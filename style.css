@@ -650,18 +650,6 @@ footer {
 }
 
 /* ── RESPONSIVE ── */
-/* ── HERO TITLE LINE2 ── */
-.hero-title .line2 {
-  display: block;
-}
-
-.hero-football {
-  display: inline-block;
-  vertical-align: middle;
-  width: 64px;
-  height: 64px;
-}
-
 @media (max-width: 900px) {
   nav { padding: 14px 20px; }
   .nav-tag { display: none; }
@@ -673,7 +661,6 @@ footer {
 
   .hero { grid-template-columns: 1fr; padding: 36px 20px 32px; gap: 32px; max-width: 100%; }
   .hero-title { font-size: 36px; }
-  .hero-football { width: 32px !important; height: 32px !important; display: inline-block !important; }
   .hero-tagline { font-size: 16px; max-width: 100%; }
   .signal-card { display: none; }
 
@@ -696,12 +683,10 @@ footer {
   .logo-text { font-size: 13px; letter-spacing: 0.08em; }
   .logo-icon { width: 26px; height: 26px; }
   .hero-title { font-size: 30px; }
-  .hero-football { width: 26px !important; height: 26px !important; display: inline-block !important; }
 }
 
 @media (max-width: 380px) {
   .hero-title { font-size: 26px; }
-  .hero-football { width: 22px !important; height: 22px !important; display: inline-block !important; }
   .features-grid { grid-template-columns: 1fr !important; }
   .sub-title { font-size: 26px; }
   .sub-title svg { display: none !important; }
