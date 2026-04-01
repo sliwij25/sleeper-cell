@@ -672,8 +672,8 @@ footer {
   .logo-text { font-size: 15px; }
   .logo-icon { width: 28px; height: 28px; flex-shrink: 0; }
   nav > div:last-child { gap: 6px; flex-shrink: 0; }
-  .nav-cta-join { display: none; }
-  .nav-cta-dashboard { font-size: 11px; padding: 6px 14px; }
+  .nav-cta-join { font-size: 10px; padding: 5px 8px; letter-spacing: 0.04em; }
+  .nav-cta-dashboard { font-size: 10px; padding: 5px 8px; letter-spacing: 0.04em; }
 
   .hero {
     grid-template-columns: 1fr;
