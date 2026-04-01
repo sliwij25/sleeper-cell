@@ -13,7 +13,10 @@ body{background-color:var(--core);color:var(--primary);font-family:'Barlow Conde
 .grid-bg{position:fixed;inset:0;background-image:linear-gradient(var(--grid-color) 1px,transparent 1px),linear-gradient(90deg,var(--grid-color) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
 .scanline{position:fixed;top:-100%;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent,rgba(16,185,129,0.4),transparent);animation:scan 6s linear infinite;z-index:1;pointer-events:none}
 @keyframes scan{0%{top:-2px}100%{top:100vh}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
 .page{position:relative;z-index:2}
+
+/* NAV */
 nav{display:flex;align-items:center;justify-content:space-between;padding:20px 48px;border-bottom:1px solid rgba(16,185,129,0.12)}
 .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none}
 .logo-icon{width:36px;height:36px;border:1.5px solid var(--accent);display:flex;align-items:center;justify-content:center}
@@ -26,99 +29,142 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 4
 .nav-link:hover,.nav-link.active{color:var(--accent)}
 .nav-cta{background:transparent;border:1px solid var(--accent);color:var(--accent);font-family:'Rajdhani',sans-serif;font-weight:600;font-size:13px;letter-spacing:0.12em;text-transform:uppercase;padding:8px 20px;cursor:pointer;text-decoration:none;transition:all 0.2s;display:inline-block}
 .nav-cta:hover{background:var(--accent);color:var(--core)}
-.dash-header{padding:40px 48px 24px;max-width:1400px;margin:0 auto;border-bottom:1px solid rgba(16,185,129,0.08)}
-.dash-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+
+/* DASH HEADER */
+.dash-header{padding:32px 48px 24px;max-width:1400px;margin:0 auto}
+.dash-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .eyebrow-line{width:32px;height:1px;background:var(--accent)}
 .eyebrow-text{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase}
-.dash-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:36px;text-transform:uppercase;letter-spacing:0.05em;color:var(--primary)}
+.dash-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:32px;text-transform:uppercase;letter-spacing:0.05em;color:var(--primary)}
 .dash-title span{color:var(--accent)}
-.dash-meta{display:flex;align-items:center;gap:24px;margin-top:8px}
-.meta-item{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.1em;display:flex;align-items:center;gap:6px}
-.meta-dot{width:5px;height:5px;border-radius:50%;background:var(--accent)}
+
+/* PIPELINE STRIP */
+.pipeline-strip{display:flex;align-items:center;gap:24px;padding:8px 16px;border:1px solid var(--border);border-bottom:none;background:rgba(0,28,28,0.6)}
 .live-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 1.5s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
-.dash-body{max-width:1400px;margin:0 auto;padding:32px 48px 64px;display:flex;flex-direction:column;gap:32px}
-.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
-.stat-card{background:rgba(0,43,43,0.5);border:1px solid var(--border);padding:20px 24px;position:relative;overflow:hidden}
-.stat-card::before{content:'';position:absolute;top:-1px;left:-1px;width:12px;height:12px;border-top:2px solid var(--accent);border-left:2px solid var(--accent)}
-.stat-label{font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(16,185,129,0.6);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:8px}
-.stat-value{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:32px;color:var(--primary);line-height:1}
-.stat-sub{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--muted);margin-top:4px;font-weight:300}
-.stat-trend-up{color:#10B981;font-size:11px;font-family:'Share Tech Mono',monospace;margin-top:6px}
-.stat-trend-dn{color:#ef4444;font-size:11px;font-family:'Share Tech Mono',monospace;margin-top:6px}
-.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.section-left{display:flex;align-items:center;gap:12px}
-.section-tag{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase;background:var(--accent-dim);padding:4px 10px;border-left:2px solid var(--accent)}
-.section-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:20px;text-transform:uppercase;letter-spacing:0.05em;color:var(--primary)}
-.section-count{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.1em}
-.panel{background:rgba(0,43,43,0.4);border:1px solid var(--border);position:relative}
-.panel::before{content:'';position:absolute;top:-1px;left:-1px;width:16px;height:16px;border-top:2px solid var(--accent);border-left:2px solid var(--accent)}
-.panel::after{content:'';position:absolute;bottom:-1px;right:-1px;width:16px;height:16px;border-bottom:2px solid var(--accent);border-right:2px solid var(--accent)}
-.panel-inner{padding:24px}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:2px}
-.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px}
+.strip-item{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.1em}
+.strip-item.live{color:var(--accent);display:flex;align-items:center;gap:6px}
+
+/* STAT CARDS */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-bottom:2px}
+.stat-card{background:rgba(0,43,43,0.5);border:1px solid var(--border);padding:16px 18px;position:relative;overflow:hidden;cursor:pointer;transition:border-color 0.2s,background 0.2s}
+.stat-card:hover{border-color:rgba(16,185,129,0.4);background:rgba(0,43,43,0.8)}
+.stat-card.active{border-color:var(--accent);background:rgba(16,185,129,0.08);border-left:3px solid var(--accent)}
+.stat-card::before{content:'';position:absolute;top:-1px;left:-1px;width:10px;height:10px;border-top:2px solid var(--accent);border-left:2px solid var(--accent)}
+.stat-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(16,185,129,0.6);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:6px}
+.stat-value{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:28px;color:var(--primary);line-height:1}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.stat-trend-up{color:#10B981;font-size:11px;font-family:'Share Tech Mono',monospace;margin-top:3px}
+.stat-trend-dn{color:#ef4444;font-size:11px;font-family:'Share Tech Mono',monospace;margin-top:3px}
+.card-hint{font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(16,185,129,0.3);letter-spacing:0.1em;margin-top:6px}
+.stat-card.active .card-hint{color:var(--accent);opacity:0.7}
+
+/* CONTEXT CARDS */
+.ctx-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-bottom:12px}
+.ctx-card{background:rgba(0,28,28,0.7);border:1px solid var(--border);padding:10px 14px;position:relative;cursor:pointer;transition:border-color 0.2s,background 0.2s}
+.ctx-card:hover{border-color:rgba(16,185,129,0.3);background:rgba(0,43,43,0.5)}
+.ctx-card.active{border-color:var(--accent);background:rgba(16,185,129,0.06);border-left:3px solid var(--accent)}
+.ctx-card::before{content:'';position:absolute;top:-1px;left:-1px;width:7px;height:7px;border-top:1.5px solid var(--accent);border-left:1.5px solid var(--accent)}
+.ctx-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(16,185,129,0.4);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px}
+.ctx-metrics{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end}
+.ctx-item{display:flex;flex-direction:column;gap:1px}
+.ctx-key{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:0.08em}
+.ctx-val{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--primary)}
+.ctx-val.green{color:#10B981}
+.ctx-val.red{color:#ef4444}
+.ctx-val.yellow{color:#fbbf24}
+.ctx-val.sm{font-size:13px}
+
+/* SECTION NAV */
+.sec-nav{display:flex;flex-direction:column;gap:2px;margin-bottom:8px}
+.sec-btn{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--border);background:rgba(0,28,28,0.6);cursor:pointer;transition:all 0.2s;gap:12px;width:100%}
+.sec-btn:hover{border-color:rgba(16,185,129,0.3);background:rgba(0,43,43,0.6)}
+.sec-btn.active{border-color:var(--accent);background:rgba(16,185,129,0.08);border-left:3px solid var(--accent)}
+.sec-left{display:flex;align-items:center;gap:10px}
+.sec-tag{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;background:var(--accent-dim);padding:3px 8px;border-left:2px solid var(--accent)}
+.sec-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:0.05em;color:var(--primary)}
+.sec-metrics{display:flex;gap:20px;align-items:center}
+.sec-metric{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.08em;white-space:nowrap}
+.sec-metric span{color:var(--accent)}
+.sec-metric span.red{color:#ef4444}
+.sec-metric span.yellow{color:#fbbf24}
+.sec-arrow{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);opacity:0.4;flex-shrink:0}
+.sec-btn.active .sec-arrow{opacity:1}
+
+/* CONTENT PANELS */
+.sec-content{display:none;border:1px solid var(--border);background:rgba(0,43,43,0.4);position:relative;margin-bottom:2px}
+.sec-content.active{display:block}
+.sec-content::before{content:'';position:absolute;top:-1px;left:-1px;width:14px;height:14px;border-top:2px solid var(--accent);border-left:2px solid var(--accent)}
+.sec-content::after{content:'';position:absolute;bottom:-1px;right:-1px;width:14px;height:14px;border-bottom:2px solid var(--accent);border-right:2px solid var(--accent)}
+
+/* INNER TABS */
+.inner-tabs{display:flex;border-bottom:1px solid rgba(16,185,129,0.1)}
+.itab{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;padding:9px 18px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;transition:all 0.2s}
+.itab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.itab:hover{color:var(--primary)}
+.itab-content{display:none}.itab-content.active{display:block}
+
+/* TABLES */
 table{width:100%;border-collapse:collapse}
-.tbl-head th{font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(16,185,129,0.5);letter-spacing:0.15em;text-transform:uppercase;padding:0 12px 10px;text-align:left;border-bottom:1px solid rgba(16,185,129,0.1)}
-.tbl-head th:last-child{text-align:right}
-.tbl-row td{padding:11px 12px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:14px;vertical-align:middle}
+.tbl-head th{font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(16,185,129,0.5);letter-spacing:0.15em;text-transform:uppercase;padding:8px 14px;text-align:left;border-bottom:1px solid rgba(16,185,129,0.1)}
+.tbl-row td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle}
 .tbl-row:last-child td{border-bottom:none}
 .tbl-row:hover td{background:rgba(16,185,129,0.04)}
-.player-name{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:16px;color:var(--primary);letter-spacing:0.03em}
+.player-name{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:15px;color:var(--primary);letter-spacing:0.03em}
 .player-meta{font-size:11px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:300}
-.pos-badge{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.1em;padding:2px 6px;border:1px solid;margin-right:6px}
+.pos-badge{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 5px;border:1px solid;margin-right:4px}
 .pos-QB{color:#60a5fa;border-color:rgba(96,165,250,0.4)}
 .pos-RB{color:#34d399;border-color:rgba(52,211,153,0.4)}
 .pos-WR{color:#a78bfa;border-color:rgba(167,139,250,0.4)}
 .pos-TE{color:#fbbf24;border-color:rgba(251,191,36,0.4)}
-.pts{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:var(--accent);text-align:right;white-space:nowrap}
-.tier-badge{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.1em;padding:2px 8px;border:1px solid rgba(16,185,129,0.3);color:var(--accent);white-space:nowrap}
-.conf-bar-wrap{width:60px;height:4px;background:rgba(255,255,255,0.08);display:inline-block;vertical-align:middle}
-.conf-bar{height:4px;background:var(--accent)}
-.action-add{color:#10B981;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.1em}
-.action-monitor{color:#fbbf24;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.1em}
-.action-drop{color:#ef4444;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.1em}
-.faab{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--primary);text-align:right}
-.faab-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:0.1em}
-.alert-item{display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.04);gap:12px}
-.alert-item:last-child{border-bottom:none}
-.alert-critical{color:#ef4444;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.1em;padding:2px 6px;border:1px solid rgba(239,68,68,0.4)}
-.alert-warn{color:#fbbf24;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.1em;padding:2px 6px;border:1px solid rgba(251,191,36,0.4)}
-.alert-cleared{color:#10B981;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.1em;padding:2px 6px;border:1px solid rgba(16,185,129,0.4)}
-.alert-time{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.05em;white-space:nowrap}
-.rank-num{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:20px;color:rgba(16,185,129,0.4);width:32px;text-align:right;padding-right:8px}
+.pts{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;color:var(--accent);text-align:right;white-space:nowrap}
+.tier-badge{font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 7px;border:1px solid rgba(16,185,129,0.3);color:var(--accent);white-space:nowrap}
+.rank-num{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:rgba(16,185,129,0.3);width:28px;text-align:right;padding-right:6px}
 .pivot-tag{color:#10B981;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.1em}
 .fade-tag{color:#ef4444;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.1em}
-.proj-bar-wrap{width:80px;height:3px;background:rgba(255,255,255,0.06);display:inline-block;vertical-align:middle}
-.proj-bar{height:3px;background:var(--accent)}
-.sub-section-label{font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(16,185,129,0.5);letter-spacing:0.2em;text-transform:uppercase;padding:8px 12px;border-bottom:1px solid rgba(16,185,129,0.08);background:rgba(0,28,28,0.4)}
-.season-row{display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid rgba(255,255,255,0.04)}
+.hold-tag{color:rgba(255,255,255,0.4);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.1em}
+.action-add{color:#10B981;font-family:'Share Tech Mono',monospace;font-size:9px}
+.action-monitor{color:#fbbf24;font-family:'Share Tech Mono',monospace;font-size:9px}
+.action-drop{color:#ef4444;font-family:'Share Tech Mono',monospace;font-size:9px}
+.faab{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--primary);text-align:right}
+.faab-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted)}
+.sub-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(16,185,129,0.5);padding:6px 14px;background:rgba(0,28,28,0.4);border-bottom:1px solid rgba(16,185,129,0.08);letter-spacing:0.15em}
+.alert-critical{color:#ef4444;font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 5px;border:1px solid rgba(239,68,68,0.4)}
+.alert-warn{color:#fbbf24;font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 5px;border:1px solid rgba(251,191,36,0.4)}
+.alert-cleared{color:#10B981;font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 5px;border:1px solid rgba(16,185,129,0.4)}
+.alert-time{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);white-space:nowrap}
+.alert-item{display:flex;justify-content:space-between;align-items:flex-start;padding:11px 14px;border-bottom:1px solid rgba(255,255,255,0.04);gap:10px}
+.alert-item:last-child{border-bottom:none}
+.season-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.04)}
 .season-row:last-child{border-bottom:none}
 .season-row:hover{background:rgba(16,185,129,0.04)}
-.season-pts{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:20px;color:var(--accent)}
-.season-range{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.05em}
-.divider{height:1px;background:rgba(16,185,129,0.08);margin:0}
-.tab-row{display:flex;gap:0;border-bottom:1px solid rgba(16,185,129,0.1);margin-bottom:0}
-.tab{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;padding:10px 20px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:all 0.2s;background:none;border-top:none;border-left:none;border-right:none}
-.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
-.tab:hover{color:var(--primary)}
-.tab-content{display:none}.tab-content.active{display:block}
-.newsletter-card{background:rgba(0,43,43,0.4);border:1px solid var(--border);padding:32px;text-align:center;position:relative}
-.newsletter-card::before{content:'';position:absolute;top:-1px;left:-1px;width:16px;height:16px;border-top:2px solid var(--accent);border-left:2px solid var(--accent)}
-.newsletter-card::after{content:'';position:absolute;bottom:-1px;right:-1px;width:16px;height:16px;border-bottom:2px solid var(--accent);border-right:2px solid var(--accent)}
-.nl-eyebrow{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.2em;opacity:0.8;margin-bottom:12px}
-.nl-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:28px;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px}
+.season-pts{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:19px;color:var(--accent)}
+.season-range{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+.sleeper-card{padding:16px;border-right:1px solid rgba(16,185,129,0.08)}
+.sleeper-card:last-child{border-right:none}
+.trend-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.04)}
+.trend-row:last-child{border-bottom:none}
+
+/* NEWSLETTER */
+.newsletter-card{background:rgba(0,43,43,0.4);border:1px solid var(--border);padding:28px;text-align:center;position:relative;margin-top:12px}
+.newsletter-card::before{content:'';position:absolute;top:-1px;left:-1px;width:14px;height:14px;border-top:2px solid var(--accent);border-left:2px solid var(--accent)}
+.newsletter-card::after{content:'';position:absolute;bottom:-1px;right:-1px;width:14px;height:14px;border-bottom:2px solid var(--accent);border-right:2px solid var(--accent)}
+.nl-eyebrow{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.2em;opacity:0.8;margin-bottom:10px}
+.nl-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:26px;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px}
 .nl-title span{color:var(--accent)}
-.nl-desc{font-size:14px;color:var(--muted);font-weight:300;max-width:400px;margin:0 auto 24px;line-height:1.6;letter-spacing:0.04em}
-.nl-form{display:flex;max-width:380px;margin:0 auto}
-.nl-input{flex:1;background:rgba(0,28,28,0.9);border:1px solid rgba(16,185,129,0.25);border-right:none;color:var(--primary);font-family:'Share Tech Mono',monospace;font-size:12px;padding:12px 16px;outline:none;letter-spacing:0.05em}
+.nl-desc{font-size:13px;color:var(--muted);font-weight:300;max-width:380px;margin:0 auto 20px;line-height:1.6}
+.nl-form{display:flex;max-width:360px;margin:0 auto}
+.nl-input{flex:1;background:rgba(0,28,28,0.9);border:1px solid rgba(16,185,129,0.25);border-right:none;color:var(--primary);font-family:'Share Tech Mono',monospace;font-size:12px;padding:10px 14px;outline:none}
 .nl-input::placeholder{color:rgba(255,255,255,0.2)}
-.nl-btn{background:var(--accent);color:var(--core);border:none;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:0.12em;text-transform:uppercase;padding:12px 20px;cursor:pointer;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%);white-space:nowrap}
-.nl-fine{margin-top:12px;font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(255,255,255,0.2);letter-spacing:0.12em}
-footer{padding:28px 48px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(16,185,129,0.08)}
+.nl-btn{background:var(--accent);color:var(--core);border:none;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:0.12em;text-transform:uppercase;padding:10px 18px;cursor:pointer;clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,0 100%);white-space:nowrap}
+.nl-fine{margin-top:10px;font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(255,255,255,0.2);letter-spacing:0.12em}
+
+footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(16,185,129,0.08)}
 .footer-left{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:14px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3)}
 .footer-left span{color:var(--accent)}
 .footer-right{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(255,255,255,0.15);letter-spacing:0.1em}
-@media(max-width:900px){nav{padding:16px 24px}.nav-tag,.nav-links{display:none}.dash-header,.dash-body{padding:24px}.stat-row{grid-template-columns:1fr 1fr}.two-col,.three-col{grid-template-columns:1fr}footer{padding:20px 24px;flex-direction:column;gap:8px;text-align:center}}
+@media(max-width:900px){nav{padding:16px 24px}.nav-tag,.nav-links{display:none}.dash-header,.dash-body{padding:24px}.stat-grid,.ctx-grid{grid-template-columns:1fr 1fr}.sec-metrics{display:none}footer{padding:20px 24px;flex-direction:column;gap:8px;text-align:center}}
 </style>
 </head>
 <body>
@@ -147,290 +193,287 @@ footer{padding:28px 48px;display:flex;justify-content:space-between;align-items:
   <a href="index.html#subscribe" class="nav-cta">Join the Cell</a>
 </nav>
 
-<div class="dash-header">
-  <div class="dash-eyebrow">
-    <div class="eyebrow-line"></div>
-    <span class="eyebrow-text">Intelligence Dashboard</span>
-  </div>
-  <div class="dash-title">Weekly <span>Field Report</span></div>
-  <div class="dash-meta">
-    <div class="meta-item"><div class="live-dot"></div>PIPELINE ACTIVE</div>
-    <div class="meta-item">2026 SEASON</div>
-    <div class="meta-item">LAST RUN: WED 6:00 AM ET</div>
-    <div class="meta-item">PPR SCORING</div>
-  </div>
-</div>
+<div style="max-width:1400px;margin:0 auto;padding:32px 48px 64px">
 
-<div class="dash-body">
+  <div class="dash-header" style="padding:0 0 20px">
+    <div class="dash-eyebrow"><div class="eyebrow-line"></div><span class="eyebrow-text">Intelligence Dashboard</span></div>
+    <div class="dash-title">Weekly <span>Field Report</span></div>
+  </div>
 
-  <!-- STAT CARDS -->
-  <div class="stat-row">
-    <div class="stat-card">
+  <!-- PIPELINE STRIP -->
+  <div class="pipeline-strip" id="pipeline-strip">
+    <div class="strip-item live"><div class="live-dot"></div>PIPELINE ACTIVE</div>
+    <div class="strip-item" id="meta-season">2026 SEASON</div>
+    <div class="strip-item" id="meta-lastrun">LAST RUN: —</div>
+    <div class="strip-item">PPR SCORING</div>
+  </div>
+
+  <!-- ROW 1 — MAIN STAT CARDS -->
+  <div class="stat-grid">
+    <div class="stat-card" id="card-players" onclick="activateSection('s-proj','card-players')">
       <div class="stat-label">Players Tracked</div>
-      <div class="stat-value">487</div>
+      <div class="stat-value" id="val-players">—</div>
       <div class="stat-sub">QB / RB / WR / TE</div>
-      <div class="stat-trend-up">▲ 12 added this week</div>
+      <div class="stat-trend-up" id="val-players-sub"></div>
+      <div class="card-hint">↓ VIEW PROJECTIONS</div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card" id="card-proj" onclick="activateSection('s-rank','card-proj')">
       <div class="stat-label">Projections Generated</div>
-      <div class="stat-value">463</div>
-      <div class="stat-sub">Week 1 · 2026</div>
-      <div class="stat-trend-up">▲ Confidence avg 0.74</div>
+      <div class="stat-value" id="val-proj">—</div>
+      <div class="stat-sub" id="val-proj-sub"></div>
+      <div class="stat-trend-up" id="val-conf"></div>
+      <div class="card-hint">↓ VIEW RANKINGS</div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card" id="card-waiver" onclick="activateSection('s-waiver','card-waiver')">
       <div class="stat-label">Waiver Targets</div>
-      <div class="stat-value">28</div>
-      <div class="stat-sub">14 add · 9 monitor · 5 drop</div>
-      <div class="stat-trend-up">▲ 6 high priority</div>
+      <div class="stat-value" id="val-waiver">—</div>
+      <div class="stat-sub" id="val-waiver-sub"></div>
+      <div class="stat-trend-up" id="val-waiver-hint"></div>
+      <div class="card-hint">↓ VIEW WAIVER WIRE</div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card" id="card-injury" onclick="activateSection('s-injury','card-injury')">
       <div class="stat-label">Injury Alerts</div>
-      <div class="stat-value">7</div>
-      <div class="stat-sub">3 critical · 4 questionable</div>
-      <div class="stat-trend-dn">▼ 3 new since yesterday</div>
+      <div class="stat-value" id="val-injury">—</div>
+      <div class="stat-sub">Last 3 days</div>
+      <div class="stat-trend-dn" id="val-injury-sub"></div>
+      <div class="card-hint">↓ VIEW INJURY REPORT</div>
     </div>
   </div>
 
-  <!-- SEASON PROJECTIONS -->
-  <div>
-    <div class="section-hdr">
-      <div class="section-left">
-        <div class="section-tag">Season Forecast</div>
-        <div class="section-title">2026 Projections</div>
-      </div>
-      <div class="section-count">TOP 12 BY POSITION</div>
-    </div>
-    <div class="panel">
-      <div class="tab-row">
-        <button class="tab active" onclick="switchTab(this,'sea-qb')">QB</button>
-        <button class="tab" onclick="switchTab(this,'sea-rb')">RB</button>
-        <button class="tab" onclick="switchTab(this,'sea-wr')">WR</button>
-        <button class="tab" onclick="switchTab(this,'sea-te')">TE</button>
-      </div>
-      <div id="sea-qb" class="tab-content active"></div>
-      <div id="sea-rb" class="tab-content"></div>
-      <div id="sea-wr" class="tab-content"></div>
-      <div id="sea-te" class="tab-content"></div>
-    </div>
-  </div>
-
-  <!-- RANKINGS + SNAP TRENDS -->
-
-    <!-- RANKINGS -->
-    <div>
-      <div class="section-hdr">
-        <div class="section-left">
-          <div class="section-tag">Field Report</div>
-          <div class="section-title">Weekly Rankings</div>
-        </div>
-        <div class="section-count">WEEK 1 · 2026</div>
-      </div>
-      <div class="panel">
-        <div class="tab-row">
-          <button class="tab active" onclick="switchTab(this,'rank-qb')">QB</button>
-          <button class="tab" onclick="switchTab(this,'rank-rb')">RB</button>
-          <button class="tab" onclick="switchTab(this,'rank-wr')">WR</button>
-          <button class="tab" onclick="switchTab(this,'rank-te')">TE</button>
-        </div>
-        <div id="rank-qb" class="tab-content active">
-          <table><thead class="tbl-head"><tr><th></th><th>Player</th><th>Tier</th><th>Proj</th><th>Signal</th></tr></thead><tbody>
-            <tr class="tbl-row"><td class="rank-num">1</td><td><div class="player-name">Josh Allen</div><div class="player-meta">BUF · QB</div></td><td><span class="tier-badge">TIER 1</span></td><td><div class="pts">29.4</div></td><td><div class="pivot-tag">▲ PIVOT</div></td></tr>
-            <tr class="tbl-row"><td class="rank-num">2</td><td><div class="player-name">Lamar Jackson</div><div class="player-meta">BAL · QB</div></td><td><span class="tier-badge">TIER 1</span></td><td><div class="pts">27.8</div></td><td><div class="pivot-tag">▲ PIVOT</div></td></tr>
-            <tr class="tbl-row"><td class="rank-num">3</td><td><div class="player-name">Jalen Hurts</div><div class="player-meta">PHI · QB</div></td><td><span class="tier-badge">TIER 1</span></td><td><div class="pts">26.1</div></td><td><div style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:9px">— HOLD</div></td></tr>
-            <tr class="tbl-row"><td class="rank-num">4</td><td><div class="player-name">Patrick Mahomes</div><div class="player-meta">KC · QB</div></td><td><span class="tier-badge">TIER 1</span></td><td><div class="pts">25.3</div></td><td><div style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:9px">— HOLD</div></td></tr>
-            <tr class="tbl-row"><td class="rank-num">5</td><td><div class="player-name">C.J. Stroud</div><div class="player-meta">HOU · QB</div></td><td><span class="tier-badge">TIER 2</span></td><td><div class="pts">22.7</div></td><td><div class="fade-tag">▼ FADE</div></td></tr>
-            <tr class="tbl-row"><td class="rank-num">6</td><td><div class="player-name">Tua Tagovailoa</div><div class="player-meta">MIA · QB</div></td><td><span class="tier-badge">TIER 2</span></td><td><div class="pts">21.4</div></td><td><div style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:9px">— HOLD</div></td></tr>
-          </tbody></table>
-        </div>
-        <div id="rank-rb" class="tab-content">
-          <table><thead class="tbl-head"><tr><th></th><th>Player</th><th>Tier</th><th>Proj</th><th>Signal</th></tr></thead><tbody>
-            <tr class="tbl-row"><td class="rank-num">1</td><td><div class="player-name">Saquon Barkley</div><div class="player-meta">PHI · RB</div></td><td><span class="tier-badge">TIER 1</span></td><td><div class="pts">22.1</div></td><td><div class="pivot-tag">▲ PIVOT</div></td></tr>
-            <tr class="tbl-row"><td class="rank-num">2</td><td><div class="player-name">Bijan Robinson</div><div class="player-meta">ATL · RB</div></td><td><span class="tier-badge">TIER 1</span></td><td><div class="pts">20.8</div></td><td><div style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:9px">— HOLD</div></td></tr>
-            <tr class="tbl-row"><td class="rank-num">3</td><td><div class="player-name">De'Von Achane</div><div class="player-meta">MIA · RB</div></td><td><span class="tier-badge">TIER 1</span></td><td><div class="pts">19.4</div></td><td><div class="pivot-tag">▲ PIVOT</div></td></tr>
-            <tr class="tbl-row"><td class="rank-num">4</td><td><div class="player-name">Jahmyr Gibbs</div><div class="player-meta">DET · RB</div></td><td><span class="tier-badge">TIER 1</span></td><td><div class="pts">18.9</div></td><td><div style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:9px">— HOLD</div></td></tr>
-            <tr class="tbl-row"><td class="rank-num">5</td><td><div class="player-name">Jonathan Taylor</div><div class="player-meta">IND · RB</div></td><td><span class="tier-badge">TIER 2</span></td><td><div class="pts">16.2</div></td><td><div class="fade-tag">▼ FADE</div></td></tr>
-            <tr class="tbl-row"><td class="rank-num">6</td><td><div class="player-name">Tony Pollard</div><div class="player-meta">TEN · RB</div></td><td><span class="tier-badge">TIER 2</span></td><td><div class="pts">15.7</div></td><td><div style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:9px">— HOLD</div></td></tr>
-          </tbody></table>
-        </div>
-        <div id="rank-wr" class="tab-content">
-          <table><thead class="tbl-head"><tr><th></th><th>Player</th><th>Tier</th><th>Proj</th><th>Signal</th></tr></thead><tbody>
-            <tr class="tbl-row"><td class="rank-num">1</td><td><div class="player-name">Tyreek Hill</div><div class="player-meta">MIA · WR</div></td><td><span class="tier-badge">TIER 1</span></td><td><div class="pts">21.3</div></td><td><div class="pivot-tag">▲ PIVOT</div></td></tr>
-            <tr class="tbl-row"><td class="rank-num">2</td><td><div class="player-name">Justin Jefferson</div><div class="player-meta">MIN · WR</div></td><td><span class="tier-badge">TIER 1</span></td><td><div class="pts">20.4</div></td><td><div style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:9px">— HOLD</div></td></tr>
-            <tr class="tbl-row"><td class="rank-num">3</td><td><div class="player-name">CeeDee Lamb</div><div class="player-meta">DAL · WR</div></td><td><span class="tier-badge">TIER 1</span></td><td><div class="pts">19.8</div></td><td><div style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:9px">— HOLD</div></td></tr>
-            <tr class="tbl-row"><td class="rank-num">4</td><td><div class="player-name">Puka Nacua</div><div class="player-meta">LAR · WR</div></td><td><span class="tier-badge">TIER 2</span></td><td><div class="pts">17.1</div></td><td><div class="pivot-tag">▲ PIVOT</div></td></tr>
-            <tr class="tbl-row"><td class="rank-num">5</td><td><div class="player-name">Amon-Ra St. Brown</div><div class="player-meta">DET · WR</div></td><td><span class="tier-badge">TIER 2</span></td><td><div class="pts">16.8</div></td><td><div style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:9px">— HOLD</div></td></tr>
-            <tr class="tbl-row"><td class="rank-num">6</td><td><div class="player-name">Davante Adams</div><div class="player-meta">LV · WR</div></td><td><span class="tier-badge">TIER 2</span></td><td><div class="pts">15.2</div></td><td><div class="fade-tag">▼ FADE</div></td></tr>
-          </tbody></table>
-        </div>
-        <div id="rank-te" class="tab-content">
-          <table><thead class="tbl-head"><tr><th></th><th>Player</th><th>Tier</th><th>Proj</th><th>Signal</th></tr></thead><tbody>
-            <tr class="tbl-row"><td class="rank-num">1</td><td><div class="player-name">Sam LaPorta</div><div class="player-meta">DET · TE</div></td><td><span class="tier-badge">TIER 1</span></td><td><div class="pts">14.8</div></td><td><div class="pivot-tag">▲ PIVOT</div></td></tr>
-            <tr class="tbl-row"><td class="rank-num">2</td><td><div class="player-name">Trey McBride</div><div class="player-meta">ARI · TE</div></td><td><span class="tier-badge">TIER 1</span></td><td><div class="pts">13.9</div></td><td><div style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:9px">— HOLD</div></td></tr>
-            <tr class="tbl-row"><td class="rank-num">3</td><td><div class="player-name">Brock Bowers</div><div class="player-meta">LV · TE</div></td><td><span class="tier-badge">TIER 1</span></td><td><div class="pts">13.1</div></td><td><div class="pivot-tag">▲ PIVOT</div></td></tr>
-            <tr class="tbl-row"><td class="rank-num">4</td><td><div class="player-name">Mark Andrews</div><div class="player-meta">BAL · TE</div></td><td><span class="tier-badge">TIER 2</span></td><td><div class="pts">11.4</div></td><td><div style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:9px">— HOLD</div></td></tr>
-            <tr class="tbl-row"><td class="rank-num">5</td><td><div class="player-name">Dallas Goedert</div><div class="player-meta">PHI · TE</div></td><td><span class="tier-badge">TIER 2</span></td><td><div class="pts">10.8</div></td><td><div class="fade-tag">▼ FADE</div></td></tr>
-            <tr class="tbl-row"><td class="rank-num">6</td><td><div class="player-name">Cole Kmet</div><div class="player-meta">CHI · TE</div></td><td><span class="tier-badge">TIER 3</span></td><td><div class="pts">9.2</div></td><td><div style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:9px">— HOLD</div></td></tr>
-          </tbody></table>
-        </div>
+  <!-- ROW 2 — CONTEXT CARDS -->
+  <div class="ctx-grid">
+    <div class="ctx-card" id="ctx-rank" onclick="activateSection('s-rank','ctx-rank')">
+      <div class="ctx-label">Rankings</div>
+      <div class="ctx-metrics">
+        <div class="ctx-item"><div class="ctx-key">PIVOTS</div><div class="ctx-val green" id="ctx-pivots">—</div></div>
+        <div class="ctx-item"><div class="ctx-key">FADES</div><div class="ctx-val red" id="ctx-fades">—</div></div>
+        <div class="ctx-item"><div class="ctx-key">WEEK</div><div class="ctx-val" id="ctx-week">—</div></div>
+        <div class="ctx-item"><div class="ctx-key">RANKED</div><div class="ctx-val" id="ctx-ranked">—</div></div>
       </div>
     </div>
-
-    <!-- WAIVER WIRE -->
-    <div>
-      <div class="section-hdr">
-        <div class="section-left">
-          <div class="section-tag">Acquisition</div>
-          <div class="section-title">Waiver Targets</div>
-        </div>
-        <div class="section-count">FAAB BIDS · WEEK 1</div>
+    <div class="ctx-card" id="ctx-waiver" onclick="activateSection('s-waiver','ctx-waiver')">
+      <div class="ctx-label">Waiver Wire</div>
+      <div class="ctx-metrics">
+        <div class="ctx-item"><div class="ctx-key">TOP BID</div><div class="ctx-val green" id="ctx-topbid">—</div></div>
+        <div class="ctx-item"><div class="ctx-key">TOP ADD</div><div class="ctx-val sm" id="ctx-topadd">—</div></div>
+        <div class="ctx-item"><div class="ctx-key">OWNED</div><div class="ctx-val" id="ctx-owned">—</div></div>
       </div>
-      <div class="panel">
-        <div class="sub-section-label">// HIGH PRIORITY ADDS //</div>
-        <table><thead class="tbl-head"><tr><th>Player</th><th>Action</th><th>Owned</th><th>FAAB</th></tr></thead><tbody>
-          <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-WR">WR</span>Jalen McMillan</div><div class="player-meta">TB · Snap% ↑ 91% · Tgt share ↑ 24%</div></td><td><div class="action-add">▲ ADD</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">18%</div></td><td><div class="faab">$22<div class="faab-label">BID</div></div></td></tr>
-          <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-RB">RB</span>Tyjae Spears</div><div class="player-meta">TEN · Starter role confirmed</div></td><td><div class="action-add">▲ ADD</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">31%</div></td><td><div class="faab">$18<div class="faab-label">BID</div></div></td></tr>
-          <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-QB">QB</span>Bo Nix</div><div class="player-meta">DEN · Rushing floor + 2QB leagues</div></td><td><div class="action-add">▲ ADD</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">42%</div></td><td><div class="faab">$14<div class="faab-label">BID</div></div></td></tr>
-        </tbody></table>
-        <div class="sub-section-label">// MONITOR //</div>
-        <table><thead class="tbl-head"><tr><th>Player</th><th>Action</th><th>Owned</th><th>FAAB</th></tr></thead><tbody>
-          <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-TE">TE</span>Tucker Kraft</div><div class="player-meta">GB · Routes ↑ — emerging role</div></td><td><div class="action-monitor">~ MONITOR</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">8%</div></td><td><div class="faab">$6<div class="faab-label">BID</div></div></td></tr>
-          <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-RB">RB</span>Hassan Haskins</div><div class="player-meta">LAR · Handcuff — high starter risk</div></td><td><div class="action-monitor">~ MONITOR</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">5%</div></td><td><div class="faab">$4<div class="faab-label">BID</div></div></td></tr>
-        </tbody></table>
-        <div class="sub-section-label">// DROP CANDIDATES //</div>
-        <table><thead class="tbl-head"><tr><th>Player</th><th>Action</th><th>Owned</th><th>FAAB</th></tr></thead><tbody>
-          <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-WR">WR</span>Wan'Dale Robinson</div><div class="player-meta">NYG · Snap% ↓ 41% · Role diminished</div></td><td><div class="action-drop">▼ DROP</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">22%</div></td><td><div class="faab">—<div class="faab-label"></div></div></td></tr>
-        </tbody></table>
+    </div>
+    <div class="ctx-card" id="ctx-startsit" onclick="activateSection('s-startsit','ctx-startsit')">
+      <div class="ctx-label">Start / Sit</div>
+      <div class="ctx-metrics">
+        <div class="ctx-item"><div class="ctx-key">STARTS</div><div class="ctx-val green">4</div></div>
+        <div class="ctx-item"><div class="ctx-key">SITS</div><div class="ctx-val red">4</div></div>
+        <div class="ctx-item"><div class="ctx-key">TOP START</div><div class="ctx-val sm">J. Allen</div></div>
+      </div>
+    </div>
+    <div class="ctx-card" id="ctx-sleeper" onclick="activateSection('s-sleeper','ctx-sleeper')">
+      <div class="ctx-label">Sleeper Pick</div>
+      <div class="ctx-metrics">
+        <div class="ctx-item"><div class="ctx-key">THIS WEEK</div><div class="ctx-val green sm">McMillan</div></div>
+        <div class="ctx-item"><div class="ctx-key">OWNED</div><div class="ctx-val">18%</div></div>
+        <div class="ctx-item"><div class="ctx-key">PROJ</div><div class="ctx-val">16.8</div></div>
       </div>
     </div>
   </div>
 
-  <!-- INJURY ALERTS + SEASON PROJECTIONS -->
-  <div class="two-col">
-
-    <!-- INJURY ALERTS -->
-    <div>
-      <div class="section-hdr">
-        <div class="section-left">
-          <div class="section-tag">Threat Monitor</div>
-          <div class="section-title">Injury Alerts</div>
-        </div>
-        <div class="section-count">UPDATED 12:00 PM ET</div>
+  <!-- SECTION NAV -->
+  <div class="sec-nav" id="sections-anchor">
+    <div class="sec-btn" id="btn-proj" onclick="activateSection('s-proj','btn-proj')">
+      <div class="sec-left"><div class="sec-tag">Season Forecast</div><div class="sec-name">2026 Projections</div></div>
+      <div class="sec-metrics">
+        <div class="sec-metric">TOP QB <span id="sn-topqb">—</span></div>
+        <div class="sec-metric">TOP RB <span id="sn-toprb">—</span></div>
+        <div class="sec-metric">TOP WR <span id="sn-topwr">—</span></div>
+        <div class="sec-metric">TOP TE <span id="sn-topte">—</span></div>
       </div>
-      <div class="panel">
-        <div class="panel-inner">
-          <div class="alert-item">
-            <div style="flex:1">
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-                <span class="alert-critical">CRITICAL</span>
-                <span class="player-name" style="font-size:15px">Christian McCaffrey</span>
-                <span class="player-meta">SF · RB</span>
-              </div>
-              <div class="player-meta">Hamstring — moved to IR. Out indefinitely.</div>
-            </div>
-            <div class="alert-time">2h ago</div>
-          </div>
-          <div class="alert-item">
-            <div style="flex:1">
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-                <span class="alert-critical">CRITICAL</span>
-                <span class="player-name" style="font-size:15px">Davante Adams</span>
-                <span class="player-meta">LV · WR</span>
-              </div>
-              <div class="player-meta">Knee — OUT. Did not practice Wed/Thu.</div>
-            </div>
-            <div class="alert-time">4h ago</div>
-          </div>
-          <div class="alert-item">
-            <div style="flex:1">
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-                <span class="alert-warn">QUESTIONABLE</span>
-                <span class="player-name" style="font-size:15px">Tua Tagovailoa</span>
-                <span class="player-meta">MIA · QB</span>
-              </div>
-              <div class="player-meta">Concussion protocol — limited practice.</div>
-            </div>
-            <div class="alert-time">6h ago</div>
-          </div>
-          <div class="alert-item">
-            <div style="flex:1">
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-                <span class="alert-warn">QUESTIONABLE</span>
-                <span class="player-name" style="font-size:15px">Mark Andrews</span>
-                <span class="player-meta">BAL · TE</span>
-              </div>
-              <div class="player-meta">Ankle — limited. Game-time decision.</div>
-            </div>
-            <div class="alert-time">8h ago</div>
-          </div>
-          <div class="alert-item">
-            <div style="flex:1">
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-                <span class="alert-cleared">CLEARED</span>
-                <span class="player-name" style="font-size:15px">Stefon Diggs</span>
-                <span class="player-meta">HOU · WR</span>
-              </div>
-              <div class="player-meta">Knee — returned to full practice. Active.</div>
-            </div>
-            <div class="alert-time">1d ago</div>
-          </div>
-        </div>
+      <div class="sec-arrow">▶</div>
+    </div>
+    <div class="sec-btn" id="btn-rank" onclick="activateSection('s-rank','btn-rank')">
+      <div class="sec-left"><div class="sec-tag">Field Report</div><div class="sec-name">Weekly Rankings</div></div>
+      <div class="sec-metrics">
+        <div class="sec-metric">WEEK <span id="sn-week">—</span></div>
+        <div class="sec-metric">PIVOTS <span id="sn-pivots" class="green">—</span></div>
+        <div class="sec-metric">FADES <span id="sn-fades" class="red">—</span></div>
+        <div class="sec-metric">RANKED <span id="sn-ranked">—</span></div>
+      </div>
+      <div class="sec-arrow">▶</div>
+    </div>
+    <div class="sec-btn" id="btn-waiver" onclick="activateSection('s-waiver','btn-waiver')">
+      <div class="sec-left"><div class="sec-tag">Acquisition</div><div class="sec-name">Waiver Wire</div></div>
+      <div class="sec-metrics">
+        <div class="sec-metric">ADDS <span id="sn-adds">—</span></div>
+        <div class="sec-metric">MONITOR <span id="sn-monitor">—</span></div>
+        <div class="sec-metric">DROP <span id="sn-drop">—</span></div>
+        <div class="sec-metric">TOP BID <span id="sn-topbid">—</span></div>
+      </div>
+      <div class="sec-arrow">▶</div>
+    </div>
+    <div class="sec-btn" id="btn-startsit" onclick="activateSection('s-startsit','btn-startsit')">
+      <div class="sec-left"><div class="sec-tag">Decision Intel</div><div class="sec-name">Start / Sit</div></div>
+      <div class="sec-metrics">
+        <div class="sec-metric">STARTS <span>4</span></div>
+        <div class="sec-metric">SITS <span>4</span></div>
+        <div class="sec-metric">TOP START <span>J. Allen</span></div>
+      </div>
+      <div class="sec-arrow">▶</div>
+    </div>
+    <div class="sec-btn" id="btn-sleeper" onclick="activateSection('s-sleeper','btn-sleeper')">
+      <div class="sec-left"><div class="sec-tag">Classified</div><div class="sec-name">Sleeper Picks</div></div>
+      <div class="sec-metrics">
+        <div class="sec-metric">THIS WEEK <span>McMillan</span></div>
+        <div class="sec-metric">OWNED <span>18%</span></div>
+        <div class="sec-metric">PROJ <span>16.8</span></div>
+      </div>
+      <div class="sec-arrow">▶</div>
+    </div>
+    <div class="sec-btn" id="btn-snap" onclick="activateSection('s-snap','btn-snap')">
+      <div class="sec-left"><div class="sec-tag">Usage Intel</div><div class="sec-name">Snap &amp; Target Trends</div></div>
+      <div class="sec-metrics">
+        <div class="sec-metric">RISING <span>5</span></div>
+        <div class="sec-metric">FALLING <span>3</span></div>
+        <div class="sec-metric">TOP RISER <span>McMillan</span></div>
+      </div>
+      <div class="sec-arrow">▶</div>
+    </div>
+    <div class="sec-btn" id="btn-injury" onclick="activateSection('s-injury','btn-injury')">
+      <div class="sec-left"><div class="sec-tag">Threat Monitor</div><div class="sec-name">Injury Alerts</div></div>
+      <div class="sec-metrics">
+        <div class="sec-metric">CRITICAL <span class="red" id="sn-critical">—</span></div>
+        <div class="sec-metric">QUEST. <span class="yellow" id="sn-warn">—</span></div>
+        <div class="sec-metric">CLEARED <span id="sn-cleared">—</span></div>
+        <div class="sec-metric">UPDATED <span id="sn-updated">—</span></div>
+      </div>
+      <div class="sec-arrow">▶</div>
+    </div>
+  </div>
+
+  <!-- PROJECTIONS -->
+  <div id="s-proj" class="sec-content">
+    <div class="inner-tabs">
+      <button class="itab active" onclick="innerTab(this,'p-qb')">QB</button>
+      <button class="itab" onclick="innerTab(this,'p-rb')">RB</button>
+      <button class="itab" onclick="innerTab(this,'p-wr')">WR</button>
+      <button class="itab" onclick="innerTab(this,'p-te')">TE</button>
+    </div>
+    <div id="p-qb" class="itab-content active"></div>
+    <div id="p-rb" class="itab-content"></div>
+    <div id="p-wr" class="itab-content"></div>
+    <div id="p-te" class="itab-content"></div>
+  </div>
+
+  <!-- RANKINGS -->
+  <div id="s-rank" class="sec-content">
+    <div class="inner-tabs">
+      <button class="itab active" onclick="innerTab(this,'r-qb')">QB</button>
+      <button class="itab" onclick="innerTab(this,'r-rb')">RB</button>
+      <button class="itab" onclick="innerTab(this,'r-wr')">WR</button>
+      <button class="itab" onclick="innerTab(this,'r-te')">TE</button>
+    </div>
+    <div id="r-qb" class="itab-content active"></div>
+    <div id="r-rb" class="itab-content"></div>
+    <div id="r-wr" class="itab-content"></div>
+    <div id="r-te" class="itab-content"></div>
+  </div>
+
+  <!-- WAIVER WIRE -->
+  <div id="s-waiver" class="sec-content">
+    <div class="sub-label">// HIGH PRIORITY ADDS //</div>
+    <table><thead class="tbl-head"><tr><th>Player</th><th>Action</th><th>Owned</th><th>FAAB</th></tr></thead>
+    <tbody id="waiver-adds"></tbody></table>
+    <div class="sub-label">// MONITOR //</div>
+    <table><thead class="tbl-head"><tr><th>Player</th><th>Action</th><th>Owned</th><th>FAAB</th></tr></thead>
+    <tbody id="waiver-monitor"></tbody></table>
+    <div class="sub-label">// DROP CANDIDATES //</div>
+    <table><thead class="tbl-head"><tr><th>Player</th><th>Action</th><th>Owned</th><th>FAAB</th></tr></thead>
+    <tbody id="waiver-drop"></tbody></table>
+  </div>
+
+  <!-- START / SIT -->
+  <div id="s-startsit" class="sec-content">
+    <div class="two-col">
+      <div>
+        <div class="sub-label">// START THESE //</div>
+        <div class="tbl-row" style="display:table;width:100%"><table><tbody>
+          <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-QB">QB</span>Josh Allen</div><div class="player-meta">BUF vs MIA · Def #24</div></td><td style="text-align:right"><div class="pivot-tag">▲ START</div><div class="pts" style="font-size:15px">29.4</div></td></tr>
+          <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-WR">WR</span>Puka Nacua</div><div class="player-meta">LAR vs ARI · Def #28</div></td><td style="text-align:right"><div class="pivot-tag">▲ START</div><div class="pts" style="font-size:15px">18.4</div></td></tr>
+          <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-RB">RB</span>De'Von Achane</div><div class="player-meta">MIA vs NYJ · Def #30</div></td><td style="text-align:right"><div class="pivot-tag">▲ START</div><div class="pts" style="font-size:15px">19.4</div></td></tr>
+          <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-TE">TE</span>Sam LaPorta</div><div class="player-meta">DET vs CHI · Def #27</div></td><td style="text-align:right"><div class="pivot-tag">▲ START</div><div class="pts" style="font-size:15px">14.8</div></td></tr>
+        </tbody></table></div>
+      </div>
+      <div style="border-left:1px solid rgba(16,185,129,0.08)">
+        <div class="sub-label">// SIT THESE //</div>
+        <table><tbody>
+          <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-QB">QB</span>C.J. Stroud</div><div class="player-meta">HOU vs PIT · Def #5</div></td><td style="text-align:right"><div class="fade-tag">▼ SIT</div><div class="pts" style="font-size:15px">18.1</div></td></tr>
+          <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-WR">WR</span>Davante Adams</div><div class="player-meta">LV vs SF · Def #2</div></td><td style="text-align:right"><div class="fade-tag">▼ SIT</div><div class="pts" style="font-size:15px">9.1</div></td></tr>
+          <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-RB">RB</span>Jonathan Taylor</div><div class="player-meta">IND vs BAL · Def #4</div></td><td style="text-align:right"><div class="fade-tag">▼ SIT</div><div class="pts" style="font-size:15px">11.2</div></td></tr>
+          <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-TE">TE</span>Dallas Goedert</div><div class="player-meta">PHI vs DAL · Def #6</div></td><td style="text-align:right"><div class="fade-tag">▼ SIT</div><div class="pts" style="font-size:15px">7.4</div></td></tr>
+        </tbody></table>
       </div>
     </div>
+  </div>
 
-    <!-- SEASON PROJECTIONS -->
-    <div>
-      <div class="section-hdr">
-        <div class="section-left">
-          <div class="section-tag">Season Forecast</div>
-          <div class="section-title">2026 Projections</div>
-        </div>
-        <div class="section-count">TOP 12 BY POSITION</div>
+  <!-- SLEEPER PICKS -->
+  <div id="s-sleeper" class="sec-content">
+    <div class="three-col">
+      <div class="sleeper-card">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(16,185,129,0.5);letter-spacing:0.15em;margin-bottom:6px">WR — LOW OWNERSHIP</div>
+        <div class="player-name" style="font-size:19px;margin-bottom:2px">Jalen McMillan</div>
+        <div class="player-meta" style="margin-bottom:10px">TB · 18% owned</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.5;font-weight:300">Snap share jumped to 91%. Soft matchup vs ATL secondary ranked #29. Target share trending hard.</div>
+        <div style="margin-top:10px;display:flex;justify-content:space-between"><div class="pts">16.8</div><div class="pivot-tag">▲ PIVOT</div></div>
       </div>
-      <div class="panel">
-        <div class="tab-row">
-          <button class="tab active" onclick="switchTab(this,'sea-qb')">QB</button>
-          <button class="tab" onclick="switchTab(this,'sea-rb')">RB</button>
-          <button class="tab" onclick="switchTab(this,'sea-wr')">WR</button>
-          <button class="tab" onclick="switchTab(this,'sea-te')">TE</button>
-        </div>
-        <div id="sea-qb" class="tab-content active">
-          <div class="season-row"><div><div class="player-name">Josh Allen</div><div class="player-meta">BUF</div></div><div style="text-align:right"><div class="season-pts">381</div><div class="season-range">Floor 298 · Ceil 462</div></div></div>
-          <div class="season-row"><div><div class="player-name">Lamar Jackson</div><div class="player-meta">BAL</div></div><div style="text-align:right"><div class="season-pts">362</div><div class="season-range">Floor 284 · Ceil 441</div></div></div>
-          <div class="season-row"><div><div class="player-name">Jalen Hurts</div><div class="player-meta">PHI</div></div><div style="text-align:right"><div class="season-pts">344</div><div class="season-range">Floor 271 · Ceil 418</div></div></div>
-          <div class="season-row"><div><div class="player-name">Patrick Mahomes</div><div class="player-meta">KC</div></div><div style="text-align:right"><div class="season-pts">324</div><div class="season-range">Floor 258 · Ceil 397</div></div></div>
-          <div class="season-row"><div><div class="player-name">C.J. Stroud</div><div class="player-meta">HOU</div></div><div style="text-align:right"><div class="season-pts">298</div><div class="season-range">Floor 231 · Ceil 364</div></div></div>
-        </div>
-        <div id="sea-rb" class="tab-content">
-          <div class="season-row"><div><div class="player-name">Saquon Barkley</div><div class="player-meta">PHI</div></div><div style="text-align:right"><div class="season-pts">312</div><div class="season-range">Floor 241 · Ceil 384</div></div></div>
-          <div class="season-row"><div><div class="player-name">Bijan Robinson</div><div class="player-meta">ATL</div></div><div style="text-align:right"><div class="season-pts">294</div><div class="season-range">Floor 228 · Ceil 361</div></div></div>
-          <div class="season-row"><div><div class="player-name">De'Von Achane</div><div class="player-meta">MIA</div></div><div style="text-align:right"><div class="season-pts">271</div><div class="season-range">Floor 198 · Ceil 344</div></div></div>
-          <div class="season-row"><div><div class="player-name">Jahmyr Gibbs</div><div class="player-meta">DET</div></div><div style="text-align:right"><div class="season-pts">258</div><div class="season-range">Floor 192 · Ceil 318</div></div></div>
-          <div class="season-row"><div><div class="player-name">Jonathan Taylor</div><div class="player-meta">IND</div></div><div style="text-align:right"><div class="season-pts">241</div><div class="season-range">Floor 181 · Ceil 302</div></div></div>
-        </div>
-        <div id="sea-wr" class="tab-content">
-          <div class="season-row"><div><div class="player-name">Tyreek Hill</div><div class="player-meta">MIA</div></div><div style="text-align:right"><div class="season-pts">298</div><div class="season-range">Floor 228 · Ceil 368</div></div></div>
-          <div class="season-row"><div><div class="player-name">Justin Jefferson</div><div class="player-meta">MIN</div></div><div style="text-align:right"><div class="season-pts">284</div><div class="season-range">Floor 218 · Ceil 351</div></div></div>
-          <div class="season-row"><div><div class="player-name">CeeDee Lamb</div><div class="player-meta">DAL</div></div><div style="text-align:right"><div class="season-pts">276</div><div class="season-range">Floor 211 · Ceil 341</div></div></div>
-          <div class="season-row"><div><div class="player-name">Puka Nacua</div><div class="player-meta">LAR</div></div><div style="text-align:right"><div class="season-pts">241</div><div class="season-range">Floor 178 · Ceil 304</div></div></div>
-          <div class="season-row"><div><div class="player-name">Amon-Ra St. Brown</div><div class="player-meta">DET</div></div><div style="text-align:right"><div class="season-pts">234</div><div class="season-range">Floor 172 · Ceil 296</div></div></div>
-        </div>
-        <div id="sea-te" class="tab-content">
-          <div class="season-row"><div><div class="player-name">Sam LaPorta</div><div class="player-meta">DET</div></div><div style="text-align:right"><div class="season-pts">198</div><div class="season-range">Floor 144 · Ceil 252</div></div></div>
-          <div class="season-row"><div><div class="player-name">Trey McBride</div><div class="player-meta">ARI</div></div><div style="text-align:right"><div class="season-pts">184</div><div class="season-range">Floor 134 · Ceil 234</div></div></div>
-          <div class="season-row"><div><div class="player-name">Brock Bowers</div><div class="player-meta">LV</div></div><div style="text-align:right"><div class="season-pts">176</div><div class="season-range">Floor 128 · Ceil 224</div></div></div>
-          <div class="season-row"><div><div class="player-name">Mark Andrews</div><div class="player-meta">BAL</div></div><div style="text-align:right"><div class="season-pts">158</div><div class="season-range">Floor 112 · Ceil 204</div></div></div>
-          <div class="season-row"><div><div class="player-name">Dallas Goedert</div><div class="player-meta">PHI</div></div><div style="text-align:right"><div class="season-pts">144</div><div class="season-range">Floor 104 · Ceil 184</div></div></div>
-        </div>
+      <div class="sleeper-card">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(16,185,129,0.5);letter-spacing:0.15em;margin-bottom:6px">RB — LOW OWNERSHIP</div>
+        <div class="player-name" style="font-size:19px;margin-bottom:2px">Tyjae Spears</div>
+        <div class="player-meta" style="margin-bottom:10px">TEN · 31% owned</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.5;font-weight:300">Confirmed lead back role. 19 carries last week. Faces NYJ run defense ranked #31.</div>
+        <div style="margin-top:10px;display:flex;justify-content:space-between"><div class="pts">15.2</div><div class="pivot-tag">▲ PIVOT</div></div>
+      </div>
+      <div class="sleeper-card">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(16,185,129,0.5);letter-spacing:0.15em;margin-bottom:6px">TE — LOW OWNERSHIP</div>
+        <div class="player-name" style="font-size:19px;margin-bottom:2px">Tucker Kraft</div>
+        <div class="player-meta" style="margin-bottom:10px">GB · 8% owned</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.5;font-weight:300">Routes up 72% over 3 weeks. Emerging as Love's safety valve. TE defense ranked #28.</div>
+        <div style="margin-top:10px;display:flex;justify-content:space-between"><div class="pts">11.4</div><div class="pivot-tag">▲ PIVOT</div></div>
       </div>
     </div>
+  </div>
 
+  <!-- SNAP & TARGET TRENDS -->
+  <div id="s-snap" class="sec-content">
+    <div class="inner-tabs">
+      <button class="itab active" onclick="innerTab(this,'snap-rising')">Rising</button>
+      <button class="itab" onclick="innerTab(this,'snap-falling')">Falling</button>
+    </div>
+    <div id="snap-rising" class="itab-content active">
+      <table><thead class="tbl-head"><tr><th>Player</th><th>Metric</th><th>Trend</th></tr></thead><tbody>
+        <tr class="tbl-row"><td><div class="player-name">Jalen McMillan</div><div class="player-meta">TB · WR</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">Snap%</div></td><td><div class="pivot-tag">▲ 71% → 94%</div></td></tr>
+        <tr class="tbl-row"><td><div class="player-name">Tyjae Spears</div><div class="player-meta">TEN · RB</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">Carries</div></td><td><div class="pivot-tag">▲ 8 → 19</div></td></tr>
+        <tr class="tbl-row"><td><div class="player-name">Tucker Kraft</div><div class="player-meta">GB · TE</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">Routes</div></td><td><div class="pivot-tag">▲ 18 → 31</div></td></tr>
+        <tr class="tbl-row"><td><div class="player-name">Bo Nix</div><div class="player-meta">DEN · QB</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">Air Yards</div></td><td><div class="pivot-tag">▲ 198 → 274</div></td></tr>
+        <tr class="tbl-row"><td><div class="player-name">Puka Nacua</div><div class="player-meta">LAR · WR</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">Tgt Share</div></td><td><div class="pivot-tag">▲ 18% → 29%</div></td></tr>
+      </tbody></table>
+    </div>
+    <div id="snap-falling" class="itab-content">
+      <table><thead class="tbl-head"><tr><th>Player</th><th>Metric</th><th>Trend</th></tr></thead><tbody>
+        <tr class="tbl-row"><td><div class="player-name">Wan'Dale Robinson</div><div class="player-meta">NYG · WR</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">Snap%</div></td><td><div class="fade-tag">▼ 78% → 41%</div></td></tr>
+        <tr class="tbl-row"><td><div class="player-name">Davante Adams</div><div class="player-meta">LV · WR</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">Routes</div></td><td><div class="fade-tag">▼ 38 → 21</div></td></tr>
+        <tr class="tbl-row"><td><div class="player-name">Tony Pollard</div><div class="player-meta">TEN · RB</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">Carries</div></td><td><div class="fade-tag">▼ 16 → 9</div></td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <!-- INJURY ALERTS -->
+  <div id="s-injury" class="sec-content">
+    <div id="injury-body" style="padding:4px 0"></div>
   </div>
 
   <!-- NEWSLETTER -->
   <div class="newsletter-card">
     <div class="nl-eyebrow">// Clearance Level: Open //</div>
     <h2 class="nl-title">Weekly <span>Briefing</span>
-      <svg viewBox="0 0 15 15" width="36" height="36" fill="#10B981" style="display:inline-block;vertical-align:middle;margin-left:10px;opacity:0.9" xmlns="http://www.w3.org/2000/svg"><path d="M7.53,3C3.09,3,1,7.5,1,7.5S3.09,12,7.53,12S14,7.5,14,7.5S12,3,7.53,3z M11,7v1.5C11,8.7761,10.7761,9,10.5,9S10,8.7761,10,8.5V8H8v0.5C8,8.7761,7.7761,9,7.5,9S7,8.7761,7,8.5V8H5v0.5C5,8.7761,4.7761,9,4.5,9S4,8.7761,4,8.5v-2C4,6.2239,4.2239,6,4.5,6S5,6.2239,5,6.5V7h2V6.5C7,6.2239,7.2239,6,7.5,6S8,6.2239,8,6.5V7h2V6.5C10,6.2239,10.2239,6,10.5,6S11,6.2239,11,6.5V7z"/></svg>
+      <svg viewBox="0 0 15 15" width="32" height="32" fill="#10B981" style="display:inline-block;vertical-align:middle;margin-left:10px;opacity:0.9" xmlns="http://www.w3.org/2000/svg"><path d="M7.53,3C3.09,3,1,7.5,1,7.5S3.09,12,7.53,12S14,7.5,14,7.5S12,3,7.53,3z M11,7v1.5C11,8.7761,10.7761,9,10.5,9S10,8.7761,10,8.5V8H8v0.5C8,8.7761,7.7761,9,7.5,9S7,8.7761,7,8.5V8H5v0.5C5,8.7761,4.7761,9,4.5,9S4,8.7761,4,8.5v-2C4,6.2239,4.2239,6,4.5,6S5,6.2239,5,6.5V7h2V6.5C7,6.2239,7.2239,6,7.5,6S8,6.2239,8,6.5V7h2V6.5C10,6.2239,10.2239,6,10.5,6S11,6.2239,11,6.5V7z"/></svg>
     </h2>
     <p class="nl-desc">Intelligence delivered every Wednesday. Rankings, waiver targets, injury alerts — all in one field report. Free to join.</p>
     <div class="nl-form">
@@ -449,193 +492,160 @@ footer{padding:28px 48px;display:flex;justify-content:space-between;align-items:
 
 </div>
 <script>
-const BASE = 'https://cdn.jsdelivr.net/gh/sliwij25/sleeper-cell@main/data/';
-const POS_COLOR = {QB:'#60a5fa',RB:'#34d399',WR:'#a78bfa',TE:'#fbbf24'};
-const POS_BORDER = {QB:'rgba(96,165,250,0.4)',RB:'rgba(52,211,153,0.4)',WR:'rgba(167,139,250,0.4)',TE:'rgba(251,191,36,0.4)'};
+const BASE='https://cdn.jsdelivr.net/gh/sliwij25/sleeper-cell@main/data/';
+const POS_COLOR={QB:'#60a5fa',RB:'#34d399',WR:'#a78bfa',TE:'#fbbf24'};
+const POS_BORDER={QB:'rgba(96,165,250,0.4)',RB:'rgba(52,211,153,0.4)',WR:'rgba(167,139,250,0.4)',TE:'rgba(251,191,36,0.4)'};
 
-function switchTab(btn,id){
-  const panel=btn.closest('.panel');
-  panel.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  panel.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+function posBadge(p){return`<span class="pos-badge pos-${p}" style="color:${POS_COLOR[p]||'#fff'};border-color:${POS_BORDER[p]||'rgba(255,255,255,0.3)'}">${p}</span>`;}
+function sig(r){if(r.is_pivot)return`<div class="pivot-tag">▲ PIVOT</div>`;if(r.is_fade)return`<div class="fade-tag">▼ FADE</div>`;return`<div class="hold-tag">— HOLD</div>`;}
+function timeAgo(iso){if(!iso)return'—';const d=(Date.now()-new Date(iso).getTime())/1000;if(d<3600)return Math.floor(d/60)+'m ago';if(d<86400)return Math.floor(d/3600)+'h ago';return Math.floor(d/86400)+'d ago';}
+function alertCls(a){if(a.alert_type==='CLEARED')return'alert-cleared';if(a.alert_type==='CRITICAL'||a.new_status==='O'||a.new_status==='IR'||a.new_status==='PUP')return'alert-critical';return'alert-warn';}
+function alertLbl(a){if(a.alert_type==='CLEARED')return'CLEARED';if(a.new_status==='O'||a.new_status==='IR'||a.new_status==='PUP')return'CRITICAL';if(a.new_status==='D')return'DOUBTFUL';return'QUESTIONABLE';}
+
+async function load(f){try{const r=await fetch(BASE+f+'?t='+Date.now());if(!r.ok)throw new Error(r.status);return await r.json();}catch(e){console.warn('Could not load '+f,e);return null;}}
+
+function set(id,v){const el=document.getElementById(id);if(el)el.textContent=v;}
+
+// ── SECTION SWITCHING ──────────────────────────────────────
+const SEC_IDS=['s-proj','s-rank','s-waiver','s-startsit','s-sleeper','s-snap','s-injury'];
+const BTN_MAP={'s-proj':['btn-proj','card-players'],'s-rank':['btn-rank','card-proj','ctx-rank'],'s-waiver':['btn-waiver','card-waiver','ctx-waiver'],'s-startsit':['btn-startsit','ctx-startsit'],'s-sleeper':['btn-sleeper','ctx-sleeper'],'s-snap':['btn-snap'],'s-injury':['btn-injury','card-injury']};
+
+function activateSection(secId, triggerId){
+  SEC_IDS.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.classList.remove('active');
+  });
+  document.querySelectorAll('.sec-btn,.stat-card,.ctx-card').forEach(el=>el.classList.remove('active'));
+  const sec=document.getElementById(secId);
+  if(sec){sec.classList.add('active');}
+  const btns=BTN_MAP[secId]||[];
+  btns.forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('active');});
+  if(triggerId){const el=document.getElementById(triggerId);if(el)el.classList.add('active');}
+  document.getElementById('sections-anchor').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function innerTab(btn,id){
+  const panel=btn.closest('.sec-content');
+  panel.querySelectorAll('.itab').forEach(t=>t.classList.remove('active'));
+  panel.querySelectorAll('.itab-content').forEach(t=>t.classList.remove('active'));
   btn.classList.add('active');
-  panel.querySelector('#'+id).classList.add('active');
+  document.getElementById(id).classList.add('active');
 }
 
-async function load(file){
-  try{
-    const r = await fetch(BASE+file+'?t='+Date.now());
-    if(!r.ok) throw new Error(r.status);
-    return await r.json();
-  } catch(e){
-    console.warn('Could not load '+file, e);
-    return null;
-  }
-}
-
-function timeAgo(iso){
-  if(!iso) return '';
-  const diff = (Date.now() - new Date(iso).getTime()) / 1000;
-  if(diff < 3600) return Math.floor(diff/60)+'m ago';
-  if(diff < 86400) return Math.floor(diff/3600)+'h ago';
-  return Math.floor(diff/86400)+'d ago';
-}
-
-function alertClass(type){
-  if(type==='CRITICAL'||type==='TEAM_CHANGE') return 'alert-critical';
-  if(type==='CLEARED') return 'alert-cleared';
-  return 'alert-warn';
-}
-
-function alertLabel(a){
-  if(a.alert_type==='CLEARED') return 'CLEARED';
-  if(a.alert_type==='TEAM_CHANGE') return 'TEAM CHANGE';
-  if(a.new_status==='O'||a.new_status==='IR'||a.new_status==='PUP') return 'CRITICAL';
-  if(a.new_status==='Q') return 'QUESTIONABLE';
-  if(a.new_status==='D') return 'DOUBTFUL';
-  return a.alert_type;
-}
-
-function alertDetail(a){
-  if(a.alert_type==='CLEARED') return 'Cleared from injury report — active.';
-  if(a.alert_type==='TEAM_CHANGE') return `Team change detected.`;
-  return `Status: ${a.old_status||'healthy'} → ${a.new_status}`;
-}
-
-function posBadge(pos){
-  return `<span class="pos-badge pos-${pos}" style="color:${POS_COLOR[pos]||'#fff'};border-color:${POS_BORDER[pos]||'rgba(255,255,255,0.3)'}">${pos}</span>`;
-}
-
-function signal(row){
-  if(row.is_pivot) return `<div class="pivot-tag">▲ PIVOT</div>`;
-  if(row.is_fade)  return `<div class="fade-tag">▼ FADE</div>`;
-  return `<div style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:9px">— HOLD</div>`;
-}
-
-// ── META ──────────────────────────────────────────────
+// ── META ───────────────────────────────────────────────────
 async function loadMeta(){
-  const d = await load('meta.json');
-  if(!d) return;
-  document.querySelector('.dash-meta').innerHTML = `
-    <div class="meta-item"><div class="live-dot"></div>PIPELINE ACTIVE</div>
-    <div class="meta-item">${d.season} SEASON</div>
-    <div class="meta-item">LAST RUN: ${new Date(d.last_run).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',timeZoneName:'short'})}</div>
-    <div class="meta-item">PPR SCORING</div>
-  `;
-  document.querySelector('.dash-title').innerHTML = `Weekly <span>Field Report</span>`;
-
-  const cards = document.querySelectorAll('.stat-card');
-  cards[0].innerHTML = `<div class="stat-label">Players Tracked</div><div class="stat-value">${d.player_count}</div><div class="stat-sub">QB / RB / WR / TE</div>`;
-  cards[1].innerHTML = `<div class="stat-label">Projections Generated</div><div class="stat-value">${d.projection_count}</div><div class="stat-sub">Season ${d.season}</div><div class="stat-trend-up">▲ Avg confidence ${d.avg_confidence}</div>`;
-  cards[2].innerHTML = `<div class="stat-label">Waiver Targets</div><div class="stat-value">${d.waiver_adds+d.waiver_monitors+d.waiver_drops}</div><div class="stat-sub">${d.waiver_adds} add · ${d.waiver_monitors} monitor · ${d.waiver_drops} drop</div>`;
-  cards[3].innerHTML = `<div class="stat-label">Injury Alerts</div><div class="stat-value">${d.injury_critical+d.injury_warn}</div><div class="stat-sub">${d.injury_critical} critical · ${d.injury_warn} questionable</div><div class="stat-trend-dn">▼ Last 3 days</div>`;
+  const d=await load('meta.json');if(!d)return;
+  set('meta-season',d.season+' SEASON');
+  if(d.last_run)set('meta-lastrun','LAST RUN: '+new Date(d.last_run).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',timeZoneName:'short'}));
+  set('val-players',d.player_count||'—');
+  set('val-proj',d.projection_count||'—');
+  set('val-proj-sub','Season '+d.season);
+  if(d.avg_confidence)set('val-conf','▲ Avg confidence '+d.avg_confidence);
+  const w=d.waiver_adds+d.waiver_monitors+d.waiver_drops;
+  set('val-waiver',w||'—');
+  set('val-waiver-sub',d.waiver_adds+' add · '+d.waiver_monitors+' monitor · '+d.waiver_drops+' drop');
+  set('val-waiver-hint','▲ '+d.waiver_adds+' high priority adds');
+  set('val-injury',(d.injury_critical+d.injury_warn)||'—');
+  set('val-injury-sub','▼ '+d.injury_critical+' critical · '+d.injury_warn+' questionable');
 }
 
-// ── RANKINGS ─────────────────────────────────────────
+// ── RANKINGS ───────────────────────────────────────────────
 async function loadRankings(){
-  const d = await load('rankings.json');
-  if(!d) return;
-  const wk = d.week;
-  document.querySelectorAll('.section-count')[0].textContent = `WEEK ${wk} · ${d.season}`;
+  const d=await load('rankings.json');if(!d||!d.positions)return;
+  const wk=d.week||'—';
+  set('ctx-week',wk);set('sn-week',wk);
+  let pivots=0,fades=0,ranked=0;
+  ['QB','RB','WR','TE'].forEach(pos=>{
+    const list=d.positions[pos]||[];
+    ranked+=list.length;
+    list.forEach(r=>{if(r.is_pivot)pivots++;if(r.is_fade)fades++;});
+    const tabId='r-'+pos.toLowerCase();
+    const el=document.getElementById(tabId);if(!el)return;
+    if(!list.length){el.innerHTML='<div style="padding:16px;font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(16,185,129,0.4);text-align:center;letter-spacing:0.1em">// NO DATA YET — RANKINGS POPULATE IN-SEASON //</div>';return;}
+    el.innerHTML='<table><thead class="tbl-head"><tr><th></th><th>Player</th><th>Tier</th><th>Proj</th><th>Signal</th></tr></thead><tbody>'+list.map(r=>`<tr class="tbl-row"><td class="rank-num">${r.rank}</td><td><div class="player-name">${r.name}</div><div class="player-meta">${r.team} · ${r.position}</div></td><td><span class="tier-badge">TIER ${r.tier}</span></td><td><div class="pts">${r.projected_pts.toFixed(1)}</div></td><td>${sig(r)}</td></tr>`).join('')+'</tbody></table>';
+  });
+  set('ctx-pivots',pivots);set('sn-pivots',pivots);
+  set('ctx-fades',fades);set('sn-fades',fades);
+  set('ctx-ranked',ranked);set('sn-ranked',ranked);
+}
 
-  ['QB','RB','WR','TE'].forEach(pos => {
-    const id = 'rank-'+pos.toLowerCase();
-    const el = document.getElementById(id);
-    if(!el) return;
-    const rows = (d.positions[pos]||[]).map(r => `
-      <tr class="tbl-row">
-        <td class="rank-num">${r.rank}</td>
-        <td><div class="player-name">${r.name}</div><div class="player-meta">${r.team} · ${r.position}</div></td>
-        <td><span class="tier-badge">TIER ${r.tier}</span></td>
-        <td><div class="pts">${r.projected_pts.toFixed(1)}</div></td>
-        <td>${signal(r)}</td>
-      </tr>`).join('');
-    el.innerHTML = `<table><thead class="tbl-head"><tr><th></th><th>Player</th><th>Tier</th><th>Proj</th><th>Signal</th></tr></thead><tbody>${rows}</tbody></table>`;
+// ── WAIVER ─────────────────────────────────────────────────
+async function loadWaiver(){
+  const d=await load('waiver_targets.json');if(!d||!d.targets)return;
+  set('sn-adds',d.targets.add?.length||0);
+  set('sn-monitor',d.targets.monitor?.length||0);
+  set('sn-drop',d.targets.drop?.length||0);
+  const topAdd=d.targets.add?.[0];
+  if(topAdd){
+    set('ctx-topadd',topAdd.name.split(' ').pop());
+    set('ctx-topbid','$'+(topAdd.faab_bid||0));
+    set('ctx-owned',(topAdd.ownership_pct||'—')+'%');
+    set('sn-topbid','$'+(topAdd.faab_bid||0));
+  }
+  function wRow(p,action){
+    const owned=p.ownership_pct!=null?p.ownership_pct+'%':'—';
+    const faab=p.faab_bid>0?'$'+p.faab_bid:'—';
+    const cls=action==='add'?'action-add':action==='monitor'?'action-monitor':'action-drop';
+    const lbl=action==='add'?'▲ ADD':action==='monitor'?'~ MONITOR':'▼ DROP';
+    return`<tr class="tbl-row"><td><div class="player-name">${posBadge(p.position)}${p.name}</div><div class="player-meta">${p.team} · ${p.reason}</div></td><td><div class="${cls}">${lbl}</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">${owned}</div></td><td><div class="faab">${faab}<div class="faab-label">${faab!=='—'?'BID':''}</div></div></td></tr>`;
+  }
+  ['add','monitor','drop'].forEach(a=>{
+    const el=document.getElementById('waiver-'+a);
+    if(!el)return;
+    const list=d.targets[a]||[];
+    el.innerHTML=list.length?list.map(p=>wRow(p,a)).join(''):`<tr><td colspan="4" style="padding:12px 14px;font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.3);letter-spacing:0.1em">// NO DATA YET //</td></tr>`;
   });
 }
 
-// ── WAIVER TARGETS ────────────────────────────────────
-async function loadWaiver(){
-  const d = await load('waiver_targets.json');
-  if(!d) return;
-  document.querySelectorAll('.section-count')[1].textContent = `FAAB BIDS · WEEK ${d.week}`;
-
-  const panel = document.querySelectorAll('.panel')[1];
-
-  function buildRows(list){
-    return list.map(p => {
-      const owned = p.ownership_pct != null ? p.ownership_pct+'%' : '—';
-      const faab = p.faab_bid > 0 ? `${p.faab_bid}` : '—';
-      const actionClass = {add:'action-add',monitor:'action-monitor',drop:'action-drop'}[d.targets.add.includes(p)?'add':d.targets.monitor.includes(p)?'monitor':'drop']||'action-add';
-      const actionLabel = p.faab_bid > 0 ? '▲ ADD' : p.faab_bid === 0 && list === d.targets.drop ? '▼ DROP' : '~ MONITOR';
-      const cls = list === d.targets.add ? 'action-add' : list === d.targets.monitor ? 'action-monitor' : 'action-drop';
-      const lbl = list === d.targets.add ? '▲ ADD' : list === d.targets.monitor ? '~ MONITOR' : '▼ DROP';
-      return `<tr class="tbl-row">
-        <td><div class="player-name">${posBadge(p.position)}${p.name}</div><div class="player-meta">${p.team} · ${p.reason}</div></td>
-        <td><div class="${cls}">${lbl}</div></td>
-        <td><div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">${owned}</div></td>
-        <td><div class="faab">${faab}<div class="faab-label">${faab!=='—'?'BID':''}</div></div></td>
-      </tr>`;
-    }).join('');
-  }
-
-  panel.innerHTML = `
-    <div class="sub-section-label">// HIGH PRIORITY ADDS //</div>
-    <table><thead class="tbl-head"><tr><th>Player</th><th>Action</th><th>Owned</th><th>FAAB</th></tr></thead><tbody>${buildRows(d.targets.add)}</tbody></table>
-    <div class="sub-section-label">// MONITOR //</div>
-    <table><thead class="tbl-head"><tr><th>Player</th><th>Action</th><th>Owned</th><th>FAAB</th></tr></thead><tbody>${buildRows(d.targets.monitor)}</tbody></table>
-    <div class="sub-section-label">// DROP CANDIDATES //</div>
-    <table><thead class="tbl-head"><tr><th>Player</th><th>Action</th><th>Owned</th><th>FAAB</th></tr></thead><tbody>${buildRows(d.targets.drop)}</tbody></table>
-  `;
-}
-
-// ── INJURY ALERTS ─────────────────────────────────────
+// ── INJURIES ───────────────────────────────────────────────
 async function loadInjuries(){
-  const d = await load('injury_alerts.json');
-  if(!d||!d.alerts.length) return;
-  document.querySelectorAll('.section-count')[2].textContent = `UPDATED ${timeAgo(d.generated_at).toUpperCase()}`;
-
-  const inner = document.querySelector('.panel-inner');
-  inner.innerHTML = d.alerts.slice(0,8).map(a => `
+  const d=await load('injury_alerts.json');if(!d)return;
+  const alerts=d.alerts||[];
+  const critical=alerts.filter(a=>a.alert_type==='CRITICAL'||a.new_status==='O'||a.new_status==='IR'||a.new_status==='PUP').length;
+  const warn=alerts.filter(a=>a.new_status==='Q'||a.new_status==='D').length;
+  const cleared=alerts.filter(a=>a.alert_type==='CLEARED').length;
+  set('sn-critical',critical);set('sn-warn',warn);set('sn-cleared',cleared);
+  set('sn-updated',timeAgo(d.generated_at));
+  const body=document.getElementById('injury-body');
+  if(!body)return;
+  if(!alerts.length){body.innerHTML='<div style="padding:16px;font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(16,185,129,0.4);text-align:center;letter-spacing:0.1em">// NO INJURY ALERTS IN LAST 7 DAYS //</div>';return;}
+  body.innerHTML=alerts.slice(0,10).map(a=>`
     <div class="alert-item">
       <div style="flex:1">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-          <span class="${alertClass(a.alert_type)}">${alertLabel(a)}</span>
-          <span class="player-name" style="font-size:15px">${a.name}</span>
+          <span class="${alertCls(a)}">${alertLbl(a)}</span>
+          <span class="player-name" style="font-size:14px">${a.name}</span>
           <span class="player-meta">${a.team} · ${a.position}</span>
         </div>
-        <div class="player-meta">${alertDetail(a)}</div>
+        <div class="player-meta">${a.alert_type==='CLEARED'?'Cleared from injury report — active.':`Status: ${a.old_status||'healthy'} → ${a.new_status}`}</div>
       </div>
       <div class="alert-time">${timeAgo(a.detected_at)}</div>
     </div>`).join('');
 }
 
-// ── SEASON PROJECTIONS ────────────────────────────────
-async function loadSeason(){
-  const d = await load('season_projections.json');
-  if(!d) return;
-
-  ['QB','RB','WR','TE'].forEach(pos => {
-    const id = 'sea-'+pos.toLowerCase();
-    const el = document.getElementById(id);
-    if(!el) return;
-    el.innerHTML = (d.positions[pos]||[]).map(p => `
+// ── PROJECTIONS ────────────────────────────────────────────
+async function loadProjections(){
+  const d=await load('season_projections.json');if(!d||!d.positions)return;
+  ['QB','RB','WR','TE'].forEach(pos=>{
+    const list=d.positions[pos]||[];
+    const top=list[0];
+    if(top){
+      const short=top.name.split(' ').slice(-1)[0];
+      set('sn-top'+pos.toLowerCase(),short+' '+Math.round(top.projected_pts));
+    }
+    const tabId='p-'+pos.toLowerCase();
+    const el=document.getElementById(tabId);if(!el)return;
+    if(!list.length){el.innerHTML='<div style="padding:16px;font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(16,185,129,0.4);text-align:center;letter-spacing:0.1em">// NO DATA //</div>';return;}
+    el.innerHTML=list.map(p=>`
       <div class="season-row">
-        <div>
-          <div class="player-name">${p.name}</div>
-          <div class="player-meta">${p.team}${p.bye_week?' · Bye '+p.bye_week:''}${p.data_source==='rookie_model'?' · ROOKIE':''}</div>
-        </div>
-        <div style="text-align:right">
-          <div class="season-pts">${Math.round(p.projected_pts)}</div>
-          <div class="season-range">Floor ${Math.round(p.floor)} · Ceil ${Math.round(p.ceiling)}</div>
-        </div>
+        <div><div class="player-name">${p.name}</div><div class="player-meta">${p.team}${p.bye_week?' · Bye '+p.bye_week:''}${p.data_source==='rookie_model'?' · ROOKIE':''}</div></div>
+        <div style="text-align:right"><div class="season-pts">${Math.round(p.projected_pts)}</div><div class="season-range">Floor ${Math.round(p.floor)} · Ceil ${Math.round(p.ceiling)}</div></div>
       </div>`).join('');
   });
 }
 
-// ── INIT ──────────────────────────────────────────────
-Promise.all([loadMeta(), loadRankings(), loadWaiver(), loadInjuries(), loadSeason()])
-  .then(() => console.log('[dashboard] all data loaded'))
-  .catch(e => console.error('[dashboard] load error', e));
+Promise.all([loadMeta(),loadRankings(),loadWaiver(),loadInjuries(),loadProjections()])
+  .then(()=>console.log('[dashboard] all data loaded'));
 </script>
 </body>
 </html>
