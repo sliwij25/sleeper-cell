@@ -191,8 +191,30 @@ footer{padding:28px 48px;display:flex;justify-content:space-between;align-items:
     </div>
   </div>
 
-  <!-- RANKINGS + WAIVER WIRE -->
-  <div class="two-col">
+  <!-- SEASON PROJECTIONS -->
+  <div>
+    <div class="section-hdr">
+      <div class="section-left">
+        <div class="section-tag">Season Forecast</div>
+        <div class="section-title">2026 Projections</div>
+      </div>
+      <div class="section-count">TOP 12 BY POSITION</div>
+    </div>
+    <div class="panel">
+      <div class="tab-row">
+        <button class="tab active" onclick="switchTab(this,'sea-qb')">QB</button>
+        <button class="tab" onclick="switchTab(this,'sea-rb')">RB</button>
+        <button class="tab" onclick="switchTab(this,'sea-wr')">WR</button>
+        <button class="tab" onclick="switchTab(this,'sea-te')">TE</button>
+      </div>
+      <div id="sea-qb" class="tab-content active"></div>
+      <div id="sea-rb" class="tab-content"></div>
+      <div id="sea-wr" class="tab-content"></div>
+      <div id="sea-te" class="tab-content"></div>
+    </div>
+  </div>
+
+  <!-- RANKINGS + SNAP TRENDS -->
 
     <!-- RANKINGS -->
     <div>
