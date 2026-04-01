@@ -70,52 +70,12 @@
         <span class="card-title">// Live Intel Feed //</span>
         <span class="live-badge"><span class="live-dot"></span>ACTIVE</span>
       </div>
-      <div class="intel-item">
-        <div class="intel-left">
-          <div class="intel-label">WR — High Value Target</div>
-          <div class="intel-player">Puka Nacua</div>
-          <div class="intel-detail">LAR · Snap share ↑ 94%</div>
-        </div>
-        <div class="intel-score">
-          <div class="score-value">91</div>
-          <div class="score-label">CELL SCORE</div>
-          <div class="trend-up">▲ BUY</div>
-        </div>
-      </div>
-      <div class="intel-item">
-        <div class="intel-left">
-          <div class="intel-label">RB — Opportunity Index</div>
-          <div class="intel-player">Bijan Robinson</div>
-          <div class="intel-detail">ATL · Target share 28%</div>
-        </div>
-        <div class="intel-score">
-          <div class="score-value">87</div>
-          <div class="score-label">CELL SCORE</div>
-          <div class="trend-up">▲ HOLD</div>
-        </div>
-      </div>
-      <div class="intel-item">
-        <div class="intel-left">
-          <div class="intel-label">QB — Threat Assessment</div>
-          <div class="intel-player">C.J. Stroud</div>
-          <div class="intel-detail">HOU · Air yards ↑ 312</div>
-        </div>
-        <div class="intel-score">
-          <div class="score-value">79</div>
-          <div class="score-label">CELL SCORE</div>
-          <div class="trend-down">▼ FADE</div>
-        </div>
-      </div>
-      <div class="intel-item">
-        <div class="intel-left">
-          <div class="intel-label">TE — Emerging Asset</div>
-          <div class="intel-player">Sam LaPorta</div>
-          <div class="intel-detail">DET · Route rate ↑ 89%</div>
-        </div>
-        <div class="intel-score">
-          <div class="score-value">83</div>
-          <div class="score-label">CELL SCORE</div>
-          <div class="trend-up">▲ BUY</div>
+      <div id="intel-feed">
+        <div class="intel-item">
+          <div class="intel-left">
+            <div class="intel-label">Loading intel...</div>
+            <div class="intel-player" style="color:rgba(255,255,255,0.2)">—</div>
+          </div>
         </div>
       </div>
     </div>
@@ -257,4 +217,52 @@
 
 </div>
 </body>
+<script>
+const LABEL = {QB:'QB — Threat Assessment',RB:'RB — Opportunity Index',WR:'WR — High Value Target',TE:'TE — Emerging Asset'};
+const BASE = 'https://cdn.jsdelivr.net/gh/sliwij25/sleeper-cell@main/data/';
+
+async function loadIntelFeed(){
+  try {
+    const r = await fetch(BASE+'season_projections.json?t='+Date.now());
+    if(!r.ok) throw new Error(r.status);
+    const d = await r.json();
+
+    // pick top player from each position
+    const picks = ['QB','RB','WR','TE'].map(pos => {
+      const list = (d.positions[pos]||[]);
+      if(!list.length) return null;
+      const top = list[0];
+      const rank1pts = list[0].projected_pts;
+      const rank3pts = list[2] ? list[2].projected_pts : 0;
+      // signal: top 2 = BUY, middle = HOLD, bottom half = FADE
+      let signal, signalClass;
+      const idx = list.indexOf(top);
+      if(idx <= 1){ signal='▲ BUY'; signalClass='trend-up'; }
+      else if(idx <= 5){ signal='— HOLD'; signalClass=''; }
+      else { signal='▼ FADE'; signalClass='trend-down'; }
+      const score = Math.min(99, Math.round(top.confidence * 100));
+      return {pos, top, signal, signalClass, score};
+    }).filter(Boolean);
+
+    const feed = document.getElementById('intel-feed');
+    feed.innerHTML = picks.map(({pos,top,signal,signalClass,score}) => `
+      <div class="intel-item">
+        <div class="intel-left">
+          <div class="intel-label">${LABEL[pos]}</div>
+          <div class="intel-player">${top.name}</div>
+          <div class="intel-detail">${top.team} · ${top.projected_pts} proj pts · ${top.avg_ppg} ppg</div>
+        </div>
+        <div class="intel-score">
+          <div class="score-value">${score}</div>
+          <div class="score-label">CELL SCORE</div>
+          <div class="${signalClass||'trend-hold'}" style="${!signalClass?'color:rgba(255,255,255,0.4);font-size:11px':'font-size:11px'}">${signal}</div>
+        </div>
+      </div>`).join('');
+  } catch(e) {
+    console.warn('Intel feed unavailable', e);
+  }
+}
+
+loadIntelFeed();
+</script>
 </html>
