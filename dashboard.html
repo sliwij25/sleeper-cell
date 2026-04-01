@@ -424,6 +424,10 @@ footer{padding:28px 48px;display:flex;justify-content:space-between;align-items:
 
 </div>
 <script>
+const BASE = 'https://raw.githubusercontent.com/sliwij25/sleeper-cell/main/data/';
+const POS_COLOR = {QB:'#60a5fa',RB:'#34d399',WR:'#a78bfa',TE:'#fbbf24'};
+const POS_BORDER = {QB:'rgba(96,165,250,0.4)',RB:'rgba(52,211,153,0.4)',WR:'rgba(167,139,250,0.4)',TE:'rgba(251,191,36,0.4)'};
+
 function switchTab(btn,id){
   const panel=btn.closest('.panel');
   panel.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -431,6 +435,182 @@ function switchTab(btn,id){
   btn.classList.add('active');
   panel.querySelector('#'+id).classList.add('active');
 }
+
+async function load(file){
+  try{
+    const r = await fetch(BASE+file+'?t='+Date.now());
+    if(!r.ok) throw new Error(r.status);
+    return await r.json();
+  } catch(e){
+    console.warn('Could not load '+file, e);
+    return null;
+  }
+}
+
+function timeAgo(iso){
+  if(!iso) return '';
+  const diff = (Date.now() - new Date(iso).getTime()) / 1000;
+  if(diff < 3600) return Math.floor(diff/60)+'m ago';
+  if(diff < 86400) return Math.floor(diff/3600)+'h ago';
+  return Math.floor(diff/86400)+'d ago';
+}
+
+function alertClass(type){
+  if(type==='CRITICAL'||type==='TEAM_CHANGE') return 'alert-critical';
+  if(type==='CLEARED') return 'alert-cleared';
+  return 'alert-warn';
+}
+
+function alertLabel(a){
+  if(a.alert_type==='CLEARED') return 'CLEARED';
+  if(a.alert_type==='TEAM_CHANGE') return 'TEAM CHANGE';
+  if(a.new_status==='O'||a.new_status==='IR'||a.new_status==='PUP') return 'CRITICAL';
+  if(a.new_status==='Q') return 'QUESTIONABLE';
+  if(a.new_status==='D') return 'DOUBTFUL';
+  return a.alert_type;
+}
+
+function alertDetail(a){
+  if(a.alert_type==='CLEARED') return 'Cleared from injury report — active.';
+  if(a.alert_type==='TEAM_CHANGE') return `Team change detected.`;
+  return `Status: ${a.old_status||'healthy'} → ${a.new_status}`;
+}
+
+function posBadge(pos){
+  return `<span class="pos-badge pos-${pos}" style="color:${POS_COLOR[pos]||'#fff'};border-color:${POS_BORDER[pos]||'rgba(255,255,255,0.3)'}">${pos}</span>`;
+}
+
+function signal(row){
+  if(row.is_pivot) return `<div class="pivot-tag">▲ PIVOT</div>`;
+  if(row.is_fade)  return `<div class="fade-tag">▼ FADE</div>`;
+  return `<div style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:9px">— HOLD</div>`;
+}
+
+// ── META ──────────────────────────────────────────────
+async function loadMeta(){
+  const d = await load('meta.json');
+  if(!d) return;
+  document.querySelector('.dash-meta').innerHTML = `
+    <div class="meta-item"><div class="live-dot"></div>PIPELINE ACTIVE</div>
+    <div class="meta-item">${d.season} SEASON</div>
+    <div class="meta-item">LAST RUN: ${new Date(d.last_run).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',timeZoneName:'short'})}</div>
+    <div class="meta-item">PPR SCORING</div>
+  `;
+  document.querySelector('.dash-title').innerHTML = `Weekly <span>Field Report</span>`;
+
+  const cards = document.querySelectorAll('.stat-card');
+  cards[0].innerHTML = `<div class="stat-label">Players Tracked</div><div class="stat-value">${d.player_count}</div><div class="stat-sub">QB / RB / WR / TE</div>`;
+  cards[1].innerHTML = `<div class="stat-label">Projections Generated</div><div class="stat-value">${d.projection_count}</div><div class="stat-sub">Season ${d.season}</div><div class="stat-trend-up">▲ Avg confidence ${d.avg_confidence}</div>`;
+  cards[2].innerHTML = `<div class="stat-label">Waiver Targets</div><div class="stat-value">${d.waiver_adds+d.waiver_monitors+d.waiver_drops}</div><div class="stat-sub">${d.waiver_adds} add · ${d.waiver_monitors} monitor · ${d.waiver_drops} drop</div>`;
+  cards[3].innerHTML = `<div class="stat-label">Injury Alerts</div><div class="stat-value">${d.injury_critical+d.injury_warn}</div><div class="stat-sub">${d.injury_critical} critical · ${d.injury_warn} questionable</div><div class="stat-trend-dn">▼ Last 3 days</div>`;
+}
+
+// ── RANKINGS ─────────────────────────────────────────
+async function loadRankings(){
+  const d = await load('rankings.json');
+  if(!d) return;
+  const wk = d.week;
+  document.querySelectorAll('.section-count')[0].textContent = `WEEK ${wk} · ${d.season}`;
+
+  ['QB','RB','WR','TE'].forEach(pos => {
+    const id = 'rank-'+pos.toLowerCase();
+    const el = document.getElementById(id);
+    if(!el) return;
+    const rows = (d.positions[pos]||[]).map(r => `
+      <tr class="tbl-row">
+        <td class="rank-num">${r.rank}</td>
+        <td><div class="player-name">${r.name}</div><div class="player-meta">${r.team} · ${r.position}</div></td>
+        <td><span class="tier-badge">TIER ${r.tier}</span></td>
+        <td><div class="pts">${r.projected_pts.toFixed(1)}</div></td>
+        <td>${signal(r)}</td>
+      </tr>`).join('');
+    el.innerHTML = `<table><thead class="tbl-head"><tr><th></th><th>Player</th><th>Tier</th><th>Proj</th><th>Signal</th></tr></thead><tbody>${rows}</tbody></table>`;
+  });
+}
+
+// ── WAIVER TARGETS ────────────────────────────────────
+async function loadWaiver(){
+  const d = await load('waiver_targets.json');
+  if(!d) return;
+  document.querySelectorAll('.section-count')[1].textContent = `FAAB BIDS · WEEK ${d.week}`;
+
+  const panel = document.querySelectorAll('.panel')[1];
+
+  function buildRows(list){
+    return list.map(p => {
+      const owned = p.ownership_pct != null ? p.ownership_pct+'%' : '—';
+      const faab = p.faab_bid > 0 ? `${p.faab_bid}` : '—';
+      const actionClass = {add:'action-add',monitor:'action-monitor',drop:'action-drop'}[d.targets.add.includes(p)?'add':d.targets.monitor.includes(p)?'monitor':'drop']||'action-add';
+      const actionLabel = p.faab_bid > 0 ? '▲ ADD' : p.faab_bid === 0 && list === d.targets.drop ? '▼ DROP' : '~ MONITOR';
+      const cls = list === d.targets.add ? 'action-add' : list === d.targets.monitor ? 'action-monitor' : 'action-drop';
+      const lbl = list === d.targets.add ? '▲ ADD' : list === d.targets.monitor ? '~ MONITOR' : '▼ DROP';
+      return `<tr class="tbl-row">
+        <td><div class="player-name">${posBadge(p.position)}${p.name}</div><div class="player-meta">${p.team} · ${p.reason}</div></td>
+        <td><div class="${cls}">${lbl}</div></td>
+        <td><div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">${owned}</div></td>
+        <td><div class="faab">${faab}<div class="faab-label">${faab!=='—'?'BID':''}</div></div></td>
+      </tr>`;
+    }).join('');
+  }
+
+  panel.innerHTML = `
+    <div class="sub-section-label">// HIGH PRIORITY ADDS //</div>
+    <table><thead class="tbl-head"><tr><th>Player</th><th>Action</th><th>Owned</th><th>FAAB</th></tr></thead><tbody>${buildRows(d.targets.add)}</tbody></table>
+    <div class="sub-section-label">// MONITOR //</div>
+    <table><thead class="tbl-head"><tr><th>Player</th><th>Action</th><th>Owned</th><th>FAAB</th></tr></thead><tbody>${buildRows(d.targets.monitor)}</tbody></table>
+    <div class="sub-section-label">// DROP CANDIDATES //</div>
+    <table><thead class="tbl-head"><tr><th>Player</th><th>Action</th><th>Owned</th><th>FAAB</th></tr></thead><tbody>${buildRows(d.targets.drop)}</tbody></table>
+  `;
+}
+
+// ── INJURY ALERTS ─────────────────────────────────────
+async function loadInjuries(){
+  const d = await load('injury_alerts.json');
+  if(!d||!d.alerts.length) return;
+  document.querySelectorAll('.section-count')[2].textContent = `UPDATED ${timeAgo(d.generated_at).toUpperCase()}`;
+
+  const inner = document.querySelector('.panel-inner');
+  inner.innerHTML = d.alerts.slice(0,8).map(a => `
+    <div class="alert-item">
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span class="${alertClass(a.alert_type)}">${alertLabel(a)}</span>
+          <span class="player-name" style="font-size:15px">${a.name}</span>
+          <span class="player-meta">${a.team} · ${a.position}</span>
+        </div>
+        <div class="player-meta">${alertDetail(a)}</div>
+      </div>
+      <div class="alert-time">${timeAgo(a.detected_at)}</div>
+    </div>`).join('');
+}
+
+// ── SEASON PROJECTIONS ────────────────────────────────
+async function loadSeason(){
+  const d = await load('season_projections.json');
+  if(!d) return;
+
+  ['QB','RB','WR','TE'].forEach(pos => {
+    const id = 'sea-'+pos.toLowerCase();
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.innerHTML = (d.positions[pos]||[]).map(p => `
+      <div class="season-row">
+        <div>
+          <div class="player-name">${p.name}</div>
+          <div class="player-meta">${p.team}${p.bye_week?' · Bye '+p.bye_week:''}${p.data_source==='rookie_model'?' · ROOKIE':''}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="season-pts">${Math.round(p.projected_pts)}</div>
+          <div class="season-range">Floor ${Math.round(p.floor)} · Ceil ${Math.round(p.ceiling)}</div>
+        </div>
+      </div>`).join('');
+  });
+}
+
+// ── INIT ──────────────────────────────────────────────
+Promise.all([loadMeta(), loadRankings(), loadWaiver(), loadInjuries(), loadSeason()])
+  .then(() => console.log('[dashboard] all data loaded'))
+  .catch(e => console.error('[dashboard] load error', e));
 </script>
 </body>
 </html>
