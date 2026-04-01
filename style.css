@@ -15,7 +15,11 @@
 }
 
 /* ── BASE ── */
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  max-width: 100%;
+}
 
 body {
   background-color: var(--core);
@@ -23,6 +27,7 @@ body {
   font-family: 'Barlow Condensed', sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
+  max-width: 100%;
 }
 
 /* ── BACKGROUND ── */
@@ -54,7 +59,12 @@ body {
   100% { top: 100vh; }
 }
 
-.page { position: relative; z-index: 2; }
+.page {
+  position: relative;
+  z-index: 2;
+  overflow-x: hidden;
+  max-width: 100%;
+}
 
 /* ── NAV ── */
 nav {
@@ -74,6 +84,7 @@ nav {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .eye-svg { width: 20px; height: 14px; }
@@ -85,6 +96,7 @@ nav {
   letter-spacing: 0.15em;
   color: var(--primary);
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .logo-text span { color: var(--accent); }
@@ -111,6 +123,7 @@ nav {
   text-decoration: none;
   transition: all 0.2s;
   display: inline-block;
+  white-space: nowrap;
 }
 
 .nav-cta:hover { background: var(--accent); color: var(--core); }
@@ -163,7 +176,7 @@ nav {
 
 .hero-tagline strong { color: var(--primary); font-weight: 600; }
 
-.cta-group { display: flex; gap: 16px; align-items: center; }
+.cta-group { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
 
 .btn-primary {
   background: var(--accent);
@@ -284,7 +297,7 @@ nav {
 
 .intel-item:last-child { border-bottom: none; }
 
-.intel-left { flex: 1; }
+.intel-left { flex: 1; min-width: 0; }
 
 .intel-label {
   font-family: 'Share Tech Mono', monospace;
@@ -311,7 +324,7 @@ nav {
   margin-top: 2px;
 }
 
-.intel-score { text-align: right; }
+.intel-score { text-align: right; flex-shrink: 0; }
 
 .score-value {
   font-family: 'Rajdhani', sans-serif;
@@ -564,6 +577,7 @@ nav {
 
 .sub-input {
   flex: 1;
+  min-width: 0;
   background: rgba(0,28,28,0.9);
   border: 1px solid rgba(16,185,129,0.25);
   border-right: none;
@@ -593,6 +607,7 @@ nav {
   white-space: nowrap;
   transition: background 0.2s;
   clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+  flex-shrink: 0;
 }
 
 .sub-btn:hover { background: #0ea572; }
@@ -636,15 +651,61 @@ footer {
 
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
-  nav { padding: 16px 24px; }
+  nav {
+    padding: 14px 20px;
+  }
   .nav-tag { display: none; }
-  .hero { grid-template-columns: 1fr; padding: 48px 24px 40px; gap: 40px; }
-  .hero-title { font-size: 52px; }
+  .nav-logo { gap: 8px; max-width: calc(100vw - 180px); }
+  .nav-logo svg[viewBox="0 0 15 15"] { width: 18px !important; height: 18px !important; flex-shrink: 0; }
+  .logo-text { font-size: 15px; }
+  .logo-icon { width: 28px; height: 28px; flex-shrink: 0; }
+  nav > div:last-child { gap: 8px; flex-shrink: 0; }
+  .nav-cta { font-size: 11px; padding: 6px 12px; letter-spacing: 0.06em; }
+
+  .hero {
+    grid-template-columns: 1fr;
+    padding: 36px 20px 32px;
+    gap: 32px;
+    max-width: 100%;
+  }
+  .hero-title { font-size: 44px; }
+  .hero-title .line2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: nowrap;
+  }
+  .hero-title .line2 svg {
+    width: 36px !important;
+    height: 36px !important;
+    flex-shrink: 0;
+  }
+  .hero-tagline { font-size: 16px; max-width: 100%; }
   .signal-card { display: none; }
-  .intel-section { padding: 40px 24px; }
-  .features-grid { grid-template-columns: 1fr; }
-  .issues-section { padding: 0 24px 48px; }
+
+  .intel-section { padding: 32px 20px; }
+  .features-grid { grid-template-columns: 1fr 1fr !important; gap: 2px; }
+
+  .issues-section { padding: 0 20px 40px; }
   .issues-grid { grid-template-columns: 1fr; }
-  .subscribe-section { padding: 48px 24px; }
-  footer { padding: 20px 24px; flex-direction: column; gap: 8px; text-align: center; }
+
+  .subscribe-section { padding: 40px 20px; }
+  .sub-title { font-size: 38px; }
+  .sub-title svg { width: 30px !important; height: 30px !important; vertical-align: middle; }
+  .sub-form { max-width: 100%; }
+  .sub-input { font-size: 12px; padding: 12px 14px; }
+
+  footer { padding: 20px 20px; flex-direction: column; gap: 8px; text-align: center; }
+}
+
+@media (max-width: 480px) {
+  nav { padding: 12px 16px; }
+  .nav-logo { max-width: calc(100vw - 140px); }
+  .logo-text { font-size: 14px; letter-spacing: 0.1em; }
+  .hero-title { font-size: 34px; }
+  .hero-title .line2 svg { display: none !important; }
+  .features-grid { grid-template-columns: 1fr !important; }
+  nav > div:last-child .nav-cta:first-child { display: none; }
+  .sub-title { font-size: 30px; }
+  .sub-title svg { display: none !important; }
 }
