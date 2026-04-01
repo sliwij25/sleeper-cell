@@ -164,7 +164,53 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
 .footer-left{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:14px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3)}
 .footer-left span{color:var(--accent)}
 .footer-right{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(255,255,255,0.15);letter-spacing:0.1em}
-@media(max-width:900px){nav{padding:16px 24px}.nav-tag,.nav-links{display:none}.dash-header,.dash-body{padding:24px}.stat-grid,.ctx-grid{grid-template-columns:1fr 1fr}.sec-metrics{display:none}footer{padding:20px 24px;flex-direction:column;gap:8px;text-align:center}}
+@media(max-width:900px){
+  nav{padding:14px 20px}
+  .nav-tag,.nav-links{display:none}
+  .nav-logo{gap:8px}
+  .nav-logo svg[viewBox="0 0 15 15"]{width:18px;height:18px}
+  .logo-text{font-size:15px}
+  .logo-icon{width:28px;height:28px}
+  .nav-cta{font-size:11px;padding:6px 12px;letter-spacing:0.08em}
+  .dash-header{padding:0 0 16px}
+  .dash-title{font-size:24px}
+  .dash-title svg{width:26px !important;height:26px !important}
+  div[style*="padding:32px 48px"]{padding:20px 16px 40px !important}
+  .pipeline-strip{gap:12px;padding:7px 12px;flex-wrap:wrap}
+  .strip-item{font-size:8px}
+  .stat-grid{grid-template-columns:1fr 1fr}
+  .stat-card{padding:12px 14px}
+  .stat-value{font-size:22px}
+  .stat-label{font-size:7px}
+  .stat-sub,.stat-trend-up,.stat-trend-dn,.card-hint{font-size:10px}
+  .ctx-grid{grid-template-columns:1fr 1fr}
+  .ctx-card{padding:8px 10px}
+  .ctx-val{font-size:14px}
+  .ctx-val.sm{font-size:12px}
+  .ctx-key{font-size:7px}
+  .sec-metrics{display:none}
+  .sec-btn{padding:10px 12px}
+  .sec-tag{font-size:8px;padding:2px 6px}
+  .sec-name{font-size:13px}
+  .two-col{grid-template-columns:1fr}
+  .three-col{grid-template-columns:1fr}
+  .sleeper-card{border-right:none;border-bottom:1px solid rgba(16,185,129,0.08)}
+  .sleeper-card:last-child{border-bottom:none}
+  .tbl-head th{padding:6px 10px;font-size:8px}
+  .tbl-row td{padding:8px 10px}
+  .player-name{font-size:13px}
+  .pts{font-size:15px}
+  .tier-badge{font-size:8px;padding:2px 5px}
+  table{table-layout:fixed;width:100%}
+  .nl-form{max-width:100%}
+  footer{padding:20px 16px;flex-direction:column;gap:8px;text-align:center}
+}
+@media(max-width:480px){
+  .stat-grid{grid-template-columns:1fr 1fr}
+  .ctx-grid{grid-template-columns:1fr 1fr}
+  .pipeline-strip .strip-item:nth-child(n+3){display:none}
+  .rank-num{display:none}
+}
 </style>
 </head>
 <body>
@@ -197,7 +243,9 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
 
   <div class="dash-header" style="padding:0 0 20px">
     <div class="dash-eyebrow"><div class="eyebrow-line"></div><span class="eyebrow-text">Intelligence Dashboard</span></div>
-    <div class="dash-title">Weekly <span>Field Report</span></div>
+    <div class="dash-title">Weekly <span>Field Report</span>
+      <svg viewBox="0 0 15 15" width="36" height="36" fill="#10B981" style="display:inline-block;vertical-align:middle;margin-left:10px;opacity:0.9" xmlns="http://www.w3.org/2000/svg"><path d="M7.53,3C3.09,3,1,7.5,1,7.5S3.09,12,7.53,12S14,7.5,14,7.5S12,3,7.53,3z M11,7v1.5C11,8.7761,10.7761,9,10.5,9S10,8.7761,10,8.5V8H8v0.5C8,8.7761,7.7761,9,7.5,9S7,8.7761,7,8.5V8H5v0.5C5,8.7761,4.7761,9,4.5,9S4,8.7761,4,8.5v-2C4,6.2239,4.2239,6,4.5,6S5,6.2239,5,6.5V7h2V6.5C7,6.2239,7.2239,6,7.5,6S8,6.2239,8,6.5V7h2V6.5C10,6.2239,10.2239,6,10.5,6S11,6.2239,11,6.5V7z"/></svg>
+    </div>
   </div>
 
   <!-- PIPELINE STRIP -->
