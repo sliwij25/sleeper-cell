@@ -663,38 +663,28 @@ footer {
 }
 
 @media (max-width: 900px) {
-  nav {
-    padding: 14px 20px;
-  }
+  nav { padding: 14px 20px; }
   .nav-tag { display: none; }
   .nav-logo { gap: 8px; }
-  .nav-logo svg { width: 18px !important; height: 18px !important; flex-shrink: 0; }
   .logo-text { font-size: 15px; }
   .logo-icon { width: 28px; height: 28px; flex-shrink: 0; }
   nav > div:last-child { gap: 6px; flex-shrink: 0; }
-  .nav-cta-join { font-size: 10px; padding: 5px 8px; letter-spacing: 0.04em; }
-  .nav-cta-dashboard { font-size: 10px; padding: 5px 8px; letter-spacing: 0.04em; }
+  .nav-cta { font-size: 10px; padding: 5px 10px; letter-spacing: 0.04em; white-space: nowrap; }
 
-  .hero {
-    grid-template-columns: 1fr;
-    padding: 36px 20px 32px;
-    gap: 32px;
-    max-width: 100%;
-  }
-  .hero-title { font-size: 44px; }
-  .hero-football { width: 40px !important; height: 40px !important; }
+  .hero { grid-template-columns: 1fr; padding: 36px 20px 32px; gap: 32px; max-width: 100%; }
+  .hero-title { font-size: 36px; }
+  .hero-football { width: 32px !important; height: 32px !important; display: inline-block !important; }
   .hero-tagline { font-size: 16px; max-width: 100%; }
   .signal-card { display: none; }
 
   .intel-section { padding: 32px 20px; }
   .features-grid { grid-template-columns: 1fr 1fr !important; gap: 2px; }
-
   .issues-section { padding: 0 20px 40px; }
   .issues-grid { grid-template-columns: 1fr; }
 
   .subscribe-section { padding: 40px 20px; }
-  .sub-title { font-size: 38px; }
-  .sub-title svg { width: 30px !important; height: 30px !important; vertical-align: middle; }
+  .sub-title { font-size: 36px; }
+  .sub-title svg { width: 28px !important; height: 28px !important; vertical-align: middle; }
   .sub-form { max-width: 100%; }
   .sub-input { font-size: 12px; padding: 12px 14px; }
 
@@ -705,14 +695,14 @@ footer {
   nav { padding: 12px 16px; }
   .logo-text { font-size: 13px; letter-spacing: 0.08em; }
   .logo-icon { width: 26px; height: 26px; }
-  .hero-title { font-size: 34px; }
-  .hero-football { width: 30px !important; height: 30px !important; }
+  .hero-title { font-size: 30px; }
+  .hero-football { width: 26px !important; height: 26px !important; display: inline-block !important; }
 }
 
-@media (max-width: 420px) {
-  .hero-title { font-size: 28px; }
-  .hero-football { display: none !important; }
+@media (max-width: 380px) {
+  .hero-title { font-size: 26px; }
+  .hero-football { width: 22px !important; height: 22px !important; display: inline-block !important; }
   .features-grid { grid-template-columns: 1fr !important; }
-  .sub-title { font-size: 28px; }
+  .sub-title { font-size: 26px; }
   .sub-title svg { display: none !important; }
 }
