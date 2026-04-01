@@ -1,0 +1,650 @@
+/* ============================================================
+   SLEEPER CELL — style.css
+   Fantasy Football Intelligence
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --core: #001C1C;
+  --accent: #10B981;
+  --primary: #FFFFFF;
+  --tertiary: #002B2B;
+  --accent-dim: rgba(16,185,129,0.15);
+  --grid-color: rgba(16,185,129,0.06);
+}
+
+/* ── BASE ── */
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--core);
+  color: var(--primary);
+  font-family: 'Barlow Condensed', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── BACKGROUND ── */
+.grid-bg {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.scanline {
+  position: fixed;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(16,185,129,0.4), transparent);
+  animation: scan 6s linear infinite;
+  z-index: 1;
+  pointer-events: none;
+}
+
+@keyframes scan {
+  0% { top: -2px; }
+  100% { top: 100vh; }
+}
+
+.page { position: relative; z-index: 2; }
+
+/* ── NAV ── */
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 48px;
+  border-bottom: 1px solid rgba(16,185,129,0.12);
+}
+
+.nav-logo { display: flex; align-items: center; gap: 12px; }
+
+.logo-icon {
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.eye-svg { width: 20px; height: 14px; }
+
+.logo-text {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.15em;
+  color: var(--primary);
+  text-transform: uppercase;
+}
+
+.logo-text span { color: var(--accent); }
+
+.nav-tag {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  opacity: 0.7;
+}
+
+.nav-cta {
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 8px 20px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  display: inline-block;
+}
+
+.nav-cta:hover { background: var(--accent); color: var(--core); }
+
+/* ── HERO ── */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 60px;
+  align-items: center;
+  padding: 80px 48px 60px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero-eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
+
+.eyebrow-line { width: 32px; height: 1px; background: var(--accent); }
+
+.eyebrow-text {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.hero-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 76px;
+  line-height: 0.92;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  margin-bottom: 28px;
+}
+
+.hero-title .line1 { color: var(--primary); display: block; }
+.hero-title .line2 { color: var(--accent); display: block; }
+
+.hero-tagline {
+  font-size: 18px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  margin-bottom: 40px;
+  max-width: 480px;
+}
+
+.hero-tagline strong { color: var(--primary); font-weight: 600; }
+
+.cta-group { display: flex; gap: 16px; align-items: center; }
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--core);
+  border: none;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 14px 32px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.2s;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+}
+
+.btn-primary:hover { background: #0ea572; transform: translateY(-1px); }
+
+.btn-ghost {
+  background: transparent;
+  color: rgba(255,255,255,0.5);
+  border: none;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.2s;
+}
+
+.btn-ghost:hover { color: var(--primary); }
+
+.btn-ghost::before {
+  content: '';
+  width: 16px;
+  height: 1px;
+  background: currentColor;
+}
+
+/* ── SIGNAL CARD ── */
+.signal-card {
+  border: 1px solid rgba(16,185,129,0.2);
+  background: rgba(0,43,43,0.6);
+  padding: 28px;
+  position: relative;
+}
+
+.signal-card::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: -1px;
+  width: 20px; height: 20px;
+  border-top: 2px solid var(--accent);
+  border-left: 2px solid var(--accent);
+}
+
+.signal-card::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; right: -1px;
+  width: 20px; height: 20px;
+  border-bottom: 2px solid var(--accent);
+  border-right: 2px solid var(--accent);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(16,185,129,0.1);
+}
+
+.card-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.live-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
+
+.live-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.intel-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  gap: 12px;
+}
+
+.intel-item:last-child { border-bottom: none; }
+
+.intel-left { flex: 1; }
+
+.intel-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: rgba(16,185,129,0.6);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.intel-player {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primary);
+  letter-spacing: 0.05em;
+}
+
+.intel-detail {
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 300;
+  margin-top: 2px;
+}
+
+.intel-score { text-align: right; }
+
+.score-value {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.score-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: rgba(16,185,129,0.5);
+  letter-spacing: 0.1em;
+}
+
+.trend-up { color: #10B981; font-size: 11px; }
+.trend-down { color: #ef4444; font-size: 11px; }
+
+/* ── SECTIONS ── */
+.intel-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 64px 48px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.section-tag {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  background: var(--accent-dim);
+  padding: 4px 10px;
+  border-left: 2px solid var(--accent);
+}
+
+.section-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 32px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--primary);
+}
+
+/* ── FEATURES GRID ── */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2px;
+}
+
+.feature-card {
+  background: rgba(0,28,28,0.8);
+  border: 1px solid rgba(16,185,129,0.08);
+  padding: 28px 24px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+
+.feature-card:hover { border-color: rgba(16,185,129,0.3); }
+
+.feature-card::before {
+  content: attr(data-num);
+  position: absolute;
+  top: 12px; right: 16px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+  color: rgba(16,185,129,0.06);
+  line-height: 1;
+}
+
+.feature-icon {
+  width: 36px; height: 36px;
+  border: 1px solid rgba(16,185,129,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.feature-icon svg { width: 18px; height: 18px; }
+
+.feature-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 6px;
+}
+
+.feature-sub {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+}
+
+/* ── RECENT BRIEFINGS ── */
+.issues-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 48px 72px;
+}
+
+.issues-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+}
+
+.issue-card {
+  border: 1px solid rgba(16,185,129,0.15);
+  background: rgba(0,28,28,0.6);
+  text-decoration: none;
+  display: block;
+  position: relative;
+  transition: border-color 0.3s, background 0.3s;
+}
+
+.issue-card:hover {
+  border-color: rgba(16,185,129,0.4);
+  background: rgba(0,43,43,0.8);
+}
+
+.issue-card::before {
+  content: attr(data-num);
+  position: absolute;
+  top: 12px; left: 16px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: rgba(16,185,129,0.35);
+  letter-spacing: 0.15em;
+}
+
+.issue-card-inner { padding: 44px 24px 24px; }
+
+.issue-meta {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--accent);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-bottom: 10px;
+}
+
+.issue-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: 0.04em;
+  color: var(--primary);
+  line-height: 1.3;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.issue-preview {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.35);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.issue-read {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.issue-card:hover .issue-read { opacity: 1; }
+
+/* ── SUBSCRIBE ── */
+.subscribe-section {
+  background: rgba(0,43,43,0.4);
+  border-top: 1px solid rgba(16,185,129,0.1);
+  border-bottom: 1px solid rgba(16,185,129,0.1);
+  padding: 72px 48px;
+  text-align: center;
+  position: relative;
+}
+
+.subscribe-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 100% at 50% 100%, rgba(16,185,129,0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.sub-eyebrow {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  opacity: 0.8;
+}
+
+.sub-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 52px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  margin-bottom: 16px;
+  color: var(--primary);
+}
+
+.sub-title span { color: var(--accent); }
+
+.sub-desc {
+  font-size: 16px;
+  color: rgba(255,255,255,0.5);
+  font-weight: 300;
+  max-width: 480px;
+  margin: 0 auto 36px;
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+}
+
+.sub-form {
+  display: flex;
+  max-width: 440px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.sub-input {
+  flex: 1;
+  background: rgba(0,28,28,0.9);
+  border: 1px solid rgba(16,185,129,0.25);
+  border-right: none;
+  color: var(--primary);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
+  padding: 14px 18px;
+  outline: none;
+  letter-spacing: 0.05em;
+  transition: border-color 0.2s;
+}
+
+.sub-input::placeholder { color: rgba(255,255,255,0.2); }
+.sub-input:focus { border-color: rgba(16,185,129,0.5); }
+
+.sub-btn {
+  background: var(--accent);
+  color: var(--core);
+  border: none;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 14px 24px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+}
+
+.sub-btn:hover { background: #0ea572; }
+
+.sub-fine {
+  margin-top: 14px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: rgba(255,255,255,0.2);
+  letter-spacing: 0.12em;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── FOOTER ── */
+footer {
+  padding: 28px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(16,185,129,0.08);
+}
+
+.footer-left {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+}
+
+.footer-left span { color: var(--accent); }
+
+.footer-right {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: rgba(255,255,255,0.15);
+  letter-spacing: 0.1em;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  nav { padding: 16px 24px; }
+  .nav-tag { display: none; }
+  .hero { grid-template-columns: 1fr; padding: 48px 24px 40px; gap: 40px; }
+  .hero-title { font-size: 52px; }
+  .signal-card { display: none; }
+  .intel-section { padding: 40px 24px; }
+  .features-grid { grid-template-columns: 1fr; }
+  .issues-section { padding: 0 24px 48px; }
+  .issues-grid { grid-template-columns: 1fr; }
+  .subscribe-section { padding: 48px 24px; }
+  footer { padding: 20px 24px; flex-direction: column; gap: 8px; text-align: center; }
+}
