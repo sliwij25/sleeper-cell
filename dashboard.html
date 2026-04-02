@@ -318,9 +318,9 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
     <div class="ctx-card" id="ctx-sleeper" onclick="activateSection('s-sleeper','ctx-sleeper')">
       <div class="ctx-label">Sleeper Pick</div>
       <div class="ctx-metrics">
-        <div class="ctx-item"><div class="ctx-key">THIS WEEK</div><div class="ctx-val green sm">McMillan</div></div>
-        <div class="ctx-item"><div class="ctx-key">OWNED</div><div class="ctx-val">18%</div></div>
-        <div class="ctx-item"><div class="ctx-key">PROJ</div><div class="ctx-val">16.8</div></div>
+        <div class="ctx-item"><div class="ctx-key">THIS WEEK</div><div class="ctx-val green sm" id="ctx-sleeper-name">—</div></div>
+        <div class="ctx-item"><div class="ctx-key">OWNED</div><div class="ctx-val" id="ctx-sleeper-owned">—</div></div>
+        <div class="ctx-item"><div class="ctx-key">PROJ</div><div class="ctx-val" id="ctx-sleeper-proj">—</div></div>
       </div>
     </div>
   </div>
@@ -369,18 +369,18 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
     <div class="sec-btn" id="btn-sleeper" onclick="activateSection('s-sleeper','btn-sleeper')">
       <div class="sec-left"><div class="sec-tag">Classified</div><div class="sec-name">Sleeper Picks</div></div>
       <div class="sec-metrics">
-        <div class="sec-metric">THIS WEEK <span>McMillan</span></div>
-        <div class="sec-metric">OWNED <span>18%</span></div>
-        <div class="sec-metric">PROJ <span>16.8</span></div>
+        <div class="sec-metric">THIS WEEK <span id="sn-sleeper-name">—</span></div>
+        <div class="sec-metric">OWNED <span id="sn-sleeper-owned">—</span></div>
+        <div class="sec-metric">PROJ <span id="sn-sleeper-proj">—</span></div>
       </div>
       <div class="sec-arrow">▶</div>
     </div>
     <div class="sec-btn" id="btn-snap" onclick="activateSection('s-snap','btn-snap')">
       <div class="sec-left"><div class="sec-tag">Usage Intel</div><div class="sec-name">Snap &amp; Target Trends</div></div>
       <div class="sec-metrics">
-        <div class="sec-metric">RISING <span>5</span></div>
-        <div class="sec-metric">FALLING <span>3</span></div>
-        <div class="sec-metric">TOP RISER <span>McMillan</span></div>
+        <div class="sec-metric">RISING <span id="sn-rising">—</span></div>
+        <div class="sec-metric">FALLING <span id="sn-falling">—</span></div>
+        <div class="sec-metric">TOP RISER <span id="sn-top-riser">—</span></div>
       </div>
       <div class="sec-arrow">▶</div>
     </div>
@@ -412,6 +412,7 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
 
   <!-- RANKINGS -->
   <div id="s-rank" class="sec-content">
+    <div id="rank-mode-label" style="display:none;font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.6);letter-spacing:0.12em;padding:6px 14px;border-bottom:1px solid rgba(16,185,129,0.08)">// PRE-SEASON MODE — SEASON FORECAST RANKINGS //</div>
     <div class="inner-tabs">
       <button class="itab active" onclick="innerTab(this,'r-qb')">QB</button>
       <button class="itab" onclick="innerTab(this,'r-rb')">RB</button>
@@ -463,28 +464,8 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
 
   <!-- SLEEPER PICKS -->
   <div id="s-sleeper" class="sec-content">
-    <div class="three-col">
-      <div class="sleeper-card">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(16,185,129,0.5);letter-spacing:0.15em;margin-bottom:6px">WR — LOW OWNERSHIP</div>
-        <div class="player-name" style="font-size:19px;margin-bottom:2px">Jalen McMillan</div>
-        <div class="player-meta" style="margin-bottom:10px">TB · 18% owned</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.5;font-weight:300">Snap share jumped to 91%. Soft matchup vs ATL secondary ranked #29. Target share trending hard.</div>
-        <div style="margin-top:10px;display:flex;justify-content:space-between"><div class="pts">16.8</div><div class="pivot-tag">▲ PIVOT</div></div>
-      </div>
-      <div class="sleeper-card">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(16,185,129,0.5);letter-spacing:0.15em;margin-bottom:6px">RB — LOW OWNERSHIP</div>
-        <div class="player-name" style="font-size:19px;margin-bottom:2px">Tyjae Spears</div>
-        <div class="player-meta" style="margin-bottom:10px">TEN · 31% owned</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.5;font-weight:300">Confirmed lead back role. 19 carries last week. Faces NYJ run defense ranked #31.</div>
-        <div style="margin-top:10px;display:flex;justify-content:space-between"><div class="pts">15.2</div><div class="pivot-tag">▲ PIVOT</div></div>
-      </div>
-      <div class="sleeper-card">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(16,185,129,0.5);letter-spacing:0.15em;margin-bottom:6px">TE — LOW OWNERSHIP</div>
-        <div class="player-name" style="font-size:19px;margin-bottom:2px">Tucker Kraft</div>
-        <div class="player-meta" style="margin-bottom:10px">GB · 8% owned</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.5;font-weight:300">Routes up 72% over 3 weeks. Emerging as Love's safety valve. TE defense ranked #28.</div>
-        <div style="margin-top:10px;display:flex;justify-content:space-between"><div class="pts">11.4</div><div class="pivot-tag">▲ PIVOT</div></div>
-      </div>
+    <div class="three-col" id="sleeper-cards">
+      <div style="padding:16px;font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.4);letter-spacing:0.1em">// LOADING SLEEPER PICKS... //</div>
     </div>
   </div>
 
@@ -495,20 +476,10 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
       <button class="itab" onclick="innerTab(this,'snap-falling')">Falling</button>
     </div>
     <div id="snap-rising" class="itab-content active">
-      <table><thead class="tbl-head"><tr><th>Player</th><th>Metric</th><th>Trend</th></tr></thead><tbody>
-        <tr class="tbl-row"><td><div class="player-name">Jalen McMillan</div><div class="player-meta">TB · WR</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">Snap%</div></td><td><div class="pivot-tag">▲ 71% → 94%</div></td></tr>
-        <tr class="tbl-row"><td><div class="player-name">Tyjae Spears</div><div class="player-meta">TEN · RB</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">Carries</div></td><td><div class="pivot-tag">▲ 8 → 19</div></td></tr>
-        <tr class="tbl-row"><td><div class="player-name">Tucker Kraft</div><div class="player-meta">GB · TE</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">Routes</div></td><td><div class="pivot-tag">▲ 18 → 31</div></td></tr>
-        <tr class="tbl-row"><td><div class="player-name">Bo Nix</div><div class="player-meta">DEN · QB</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">Air Yards</div></td><td><div class="pivot-tag">▲ 198 → 274</div></td></tr>
-        <tr class="tbl-row"><td><div class="player-name">Puka Nacua</div><div class="player-meta">LAR · WR</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">Tgt Share</div></td><td><div class="pivot-tag">▲ 18% → 29%</div></td></tr>
-      </tbody></table>
+      <div style="padding:16px;font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.4);letter-spacing:0.1em">// LOADING TREND DATA... //</div>
     </div>
     <div id="snap-falling" class="itab-content">
-      <table><thead class="tbl-head"><tr><th>Player</th><th>Metric</th><th>Trend</th></tr></thead><tbody>
-        <tr class="tbl-row"><td><div class="player-name">Wan'Dale Robinson</div><div class="player-meta">NYG · WR</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">Snap%</div></td><td><div class="fade-tag">▼ 78% → 41%</div></td></tr>
-        <tr class="tbl-row"><td><div class="player-name">Davante Adams</div><div class="player-meta">LV · WR</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">Routes</div></td><td><div class="fade-tag">▼ 38 → 21</div></td></tr>
-        <tr class="tbl-row"><td><div class="player-name">Tony Pollard</div><div class="player-meta">TEN · RB</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">Carries</div></td><td><div class="fade-tag">▼ 16 → 9</div></td></tr>
-      </tbody></table>
+      <div style="padding:16px;font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.4);letter-spacing:0.1em">// LOADING TREND DATA... //</div>
     </div>
   </div>
 
@@ -600,8 +571,11 @@ async function loadMeta(){
 // ── RANKINGS ───────────────────────────────────────────────
 async function loadRankings(){
   const d=await load('rankings.json');if(!d||!d.positions)return;
-  const wk=d.week||'—';
+  const isOffseason=d.mode==='season_forecast'&&d.week===0;
+  const wk=isOffseason?'PRE-SEASON':(d.week||'—');
   set('ctx-week',wk);set('sn-week',wk);
+  const modeLbl=document.getElementById('rank-mode-label');
+  if(modeLbl)modeLbl.style.display=isOffseason?'block':'none';
   let pivots=0,fades=0,ranked=0;
   ['QB','RB','WR','TE'].forEach(pos=>{
     const list=d.positions[pos]||[];
@@ -686,13 +660,67 @@ async function loadProjections(){
     if(!list.length){el.innerHTML='<div style="padding:16px;font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(16,185,129,0.4);text-align:center;letter-spacing:0.1em">// NO DATA //</div>';return;}
     el.innerHTML=list.map(p=>`
       <div class="season-row">
-        <div><div class="player-name">${p.name}</div><div class="player-meta">${p.team}${p.bye_week?' · Bye '+p.bye_week:''}${p.data_source==='rookie_model'?' · ROOKIE':''}</div></div>
+        <div><div class="player-name">${p.name}${p.is_pivot?' <span class="pivot-tag" style="font-size:9px;vertical-align:middle">▲ PIVOT</span>':p.is_fade?' <span class="fade-tag" style="font-size:9px;vertical-align:middle">▼ FADE</span>':''}</div><div class="player-meta">${p.team}${p.bye_week?' · Bye '+p.bye_week:''}${p.data_source==='rookie_model'?' · ROOKIE':''}</div></div>
         <div style="text-align:right"><div class="season-pts">${Math.round(p.projected_pts)}</div><div class="season-range">Floor ${Math.round(p.floor)} · Ceil ${Math.round(p.ceiling)}</div></div>
       </div>`).join('');
   });
 }
 
-Promise.all([loadMeta(),loadRankings(),loadWaiver(),loadInjuries(),loadProjections()])
+// ── SNAP & TARGET TRENDS ──────────────────────────────────
+async function loadTrends(){
+  const d=await load('player_trends.json');if(!d||!d.trends)return;
+  const rising=d.trends.filter(t=>t.trend_label==='BREAKOUT'||t.trend_label==='TRENDING_UP');
+  const falling=d.trends.filter(t=>t.trend_label==='BUST'||t.trend_label==='DECLINING');
+  set('sn-rising',rising.length);set('sn-falling',falling.length);
+  if(rising.length)set('sn-top-riser',rising[0].name.split(' ').pop());
+  function trendRow(t,isRising){
+    const pos=t.position;
+    let metric,val;
+    if((pos==='WR'||pos==='TE')&&t.target_share_chg!=null){
+      metric='Tgt Share';
+      const prev=((t.target_share_last-t.target_share_chg)*100);
+      val=prev.toFixed(0)+'% → '+(t.target_share_last*100).toFixed(0)+'%';
+    } else if(t.snap_pct_chg!=null){
+      metric='Snap%';
+      const prev=((t.snap_pct_last-t.snap_pct_chg)*100);
+      val=prev.toFixed(0)+'% → '+(t.snap_pct_last*100).toFixed(0)+'%';
+    } else {
+      metric='PPG';val=t.ppg_last!=null?t.ppg_last.toFixed(1):'—';
+    }
+    const tag=isRising?`<div class="pivot-tag">▲ ${val}</div>`:`<div class="fade-tag">▼ ${val}</div>`;
+    return`<tr class="tbl-row"><td><div class="player-name">${posBadge(pos)}${t.name}</div><div class="player-meta">${t.team} · ${pos}</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">${metric}</div></td><td>${tag}</td></tr>`;
+  }
+  const TABLE_HEAD='<table><thead class="tbl-head"><tr><th>Player</th><th>Metric</th><th>Trend</th></tr></thead><tbody>';
+  const risingEl=document.getElementById('snap-rising');
+  if(risingEl)risingEl.innerHTML=rising.length?TABLE_HEAD+rising.slice(0,10).map(t=>trendRow(t,true)).join('')+'</tbody></table>':'<div style="padding:16px;font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(16,185,129,0.4);letter-spacing:0.1em">// NO BREAKOUT SIGNALS YET //</div>';
+  const fallingEl=document.getElementById('snap-falling');
+  if(fallingEl)fallingEl.innerHTML=falling.length?TABLE_HEAD+falling.slice(0,10).map(t=>trendRow(t,false)).join('')+'</tbody></table>':'<div style="padding:16px;font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(16,185,129,0.4);letter-spacing:0.1em">// NO DECLINING SIGNALS YET //</div>';
+}
+
+// ── SLEEPER PICKS ─────────────────────────────────────────
+async function loadSleeperPicks(){
+  const d=await load('waiver_targets.json');if(!d||!d.targets)return;
+  const adds=(d.targets.add||[]).filter(p=>p.ownership_pct!=null&&p.ownership_pct<35).slice(0,3);
+  if(!adds.length)return;
+  const top=adds[0];
+  set('sn-sleeper-name',top.name.split(' ').pop());
+  set('sn-sleeper-owned',(top.ownership_pct||0)+'%');
+  set('sn-sleeper-proj',top.projected_pts||'—');
+  set('ctx-sleeper-name',top.name.split(' ').pop());
+  set('ctx-sleeper-owned',(top.ownership_pct||0)+'%');
+  set('ctx-sleeper-proj',top.projected_pts||'—');
+  const el=document.getElementById('sleeper-cards');if(!el)return;
+  el.innerHTML=adds.map(p=>`
+    <div class="sleeper-card">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(16,185,129,0.5);letter-spacing:0.15em;margin-bottom:6px">${p.position} — LOW OWNERSHIP</div>
+      <div class="player-name" style="font-size:19px;margin-bottom:2px">${p.name}</div>
+      <div class="player-meta" style="margin-bottom:10px">${p.team} · ${p.ownership_pct!=null?p.ownership_pct+'% owned':'—'}</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.5;font-weight:300">${p.reason||'Low ownership opportunity flagged as high-priority add.'}</div>
+      <div style="margin-top:10px;display:flex;justify-content:space-between"><div class="pts">${p.projected_pts||'—'}</div><div class="pivot-tag">▲ ADD</div></div>
+    </div>`).join('');
+}
+
+Promise.all([loadMeta(),loadRankings(),loadWaiver(),loadInjuries(),loadProjections(),loadTrends(),loadSleeperPicks()])
   .then(()=>console.log('[dashboard] all data loaded'));
 </script>
 </body>
