@@ -444,6 +444,24 @@ const BASE = 'https://cdn.jsdelivr.net/gh/sliwij25/sleeper-cell@main/data/';
 
 
 
+function normPlayer(p){
+  return Object.assign({},p,{
+    full_name:      p.full_name||p.name||'',
+    projected_season_pts: p.projected_season_pts!=null?p.projected_season_pts:(p.projected_pts||0),
+    season_floor:   p.season_floor!=null?p.season_floor:(p.floor||0),
+    season_ceiling: p.season_ceiling!=null?p.season_ceiling:(p.ceiling||0),
+    avg_pts_per_game: p.avg_pts_per_game!=null?p.avg_pts_per_game:(p.avg_ppg||0),
+    confidence_score: p.confidence_score!=null?p.confidence_score:(p.confidence||0),
+    is_pivot:  p.is_pivot||false,
+    is_fade:   p.is_fade||false,
+    trend_label: p.trend_label||null,
+    ecr_position_rank: p.ecr_position_rank||null,
+    injury_risk_pct: p.injury_risk_pct!=null?p.injury_risk_pct:null,
+    age: p.age||null,
+    adp_divergence: p.adp_divergence||0,
+  });
+}
+
 async function loadIntelFeed(){
 
   try {
@@ -460,7 +478,8 @@ async function loadIntelFeed(){
 
     const picks = ['QB','RB','WR','TE'].map(pos => {
 
-      const list = (d.players[pos]||[]);
+      const posMap=d.players||d.positions||{};
+      const list = (posMap[pos]||[]).map(normPlayer);
 
       if(!list.length) return null;
 
