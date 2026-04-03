@@ -1,483 +1,966 @@
 <!DOCTYPE html>
 
+
+
 <html lang="en">
+
+
 
 <head>
 
+
+
 <meta charset="UTF-8">
+
+
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+
+
 <title>Sleeper Cell | Intelligence Dashboard</title>
+
+
 
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700&display=swap" rel="stylesheet">
 
+
+
 <style>
+
+
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
+
+
 :root{--core:#001C1C;--accent:#10B981;--primary:#FFFFFF;--tertiary:#002B2B;--accent-dim:rgba(16,185,129,0.15);--grid-color:rgba(16,185,129,0.06);--muted:rgba(255,255,255,0.4);--border:rgba(16,185,129,0.15)}
+
+
 
 html{scroll-behavior:smooth}
 
+
+
 body{background-color:var(--core);color:var(--primary);font-family:'Barlow Condensed',sans-serif;min-height:100vh;overflow-x:hidden}
+
+
 
 .grid-bg{position:fixed;inset:0;background-image:linear-gradient(var(--grid-color) 1px,transparent 1px),linear-gradient(90deg,var(--grid-color) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
 
+
+
 .scanline{position:fixed;top:-100%;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent,rgba(16,185,129,0.4),transparent);animation:scan 6s linear infinite;z-index:1;pointer-events:none}
+
+
 
 @keyframes scan{0%{top:-2px}100%{top:100vh}}
 
+
+
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+
+
 
 .page{position:relative;z-index:2}
 
 
 
+
+
+
+
 /* NAV */
+
+
 
 nav{display:flex;align-items:center;justify-content:space-between;padding:20px 48px;border-bottom:1px solid rgba(16,185,129,0.12)}
 
+
+
 .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none}
+
+
 
 .logo-icon{width:36px;height:36px;border:1.5px solid var(--accent);display:flex;align-items:center;justify-content:center}
 
+
+
 .eye-svg{width:20px;height:14px}
+
+
 
 .logo-text{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;letter-spacing:0.15em;color:var(--primary);text-transform:uppercase}
 
+
+
 .logo-text span{color:var(--accent)}
+
+
 
 .nav-tag{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:0.1em;opacity:0.7}
 
+
+
 .nav-links{display:flex;align-items:center;gap:24px}
+
+
 
 .nav-link{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.1em;text-decoration:none;text-transform:uppercase;transition:color 0.2s}
 
+
+
 .nav-link:hover,.nav-link.active{color:var(--accent)}
 
+
+
 .nav-cta{background:transparent;border:1px solid var(--accent);color:var(--accent);font-family:'Rajdhani',sans-serif;font-weight:600;font-size:13px;letter-spacing:0.12em;text-transform:uppercase;padding:8px 20px;cursor:pointer;text-decoration:none;transition:all 0.2s;display:inline-block}
+
+
 
 .nav-cta:hover{background:var(--accent);color:var(--core)}
 
 
 
+
+
+
+
 /* DASH HEADER */
+
+
 
 .dash-header{padding:32px 48px 24px;max-width:1400px;margin:0 auto}
 
+
+
 .dash-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+
+
 
 .eyebrow-line{width:32px;height:1px;background:var(--accent)}
 
+
+
 .eyebrow-text{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase}
 
+
+
 .dash-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:32px;text-transform:uppercase;letter-spacing:0.05em;color:var(--primary)}
+
+
 
 .dash-title span{color:var(--accent)}
 
 
 
+
+
+
+
 /* PIPELINE STRIP */
+
+
 
 .pipeline-strip{display:flex;align-items:center;gap:24px;padding:8px 16px;border:1px solid var(--border);border-bottom:none;background:rgba(0,28,28,0.6)}
 
+
+
 .live-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 1.5s ease-in-out infinite}
 
+
+
 .strip-item{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.1em}
+
+
 
 .strip-item.live{color:var(--accent);display:flex;align-items:center;gap:6px}
 
 
 
+
+
+
+
 /* STAT CARDS */
+
+
 
 .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-bottom:2px}
 
+
+
 .stat-card{background:rgba(0,43,43,0.5);border:1px solid var(--border);padding:16px 18px;position:relative;overflow:hidden;cursor:pointer;transition:border-color 0.2s,background 0.2s}
+
+
 
 .stat-card:hover{border-color:rgba(16,185,129,0.4);background:rgba(0,43,43,0.8)}
 
+
+
 .stat-card.active{border-color:var(--accent);background:rgba(16,185,129,0.08);border-left:3px solid var(--accent)}
+
+
 
 .stat-card::before{content:'';position:absolute;top:-1px;left:-1px;width:10px;height:10px;border-top:2px solid var(--accent);border-left:2px solid var(--accent)}
 
+
+
 .stat-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(16,185,129,0.6);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:6px}
+
+
 
 .stat-value{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:28px;color:var(--primary);line-height:1}
 
+
+
 .stat-sub{font-size:11px;color:var(--muted);margin-top:3px}
+
+
 
 .stat-trend-up{color:#10B981;font-size:11px;font-family:'Share Tech Mono',monospace;margin-top:3px}
 
+
+
 .stat-trend-dn{color:#ef4444;font-size:11px;font-family:'Share Tech Mono',monospace;margin-top:3px}
 
+
+
 .card-hint{font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(16,185,129,0.3);letter-spacing:0.1em;margin-top:6px}
+
+
 
 .stat-card.active .card-hint{color:var(--accent);opacity:0.7}
 
 
 
+
+
+
+
 /* CONTEXT CARDS */
+
+
 
 .ctx-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-bottom:12px}
 
+
+
 .ctx-card{background:rgba(0,28,28,0.7);border:1px solid var(--border);padding:10px 14px;position:relative;cursor:pointer;transition:border-color 0.2s,background 0.2s}
+
+
 
 .ctx-card:hover{border-color:rgba(16,185,129,0.3);background:rgba(0,43,43,0.5)}
 
+
+
 .ctx-card.active{border-color:var(--accent);background:rgba(16,185,129,0.06);border-left:3px solid var(--accent)}
+
+
 
 .ctx-card::before{content:'';position:absolute;top:-1px;left:-1px;width:7px;height:7px;border-top:1.5px solid var(--accent);border-left:1.5px solid var(--accent)}
 
+
+
 .ctx-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(16,185,129,0.4);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px}
+
+
 
 .ctx-metrics{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end}
 
+
+
 .ctx-item{display:flex;flex-direction:column;gap:1px}
+
+
 
 .ctx-key{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:0.08em}
 
+
+
 .ctx-val{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--primary)}
+
+
 
 .ctx-val.green{color:#10B981}
 
+
+
 .ctx-val.red{color:#ef4444}
 
+
+
 .ctx-val.yellow{color:#fbbf24}
+
+
 
 .ctx-val.sm{font-size:13px}
 
 
 
+
+
+
+
 /* SECTION NAV */
+
+
 
 .sec-nav{display:flex;flex-direction:column;gap:2px;margin-bottom:8px}
 
+
+
 .sec-btn{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--border);background:rgba(0,28,28,0.6);cursor:pointer;transition:all 0.2s;gap:12px;width:100%}
+
+
 
 .sec-btn:hover{border-color:rgba(16,185,129,0.3);background:rgba(0,43,43,0.6)}
 
+
+
 .sec-btn.active{border-color:var(--accent);background:rgba(16,185,129,0.08);border-left:3px solid var(--accent)}
+
+
 
 .sec-left{display:flex;align-items:center;gap:10px}
 
+
+
 .sec-tag{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;background:var(--accent-dim);padding:3px 8px;border-left:2px solid var(--accent)}
+
+
 
 .sec-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:0.05em;color:var(--primary)}
 
+
+
 .sec-metrics{display:flex;gap:20px;align-items:center}
+
+
 
 .sec-metric{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.08em;white-space:nowrap}
 
+
+
 .sec-metric span{color:var(--accent)}
+
+
 
 .sec-metric span.red{color:#ef4444}
 
+
+
 .sec-metric span.yellow{color:#fbbf24}
 
+
+
 .sec-arrow{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);opacity:0.4;flex-shrink:0}
+
+
 
 .sec-btn.active .sec-arrow{opacity:1}
 
 
 
+
+
+
+
 /* CONTENT PANELS */
+
+
 
 .sec-content{display:none;border:1px solid var(--border);background:rgba(0,43,43,0.4);position:relative;margin-bottom:2px}
 
+
+
 .sec-content.active{display:block}
 
+
+
 .sec-content::before{content:'';position:absolute;top:-1px;left:-1px;width:14px;height:14px;border-top:2px solid var(--accent);border-left:2px solid var(--accent)}
+
+
 
 .sec-content::after{content:'';position:absolute;bottom:-1px;right:-1px;width:14px;height:14px;border-bottom:2px solid var(--accent);border-right:2px solid var(--accent)}
 
 
 
+
+
+
+
 /* INNER TABS */
 
+
+
 .fmt-btn{background:transparent;border:1px solid rgba(16,185,129,0.25);color:rgba(255,255,255,0.4);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.1em;padding:3px 8px;cursor:pointer;transition:all 0.15s}.fmt-btn:hover{border-color:rgba(16,185,129,0.5);color:rgba(16,185,129,0.8)}.fmt-btn-active{border-color:#10B981;color:#10B981;background:rgba(16,185,129,0.08)}
+
 .inner-tabs{display:flex;border-bottom:1px solid rgba(16,185,129,0.1)}
+
+
 
 .itab{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;padding:9px 18px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;transition:all 0.2s}
 
+
+
 .itab.active{color:var(--accent);border-bottom-color:var(--accent)}
 
+
+
 .itab:hover{color:var(--primary)}
+
+
 
 .itab-content{display:none}.itab-content.active{display:block}
 
 
 
+
+
+
+
 /* TABLES */
+
+
 
 table{width:100%;border-collapse:collapse}
 
+
+
 .tbl-head th{font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(16,185,129,0.5);letter-spacing:0.15em;text-transform:uppercase;padding:8px 14px;text-align:left;border-bottom:1px solid rgba(16,185,129,0.1)}
+
+
 
 .tbl-row td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle}
 
+
+
 .tbl-row:last-child td{border-bottom:none}
+
+
 
 .tbl-row:hover td{background:rgba(16,185,129,0.04)}
 
+
+
 .player-name{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:15px;color:var(--primary);letter-spacing:0.03em}
+
+
 
 .player-meta{font-size:11px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:300}
 
+
+
 .pos-badge{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 5px;border:1px solid;margin-right:4px}
+
+
 
 .pos-QB{color:#60a5fa;border-color:rgba(96,165,250,0.4)}
 
+
+
 .pos-RB{color:#34d399;border-color:rgba(52,211,153,0.4)}
+
+
 
 .pos-WR{color:#a78bfa;border-color:rgba(167,139,250,0.4)}
 
+
+
 .pos-TE{color:#fbbf24;border-color:rgba(251,191,36,0.4)}
+
+
 
 .pts{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;color:var(--accent);text-align:right;white-space:nowrap}
 
+
+
 .tier-badge{font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 7px;border:1px solid rgba(16,185,129,0.3);color:var(--accent);white-space:nowrap}
+
+
 
 .rank-num{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:rgba(16,185,129,0.3);width:28px;text-align:right;padding-right:6px}
 
+
+
 .pivot-tag{color:#10B981;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.1em}
+
+
 
 .fade-tag{color:#ef4444;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.1em}
 
+
+
 .hold-tag{color:rgba(255,255,255,0.4);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.1em}
+
+
 
 .action-add{color:#10B981;font-family:'Share Tech Mono',monospace;font-size:9px}
 
+
+
 .action-monitor{color:#fbbf24;font-family:'Share Tech Mono',monospace;font-size:9px}
+
+
 
 .action-drop{color:#ef4444;font-family:'Share Tech Mono',monospace;font-size:9px}
 
+
+
 .faab{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--primary);text-align:right}
+
+
 
 .faab-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted)}
 
+
+
 .sub-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(16,185,129,0.5);padding:6px 14px;background:rgba(0,28,28,0.4);border-bottom:1px solid rgba(16,185,129,0.08);letter-spacing:0.15em}
+
+
 
 .alert-critical{color:#ef4444;font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 5px;border:1px solid rgba(239,68,68,0.4)}
 
+
+
 .alert-warn{color:#fbbf24;font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 5px;border:1px solid rgba(251,191,36,0.4)}
+
+
 
 .alert-cleared{color:#10B981;font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 5px;border:1px solid rgba(16,185,129,0.4)}
 
+
+
 .alert-time{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);white-space:nowrap}
+
+
 
 .alert-item{display:flex;justify-content:space-between;align-items:flex-start;padding:11px 14px;border-bottom:1px solid rgba(255,255,255,0.04);gap:10px}
 
+
+
 .alert-item:last-child{border-bottom:none}
+
+
 
 .season-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.04)}
 
+
+
 .season-row:last-child{border-bottom:none}
+
+
 
 .season-row:hover{background:rgba(16,185,129,0.04)}
 
+
+
 .season-pts{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:19px;color:var(--accent)}
+
+
 
 .season-range{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted)}
 
+
+
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:0}
+
+
 
 .three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
 
+
+
 .sleeper-card{padding:16px;border-right:1px solid rgba(16,185,129,0.08)}
+
+
 
 .sleeper-card:last-child{border-right:none}
 
+
+
 .trend-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.04)}
+
+
 
 .trend-row:last-child{border-bottom:none}
 
 
 
+
+
+
+
 /* NEWSLETTER */
+
+
 
 .newsletter-card{background:rgba(0,43,43,0.4);border:1px solid var(--border);padding:28px;text-align:center;position:relative;margin-top:12px}
 
+
+
 .newsletter-card::before{content:'';position:absolute;top:-1px;left:-1px;width:14px;height:14px;border-top:2px solid var(--accent);border-left:2px solid var(--accent)}
+
+
 
 .newsletter-card::after{content:'';position:absolute;bottom:-1px;right:-1px;width:14px;height:14px;border-bottom:2px solid var(--accent);border-right:2px solid var(--accent)}
 
+
+
 .nl-eyebrow{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.2em;opacity:0.8;margin-bottom:10px}
+
+
 
 .nl-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:26px;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px}
 
+
+
 .nl-title span{color:var(--accent)}
+
+
 
 .nl-desc{font-size:13px;color:var(--muted);font-weight:300;max-width:380px;margin:0 auto 20px;line-height:1.6}
 
+
+
 .nl-form{display:flex;max-width:360px;margin:0 auto}
+
+
 
 .nl-input{flex:1;background:rgba(0,28,28,0.9);border:1px solid rgba(16,185,129,0.25);border-right:none;color:var(--primary);font-family:'Share Tech Mono',monospace;font-size:12px;padding:10px 14px;outline:none}
 
+
+
 .nl-input::placeholder{color:rgba(255,255,255,0.2)}
 
+
+
 .nl-btn{background:var(--accent);color:var(--core);border:none;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:0.12em;text-transform:uppercase;padding:10px 18px;cursor:pointer;clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,0 100%);white-space:nowrap}
+
+
 
 .nl-fine{margin-top:10px;font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(255,255,255,0.2);letter-spacing:0.12em}
 
 
 
+
+
+
+
 footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(16,185,129,0.08)}
+
+
 
 .footer-left{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:14px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3)}
 
+
+
 .footer-left span{color:var(--accent)}
+
+
 
 .footer-right{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(255,255,255,0.15);letter-spacing:0.1em}
 
+
+
 @media(max-width:900px){
+
+
 
   nav{padding:14px 20px}
 
+
+
   .nav-tag,.nav-links{display:none}
+
+
 
   .nav-logo{gap:8px}
 
+
+
   .nav-logo svg[viewBox="0 0 15 15"]{width:18px;height:18px}
+
+
 
   .logo-text{font-size:15px}
 
+
+
   .logo-icon{width:28px;height:28px}
+
+
 
   .nav-cta{font-size:11px;padding:6px 12px;letter-spacing:0.08em}
 
+
+
   .dash-header{padding:0 0 16px}
+
+
 
   .dash-title{font-size:24px}
 
+
+
   .dash-title svg{width:26px !important;height:26px !important}
+
+
 
   div[style*="padding:32px 48px"]{padding:20px 16px 40px !important}
 
+
+
   .pipeline-strip{gap:12px;padding:7px 12px;flex-wrap:wrap}
+
+
 
   .strip-item{font-size:8px}
 
+
+
   .stat-grid{grid-template-columns:1fr 1fr}
+
+
 
   .stat-card{padding:12px 14px}
 
+
+
   .stat-value{font-size:22px}
+
+
 
   .stat-label{font-size:7px}
 
+
+
   .stat-sub,.stat-trend-up,.stat-trend-dn,.card-hint{font-size:10px}
 
+
+
   .ctx-grid{grid-template-columns:1fr 1fr}
+
+
 
   .ctx-card{padding:8px 10px}
 
+
+
   .ctx-val{font-size:14px}
+
+
 
   .ctx-val.sm{font-size:12px}
 
+
+
   .ctx-key{font-size:7px}
+
+
 
   .sec-metrics{display:none}
 
+
+
   .sec-btn{padding:10px 12px}
+
+
 
   .sec-tag{font-size:8px;padding:2px 6px}
 
+
+
   .sec-name{font-size:13px}
+
+
 
   .two-col{grid-template-columns:1fr}
 
+
+
   .three-col{grid-template-columns:1fr}
+
+
 
   .sleeper-card{border-right:none;border-bottom:1px solid rgba(16,185,129,0.08)}
 
+
+
   .sleeper-card:last-child{border-bottom:none}
+
+
 
   .tbl-head th{padding:6px 10px;font-size:8px}
 
+
+
   .tbl-row td{padding:8px 10px}
+
+
 
   .player-name{font-size:13px}
 
+
+
   .pts{font-size:15px}
+
+
 
   .tier-badge{font-size:8px;padding:2px 5px}
 
+
+
   table{table-layout:fixed;width:100%}
+
+
 
   .nl-form{max-width:100%}
 
+
+
   footer{padding:20px 16px;flex-direction:column;gap:8px;text-align:center}
 
+
+
 }
+
+
 
 @media(max-width:480px){
 
+
+
   .stat-grid{grid-template-columns:1fr 1fr}
+
+
 
   .ctx-grid{grid-template-columns:1fr 1fr}
 
+
+
   .pipeline-strip .strip-item:nth-child(n+3){display:none}
+
+
 
   .rank-num{display:none}
 
+
+
 }
+
+
 
 </style>
 
+
+
 </head>
+
+
 
 <body>
 
+
+
 <div class="grid-bg"></div>
 
+
+
 <div class="scanline"></div>
+
+
 
 <div class="page">
 
 
 
+
+
+
+
 <nav>
+
+
 
   <a href="index.html" class="nav-logo">
 
+
+
     <div class="logo-icon">
+
+
 
       <svg class="eye-svg" viewBox="0 0 20 14" fill="none">
 
+
+
         <path d="M1 7C1 7 4.5 1.5 10 1.5C15.5 1.5 19 7 19 7C19 7 15.5 12.5 10 12.5C4.5 12.5 1 7 1 7Z" stroke="#10B981" stroke-width="1.2"/>
+
+
 
         <circle cx="10" cy="7" r="2.5" stroke="#10B981" stroke-width="1.2"/>
 
+
+
         <circle cx="10" cy="7" r="1" fill="#10B981"/>
+
+
 
       </svg>
 
+
+
     </div>
+
+
 
     <div class="logo-text">Sleeper <span>Cell</span></div>
 
+
+
     <svg viewBox="0 0 15 15" width="22" height="22" fill="#10B981" style="margin-left:6px;flex-shrink:0" xmlns="http://www.w3.org/2000/svg"><path d="M7.53,3C3.09,3,1,7.5,1,7.5S3.09,12,7.53,12S14,7.5,14,7.5S12,3,7.53,3z M11,7v1.5C11,8.7761,10.7761,9,10.5,9S10,8.7761,10,8.5V8H8v0.5C8,8.7761,7.7761,9,7.5,9S7,8.7761,7,8.5V8H5v0.5C5,8.7761,4.7761,9,4.5,9S4,8.7761,4,8.5v-2C4,6.2239,4.2239,6,4.5,6S5,6.2239,5,6.5V7h2V6.5C7,6.2239,7.2239,6,7.5,6S8,6.2239,8,6.5V7h2V6.5C10,6.2239,10.2239,6,10.5,6S11,6.2239,11,6.5V7z"/></svg>
+
+
 
   </a>
 
+
+
   <div class="nav-tag">// FANTASY INTEL NETWORK //</div>
+
+
 
   <div class="nav-links">
 
+
+
     <a href="index.html" class="nav-link">Home</a>
+
+
 
     <a href="dashboard.html" class="nav-link active">Dashboard</a>
 
+
+
     <a href="index.html#subscribe" class="nav-link">Newsletter</a>
+
+
 
   </div>
 
+
+
   <a href="index.html#subscribe" class="nav-cta">Join the Cell</a>
 
+
+
 </nav>
+
+
+
+
 
 
 
@@ -485,575 +968,1151 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
 
 
 
+
+
+
+
   <div class="dash-header" style="padding:0 0 20px">
+
+
 
     <div class="dash-eyebrow"><div class="eyebrow-line"></div><span class="eyebrow-text">Intelligence Dashboard</span></div>
 
+
+
     <div class="dash-title">Weekly <span>Field Report</span>
+
+
 
       <svg viewBox="0 0 15 15" width="36" height="36" fill="#10B981" style="display:inline-block;vertical-align:middle;margin-left:10px;opacity:0.9" xmlns="http://www.w3.org/2000/svg"><path d="M7.53,3C3.09,3,1,7.5,1,7.5S3.09,12,7.53,12S14,7.5,14,7.5S12,3,7.53,3z M11,7v1.5C11,8.7761,10.7761,9,10.5,9S10,8.7761,10,8.5V8H8v0.5C8,8.7761,7.7761,9,7.5,9S7,8.7761,7,8.5V8H5v0.5C5,8.7761,4.7761,9,4.5,9S4,8.7761,4,8.5v-2C4,6.2239,4.2239,6,4.5,6S5,6.2239,5,6.5V7h2V6.5C7,6.2239,7.2239,6,7.5,6S8,6.2239,8,6.5V7h2V6.5C10,6.2239,10.2239,6,10.5,6S11,6.2239,11,6.5V7z"/></svg>
 
+
+
     </div>
 
+
+
   </div>
+
+
+
+
 
 
 
   <!-- PIPELINE STRIP -->
 
+
+
   <div class="pipeline-strip" id="pipeline-strip">
+
+
 
     <div class="strip-item live"><div class="live-dot"></div>PIPELINE ACTIVE</div>
 
+
+
     <div class="strip-item" id="meta-season">2026 SEASON</div>
+
+
 
     <div class="strip-item" id="meta-lastrun">LAST RUN: —</div>
 
+
+
     <div class="strip-item">PPR SCORING</div>
 
+
+
   </div>
+
+
+
+
 
 
 
   <!-- ROW 1 — MAIN STAT CARDS -->
 
+
+
   <div class="stat-grid">
+
+
 
     <div class="stat-card" id="card-players" onclick="activateSection('s-proj','card-players')">
 
+
+
       <div class="stat-label">Players Tracked</div>
+
+
 
       <div class="stat-value" id="val-players">—</div>
 
+
+
       <div class="stat-sub">QB / RB / WR / TE</div>
+
+
 
       <div class="stat-trend-up" id="val-players-sub"></div>
 
+
+
       <div class="card-hint">↓ VIEW PROJECTIONS</div>
 
+
+
     </div>
+
+
 
     <div class="stat-card" id="card-proj" onclick="activateSection('s-rank','card-proj')">
 
+
+
       <div class="stat-label">Projections Generated</div>
+
+
 
       <div class="stat-value" id="val-proj">—</div>
 
+
+
       <div class="stat-sub" id="val-proj-sub"></div>
+
+
 
       <div class="stat-trend-up" id="val-conf"></div>
 
+
+
       <div class="card-hint">↓ VIEW RANKINGS</div>
 
+
+
     </div>
+
+
 
     <div class="stat-card" id="card-waiver" onclick="activateSection('s-waiver','card-waiver')">
 
+
+
       <div class="stat-label">Waiver Targets</div>
+
+
 
       <div class="stat-value" id="val-waiver">—</div>
 
+
+
       <div class="stat-sub" id="val-waiver-sub"></div>
+
+
 
       <div class="stat-trend-up" id="val-waiver-hint"></div>
 
+
+
       <div class="card-hint">↓ VIEW WAIVER WIRE</div>
 
+
+
     </div>
+
+
 
     <div class="stat-card" id="card-injury" onclick="activateSection('s-injury','card-injury')">
 
+
+
       <div class="stat-label">Injury Alerts</div>
+
+
 
       <div class="stat-value" id="val-injury">—</div>
 
+
+
       <div class="stat-sub">Last 3 days</div>
+
+
 
       <div class="stat-trend-dn" id="val-injury-sub"></div>
 
+
+
       <div class="card-hint">↓ VIEW INJURY REPORT</div>
+
+
 
     </div>
 
+
+
   </div>
+
+
+
+
 
 
 
   <!-- ROW 2 — CONTEXT CARDS -->
 
+
+
   <div class="ctx-grid">
+
+
 
     <div class="ctx-card" id="ctx-rank" onclick="activateSection('s-rank','ctx-rank')">
 
+
+
       <div class="ctx-label">Rankings</div>
 
+
+
       <div class="ctx-metrics">
+
+
 
         <div class="ctx-item"><div class="ctx-key">PIVOTS</div><div class="ctx-val green" id="ctx-pivots">—</div></div>
 
+
+
         <div class="ctx-item"><div class="ctx-key">FADES</div><div class="ctx-val red" id="ctx-fades">—</div></div>
+
+
 
         <div class="ctx-item"><div class="ctx-key">WEEK</div><div class="ctx-val" id="ctx-week">—</div></div>
 
+
+
         <div class="ctx-item"><div class="ctx-key">RANKED</div><div class="ctx-val" id="ctx-ranked">—</div></div>
+
+
 
       </div>
 
+
+
     </div>
+
+
 
     <div class="ctx-card" id="ctx-waiver" onclick="activateSection('s-waiver','ctx-waiver')">
 
+
+
       <div class="ctx-label">Waiver Wire</div>
 
+
+
       <div class="ctx-metrics">
+
+
 
         <div class="ctx-item"><div class="ctx-key">TOP BID</div><div class="ctx-val green" id="ctx-topbid">—</div></div>
 
+
+
         <div class="ctx-item"><div class="ctx-key">TOP ADD</div><div class="ctx-val sm" id="ctx-topadd">—</div></div>
+
+
 
         <div class="ctx-item"><div class="ctx-key">OWNED</div><div class="ctx-val" id="ctx-owned">—</div></div>
 
+
+
       </div>
 
+
+
     </div>
+
+
 
     <div class="ctx-card" id="ctx-startsit" onclick="activateSection('s-startsit','ctx-startsit')">
 
+
+
       <div class="ctx-label">Start / Sit</div>
 
+
+
       <div class="ctx-metrics">
+
+
 
         <div class="ctx-item"><div class="ctx-key">STARTS</div><div class="ctx-val green">4</div></div>
 
+
+
         <div class="ctx-item"><div class="ctx-key">SITS</div><div class="ctx-val red">4</div></div>
+
+
 
         <div class="ctx-item"><div class="ctx-key">TOP START</div><div class="ctx-val sm">J. Allen</div></div>
 
+
+
       </div>
 
+
+
     </div>
+
+
 
     <div class="ctx-card" id="ctx-sleeper" onclick="activateSection('s-sleeper','ctx-sleeper')">
 
+
+
       <div class="ctx-label">Sleeper Pick</div>
+
+
 
       <div class="ctx-metrics">
 
+
+
         <div class="ctx-item"><div class="ctx-key">THIS WEEK</div><div class="ctx-val green sm" id="ctx-sleeper-name">—</div></div>
+
+
 
         <div class="ctx-item"><div class="ctx-key">OWNED</div><div class="ctx-val" id="ctx-sleeper-owned">—</div></div>
 
+
+
         <div class="ctx-item"><div class="ctx-key">PROJ</div><div class="ctx-val" id="ctx-sleeper-proj">—</div></div>
+
+
 
       </div>
 
+
+
     </div>
 
+
+
   </div>
+
+
+
+
 
 
 
   <!-- SECTION NAV -->
 
+
+
   <div class="sec-nav" id="sections-anchor">
+
+
 
     <div class="sec-btn" id="btn-proj" onclick="activateSection('s-proj','btn-proj')">
 
+
+
       <div class="sec-left"><div class="sec-tag">Season Forecast</div><div class="sec-name">2026 Projections</div></div>
 
+
+
       <div class="sec-metrics">
+
+
 
         <div class="sec-metric">TOP QB <span id="sn-topqb">—</span></div>
 
+
+
         <div class="sec-metric">TOP RB <span id="sn-toprb">—</span></div>
+
+
 
         <div class="sec-metric">TOP WR <span id="sn-topwr">—</span></div>
 
+
+
         <div class="sec-metric">TOP TE <span id="sn-topte">—</span></div>
+
+
 
       </div>
 
+
+
       <div class="sec-arrow">▶</div>
 
+
+
     </div>
+
+
 
     <div class="sec-btn" id="btn-rank" onclick="activateSection('s-rank','btn-rank')">
 
+
+
       <div class="sec-left"><div class="sec-tag">Field Report</div><div class="sec-name">Weekly Rankings</div></div>
 
+
+
       <div class="sec-metrics">
+
+
 
         <div class="sec-metric">WEEK <span id="sn-week">—</span></div>
 
+
+
         <div class="sec-metric">PIVOTS <span id="sn-pivots" class="green">—</span></div>
+
+
 
         <div class="sec-metric">FADES <span id="sn-fades" class="red">—</span></div>
 
+
+
         <div class="sec-metric">RANKED <span id="sn-ranked">—</span></div>
+
+
 
       </div>
 
+
+
       <div class="sec-arrow">▶</div>
 
+
+
     </div>
+
+
 
     <div class="sec-btn" id="btn-waiver" onclick="activateSection('s-waiver','btn-waiver')">
 
+
+
       <div class="sec-left"><div class="sec-tag">Acquisition</div><div class="sec-name">Waiver Wire</div></div>
 
+
+
       <div class="sec-metrics">
+
+
 
         <div class="sec-metric">ADDS <span id="sn-adds">—</span></div>
 
+
+
         <div class="sec-metric">MONITOR <span id="sn-monitor">—</span></div>
+
+
 
         <div class="sec-metric">DROP <span id="sn-drop">—</span></div>
 
+
+
         <div class="sec-metric">TOP BID <span id="sn-topbid">—</span></div>
+
+
 
       </div>
 
+
+
       <div class="sec-arrow">▶</div>
 
+
+
     </div>
+
+
 
     <div class="sec-btn" id="btn-startsit" onclick="activateSection('s-startsit','btn-startsit')">
 
+
+
       <div class="sec-left"><div class="sec-tag">Decision Intel</div><div class="sec-name">Start / Sit</div></div>
 
+
+
       <div class="sec-metrics">
+
+
 
         <div class="sec-metric">STARTS <span>4</span></div>
 
+
+
         <div class="sec-metric">SITS <span>4</span></div>
+
+
 
         <div class="sec-metric">TOP START <span>J. Allen</span></div>
 
+
+
       </div>
+
+
 
       <div class="sec-arrow">▶</div>
 
+
+
     </div>
+
+
 
     <div class="sec-btn" id="btn-sleeper" onclick="activateSection('s-sleeper','btn-sleeper')">
 
+
+
       <div class="sec-left"><div class="sec-tag">Classified</div><div class="sec-name">Sleeper Picks</div></div>
 
+
+
       <div class="sec-metrics">
+
+
 
         <div class="sec-metric">THIS WEEK <span id="sn-sleeper-name">—</span></div>
 
+
+
         <div class="sec-metric">OWNED <span id="sn-sleeper-owned">—</span></div>
+
+
 
         <div class="sec-metric">PROJ <span id="sn-sleeper-proj">—</span></div>
 
+
+
       </div>
+
+
 
       <div class="sec-arrow">▶</div>
 
+
+
     </div>
+
+
 
     <div class="sec-btn" id="btn-snap" onclick="activateSection('s-snap','btn-snap')">
 
+
+
       <div class="sec-left"><div class="sec-tag">Usage Intel</div><div class="sec-name">Snap &amp; Target Trends</div></div>
 
+
+
       <div class="sec-metrics">
+
+
 
         <div class="sec-metric">RISING <span id="sn-rising">—</span></div>
 
+
+
         <div class="sec-metric">FALLING <span id="sn-falling">—</span></div>
+
+
 
         <div class="sec-metric">TOP RISER <span id="sn-top-riser">—</span></div>
 
+
+
       </div>
+
+
 
       <div class="sec-arrow">▶</div>
 
+
+
     </div>
+
+
 
     <div class="sec-btn" id="btn-injury" onclick="activateSection('s-injury','btn-injury')">
 
+
+
       <div class="sec-left"><div class="sec-tag">Threat Monitor</div><div class="sec-name">Injury Alerts</div></div>
+
+
 
       <div class="sec-metrics">
 
+
+
         <div class="sec-metric">CRITICAL <span class="red" id="sn-critical">—</span></div>
+
+
 
         <div class="sec-metric">QUEST. <span class="yellow" id="sn-warn">—</span></div>
 
+
+
         <div class="sec-metric">CLEARED <span id="sn-cleared">—</span></div>
+
+
 
         <div class="sec-metric">UPDATED <span id="sn-updated">—</span></div>
 
+
+
       </div>
+
+
 
       <div class="sec-arrow">▶</div>
 
+
+
     </div>
 
+
+
   </div>
+
+
+
+
 
 
 
   <!-- PROJECTIONS -->
 
+
+
   <div id="s-proj" class="sec-content">
+
+
 
     <div class="inner-tabs">
 
+
+
       <button class="itab active" onclick="innerTab(this,'p-qb')">QB</button>
+
+
 
       <button class="itab" onclick="innerTab(this,'p-rb')">RB</button>
 
+
+
       <button class="itab" onclick="innerTab(this,'p-wr')">WR</button>
+
+
 
       <button class="itab" onclick="innerTab(this,'p-te')">TE</button>
 
+
+
     </div>
+
+
 
     <div id="p-qb" class="itab-content active"></div>
 
+
+
     <div id="p-rb" class="itab-content"></div>
+
+
 
     <div id="p-wr" class="itab-content"></div>
 
+
+
     <div id="p-te" class="itab-content"></div>
 
+
+
   </div>
+
+
+
+
 
 
 
   <!-- RANKINGS -->
 
+
+
   <div id="s-rank" class="sec-content">
+
     <!-- FORMAT TOGGLES -->
+
     <div style="display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px;border-bottom:1px solid rgba(16,185,129,0.08);align-items:center;">
+
       <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(16,185,129,0.4);letter-spacing:0.12em;margin-right:4px">SCORING</div>
+
       <button id="fmt-no_ppr"   class="fmt-btn" onclick="setRankingFormat('no_ppr',null)">STD</button>
+
       <button id="fmt-half_ppr" class="fmt-btn fmt-btn-active" onclick="setRankingFormat('half_ppr',null)">0.5 PPR</button>
+
       <button id="fmt-full_ppr" class="fmt-btn" onclick="setRankingFormat('full_ppr',null)">PPR</button>
+
       <div style="width:1px;height:16px;background:rgba(16,185,129,0.15);margin:0 4px"></div>
+
       <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(16,185,129,0.4);letter-spacing:0.12em;margin-right:4px">LEAGUE</div>
+
       <button id="lge-1qb"        class="fmt-btn fmt-btn-active" onclick="setRankingFormat(null,'1qb')">1QB</button>
+
       <button id="lge-superflex"  class="fmt-btn" onclick="setRankingFormat(null,'superflex')">SUPERFLEX</button>
+
       <button id="lge-te_premium" class="fmt-btn" onclick="setRankingFormat(null,'te_premium')">TE+</button>
+
     </div>
+
+
 
     <div id="rank-mode-label" style="display:none;font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.6);letter-spacing:0.12em;padding:6px 14px;border-bottom:1px solid rgba(16,185,129,0.08)">// PRE-SEASON MODE — SEASON FORECAST RANKINGS //</div>
 
+
+
     <div class="inner-tabs">
+
+
 
       <button class="itab active" onclick="innerTab(this,'r-qb')">QB</button>
 
+
+
       <button class="itab" onclick="innerTab(this,'r-rb')">RB</button>
+
+
 
       <button class="itab" onclick="innerTab(this,'r-wr')">WR</button>
 
+
+
       <button class="itab" onclick="innerTab(this,'r-te')">TE</button>
+
+
 
     </div>
 
+
+
     <div id="r-qb" class="itab-content active"></div>
+
+
 
     <div id="r-rb" class="itab-content"></div>
 
+
+
     <div id="r-wr" class="itab-content"></div>
+
+
 
     <div id="r-te" class="itab-content"></div>
 
+
+
   </div>
+
+
+
+
 
 
 
   <!-- WAIVER WIRE -->
 
+
+
   <div id="s-waiver" class="sec-content">
+
+
 
     <div class="sub-label">// HIGH PRIORITY ADDS //</div>
 
+
+
     <table><thead class="tbl-head"><tr><th>Player</th><th>Action</th><th>Owned</th><th>FAAB</th></tr></thead>
+
+
 
     <tbody id="waiver-adds"></tbody></table>
 
+
+
     <div class="sub-label">// MONITOR //</div>
 
+
+
     <table><thead class="tbl-head"><tr><th>Player</th><th>Action</th><th>Owned</th><th>FAAB</th></tr></thead>
+
+
 
     <tbody id="waiver-monitor"></tbody></table>
 
+
+
     <div class="sub-label">// DROP CANDIDATES //</div>
+
+
 
     <table><thead class="tbl-head"><tr><th>Player</th><th>Action</th><th>Owned</th><th>FAAB</th></tr></thead>
 
+
+
     <tbody id="waiver-drop"></tbody></table>
 
+
+
   </div>
+
+
+
+
 
 
 
   <!-- START / SIT -->
 
+
+
   <div id="s-startsit" class="sec-content">
+
+
 
     <div class="two-col">
 
+
+
       <div>
+
+
 
         <div class="sub-label">// START THESE //</div>
 
+
+
         <div class="tbl-row" style="display:table;width:100%"><table><tbody>
+
+
 
           <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-QB">QB</span>Josh Allen</div><div class="player-meta">BUF vs MIA · Def #24</div></td><td style="text-align:right"><div class="pivot-tag">▲ START</div><div class="pts" style="font-size:15px">29.4</div></td></tr>
 
+
+
           <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-WR">WR</span>Puka Nacua</div><div class="player-meta">LAR vs ARI · Def #28</div></td><td style="text-align:right"><div class="pivot-tag">▲ START</div><div class="pts" style="font-size:15px">18.4</div></td></tr>
+
+
 
           <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-RB">RB</span>De'Von Achane</div><div class="player-meta">MIA vs NYJ · Def #30</div></td><td style="text-align:right"><div class="pivot-tag">▲ START</div><div class="pts" style="font-size:15px">19.4</div></td></tr>
 
+
+
           <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-TE">TE</span>Sam LaPorta</div><div class="player-meta">DET vs CHI · Def #27</div></td><td style="text-align:right"><div class="pivot-tag">▲ START</div><div class="pts" style="font-size:15px">14.8</div></td></tr>
+
+
 
         </tbody></table></div>
 
+
+
       </div>
+
+
 
       <div style="border-left:1px solid rgba(16,185,129,0.08)">
 
+
+
         <div class="sub-label">// SIT THESE //</div>
+
+
 
         <table><tbody>
 
+
+
           <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-QB">QB</span>C.J. Stroud</div><div class="player-meta">HOU vs PIT · Def #5</div></td><td style="text-align:right"><div class="fade-tag">▼ SIT</div><div class="pts" style="font-size:15px">18.1</div></td></tr>
+
+
 
           <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-WR">WR</span>Davante Adams</div><div class="player-meta">LV vs SF · Def #2</div></td><td style="text-align:right"><div class="fade-tag">▼ SIT</div><div class="pts" style="font-size:15px">9.1</div></td></tr>
 
+
+
           <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-RB">RB</span>Jonathan Taylor</div><div class="player-meta">IND vs BAL · Def #4</div></td><td style="text-align:right"><div class="fade-tag">▼ SIT</div><div class="pts" style="font-size:15px">11.2</div></td></tr>
+
+
 
           <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-TE">TE</span>Dallas Goedert</div><div class="player-meta">PHI vs DAL · Def #6</div></td><td style="text-align:right"><div class="fade-tag">▼ SIT</div><div class="pts" style="font-size:15px">7.4</div></td></tr>
 
+
+
         </tbody></table>
+
+
 
       </div>
 
+
+
     </div>
 
+
+
   </div>
+
+
+
+
 
 
 
   <!-- SLEEPER PICKS -->
 
+
+
   <div id="s-sleeper" class="sec-content">
+
+
 
     <div class="three-col" id="sleeper-cards">
 
+
+
       <div style="padding:16px;font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.4);letter-spacing:0.1em">// LOADING SLEEPER PICKS... //</div>
+
+
 
     </div>
 
+
+
   </div>
+
+
+
+
 
 
 
   <!-- SNAP & TARGET TRENDS -->
 
+
+
   <div id="s-snap" class="sec-content">
+
+
 
     <div class="inner-tabs">
 
+
+
       <button class="itab active" onclick="innerTab(this,'snap-rising')">Rising</button>
+
+
 
       <button class="itab" onclick="innerTab(this,'snap-falling')">Falling</button>
 
+
+
     </div>
+
+
 
     <div id="snap-rising" class="itab-content active">
 
+
+
       <div style="padding:16px;font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.4);letter-spacing:0.1em">// LOADING TREND DATA... //</div>
 
+
+
     </div>
+
+
 
     <div id="snap-falling" class="itab-content">
 
+
+
       <div style="padding:16px;font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.4);letter-spacing:0.1em">// LOADING TREND DATA... //</div>
+
+
 
     </div>
 
+
+
   </div>
+
+
+
+
 
 
 
   <!-- INJURY ALERTS -->
 
+
+
   <div id="s-injury" class="sec-content">
+
+
 
     <div id="injury-body" style="padding:4px 0"></div>
 
+
+
   </div>
+
+
+
+
 
 
 
   <!-- NEWSLETTER -->
 
+
+
   <div class="newsletter-card">
+
+
 
     <div class="nl-eyebrow">// Clearance Level: Open //</div>
 
+
+
     <h2 class="nl-title">Weekly <span>Briefing</span>
+
+
 
       <svg viewBox="0 0 15 15" width="32" height="32" fill="#10B981" style="display:inline-block;vertical-align:middle;margin-left:10px;opacity:0.9" xmlns="http://www.w3.org/2000/svg"><path d="M7.53,3C3.09,3,1,7.5,1,7.5S3.09,12,7.53,12S14,7.5,14,7.5S12,3,7.53,3z M11,7v1.5C11,8.7761,10.7761,9,10.5,9S10,8.7761,10,8.5V8H8v0.5C8,8.7761,7.7761,9,7.5,9S7,8.7761,7,8.5V8H5v0.5C5,8.7761,4.7761,9,4.5,9S4,8.7761,4,8.5v-2C4,6.2239,4.2239,6,4.5,6S5,6.2239,5,6.5V7h2V6.5C7,6.2239,7.2239,6,7.5,6S8,6.2239,8,6.5V7h2V6.5C10,6.2239,10.2239,6,10.5,6S11,6.2239,11,6.5V7z"/></svg>
 
+
+
     </h2>
+
+
 
     <p class="nl-desc">Intelligence delivered every Wednesday. Rankings, waiver targets, injury alerts — all in one field report. Free to join.</p>
 
+
+
     <div class="nl-form">
+
+
 
       <input type="email" class="nl-input" placeholder="enter.your@email.com">
 
+
+
       <button class="nl-btn">Activate</button>
+
+
 
     </div>
 
+
+
     <div class="nl-fine">// NO SPAM. INTEL ONLY. UNSUBSCRIBE ANYTIME //</div>
+
+
 
   </div>
 
 
 
+
+
+
+
 </div>
+
+
+
+
 
 
 
 <footer>
 
+
+
   <div class="footer-left">Sleeper <span>Cell</span> &nbsp;·&nbsp; Fantasy Intelligence</div>
 
+
+
   <div class="footer-right">// CLASSIFIED // FANTASY OPERATIONS DIVISION //</div>
+
+
 
 </footer>
 
 
 
+
+
+
+
 </div>
+
+
 
 <script>
 
+
+
 const BASE='https://cdn.jsdelivr.net/gh/sliwij25/sleeper-cell@main/data/';
 
+
+
 const POS_COLOR={QB:'#60a5fa',RB:'#34d399',WR:'#a78bfa',TE:'#fbbf24'};
+
+
 
 const POS_BORDER={QB:'rgba(96,165,250,0.4)',RB:'rgba(52,211,153,0.4)',WR:'rgba(167,139,250,0.4)',TE:'rgba(251,191,36,0.4)'};
 
 
 
+
+
+
+
 function posBadge(p){return`<span class="pos-badge pos-${p}" style="color:${POS_COLOR[p]||'#fff'};border-color:${POS_BORDER[p]||'rgba(255,255,255,0.3)'}">${p}</span>`;}
+
+
 
 function sig(r){if(r.is_pivot)return`<div class="pivot-tag">▲ PIVOT</div>`;if(r.is_fade)return`<div class="fade-tag">▼ FADE</div>`;return`<div class="hold-tag">— HOLD</div>`;}
 
+
+
 function timeAgo(iso){if(!iso)return'—';const d=(Date.now()-new Date(iso).getTime())/1000;if(d<3600)return Math.floor(d/60)+'m ago';if(d<86400)return Math.floor(d/3600)+'h ago';return Math.floor(d/86400)+'d ago';}
+
+
 
 function alertCls(a){if(a.alert_type==='CLEARED')return'alert-cleared';if(a.alert_type==='CRITICAL'||a.new_status==='O'||a.new_status==='IR'||a.new_status==='PUP')return'alert-critical';return'alert-warn';}
 
+
+
 function alertLbl(a){if(a.alert_type==='CLEARED')return'CLEARED';if(a.new_status==='O'||a.new_status==='IR'||a.new_status==='PUP')return'CRITICAL';if(a.new_status==='D')return'DOUBTFUL';return'QUESTIONABLE';}
+
+
+
+
 
 
 
@@ -1061,424 +2120,812 @@ async function load(f){try{const r=await fetch(BASE+f+'?t='+Date.now());if(!r.ok
 
 
 
+
+
+
+
 function set(id,v){const el=document.getElementById(id);if(el)el.textContent=v;}
+
+
+
+
 
 
 
 // ── SECTION SWITCHING ──────────────────────────────────────
 
+
+
 const SEC_IDS=['s-proj','s-rank','s-waiver','s-startsit','s-sleeper','s-snap','s-injury'];
+
+
 
 const BTN_MAP={'s-proj':['btn-proj','card-players'],'s-rank':['btn-rank','card-proj','ctx-rank'],'s-waiver':['btn-waiver','card-waiver','ctx-waiver'],'s-startsit':['btn-startsit','ctx-startsit'],'s-sleeper':['btn-sleeper','ctx-sleeper'],'s-snap':['btn-snap'],'s-injury':['btn-injury','card-injury']};
 
 
 
+
+
+
+
 function activateSection(secId, triggerId){
+
+
 
   SEC_IDS.forEach(id=>{
 
+
+
     const el=document.getElementById(id);
+
+
 
     if(el)el.classList.remove('active');
 
+
+
   });
+
+
 
   document.querySelectorAll('.sec-btn,.stat-card,.ctx-card').forEach(el=>el.classList.remove('active'));
 
+
+
   const sec=document.getElementById(secId);
+
+
 
   if(sec){sec.classList.add('active');}
 
+
+
   const btns=BTN_MAP[secId]||[];
+
+
 
   btns.forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('active');});
 
+
+
   if(triggerId){const el=document.getElementById(triggerId);if(el)el.classList.add('active');}
+
+
 
   document.getElementById('sections-anchor').scrollIntoView({behavior:'smooth',block:'start'});
 
+
+
 }
+
+
+
+
 
 
 
 function innerTab(btn,id){
 
+
+
   const panel=btn.closest('.sec-content');
+
+
 
   panel.querySelectorAll('.itab').forEach(t=>t.classList.remove('active'));
 
+
+
   panel.querySelectorAll('.itab-content').forEach(t=>t.classList.remove('active'));
+
+
 
   btn.classList.add('active');
 
+
+
   document.getElementById(id).classList.add('active');
 
+
+
 }
+
+
+
+
 
 
 
 // ── META ───────────────────────────────────────────────────
 
+
+
 async function loadMeta(){
+
+
 
   const d=await load('meta.json');if(!d)return;
 
+
+
   set('meta-season',d.season+' SEASON');
+
+
 
   if(d.last_run)set('meta-lastrun','LAST RUN: '+new Date(d.last_run).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',timeZoneName:'short'}));
 
+
+
   set('val-players',d.player_count||'—');
+
+
 
   set('val-proj',d.projection_count||'—');
 
+
+
   set('val-proj-sub','Season '+d.season);
+
+
 
   if(d.avg_confidence)set('val-conf','▲ Avg confidence '+d.avg_confidence);
 
+
+
   const w=d.waiver_adds+d.waiver_monitors+d.waiver_drops;
+
+
 
   set('val-waiver',w||'—');
 
+
+
   set('val-waiver-sub',d.waiver_adds+' add · '+d.waiver_monitors+' monitor · '+d.waiver_drops+' drop');
+
+
 
   set('val-waiver-hint','▲ '+d.waiver_adds+' high priority adds');
 
+
+
   set('val-injury',(d.injury_critical+d.injury_warn)||'—');
+
+
 
   set('val-injury-sub','▼ '+d.injury_critical+' critical · '+d.injury_warn+' questionable');
 
+
+
 }
+
+
+
+
 
 
 
 // ── RANKINGS + FORMAT TOGGLES ──────────────────────────
+
 let _rankData=null;
+
 let _activeScoringFmt='half_ppr';
+
 let _activeLgeFmt='1qb';
 
+
+
 function _renderRankings(){
+
   if(!_rankData)return;
+
   const d=_rankData;
+
   const getList=pos=>{
+
     if(d.formats&&d.formats[_activeScoringFmt]&&d.formats[_activeScoringFmt][_activeLgeFmt])
+
       return d.formats[_activeScoringFmt][_activeLgeFmt][pos]||[];
+
     return d.positions[pos]||[];
+
   };
+
   let pivots=0,fades=0,ranked=0;
+
   ['QB','RB','WR','TE'].forEach(pos=>{
+
     const list=getList(pos);
+
     ranked+=list.length;
+
     list.forEach(r=>{if(r.is_pivot)pivots++;if(r.is_fade)fades++;});
+
     const tabId='r-'+pos.toLowerCase();
+
     const el=document.getElementById(tabId);if(!el)return;
+
     if(!list.length){el.innerHTML='<div style="padding:16px;font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(16,185,129,0.4);text-align:center;letter-spacing:0.1em">// NO DATA YET — RANKINGS POPULATE IN-SEASON //</div>';return;}
+
     el.innerHTML='<table><thead class="tbl-head"><tr><th></th><th>Player</th><th>Tier</th><th>Proj</th><th>Signal</th></tr></thead><tbody>'+list.map(r=>'<tr class="tbl-row"><td class="rank-num">'+r.rank+'</td><td><div class="player-name">'+r.name+'</div><div class="player-meta">'+r.team+' · '+r.position+'</div></td><td><span class="tier-badge">TIER '+r.tier+'</span></td><td><div class="pts">'+r.projected_pts.toFixed(1)+'</div></td><td>'+sig(r)+'</td></tr>').join('')+'</tbody></table>';
+
   });
+
   set('ctx-pivots',pivots);set('sn-pivots',pivots);
+
   set('ctx-fades',fades);set('sn-fades',fades);
+
   set('ctx-ranked',ranked);set('sn-ranked',ranked);
+
 }
+
+
 
 function setRankingFormat(sf,lf){
+
   if(sf){
+
     _activeScoringFmt=sf;
+
     ['no_ppr','half_ppr','full_ppr'].forEach(f=>{
+
       const b=document.getElementById('fmt-'+f);
+
       if(b)b.className='fmt-btn'+(f===sf?' fmt-btn-active':'');
+
     });
+
   }
+
   if(lf){
+
     _activeLgeFmt=lf;
+
     ['1qb','superflex','te_premium'].forEach(f=>{
+
       const b=document.getElementById('lge-'+f);
+
       if(b)b.className='fmt-btn'+(f===lf?' fmt-btn-active':'');
+
     });
+
   }
+
   _renderRankings();
+
 }
 
+
+
 async function loadRankings(){
+
   const d=await load('rankings.json');if(!d||!d.positions)return;
+
   _rankData=d;
+
   if(d.default_scoring)_activeScoringFmt=d.default_scoring;
+
   if(d.default_league)_activeLgeFmt=d.default_league;
+
   const isOffseason=d.mode==='season_forecast'&&d.week===0;
+
   const wk=isOffseason?'PRE-SEASON':(d.week||'—');
+
   set('ctx-week',wk);set('sn-week',wk);
+
   const modeLbl=document.getElementById('rank-mode-label');
+
   if(modeLbl)modeLbl.style.display=isOffseason?'block':'none';
+
   const fmtBtns=document.querySelectorAll('#s-rank .fmt-btn');
+
   fmtBtns.forEach(b=>b.style.display=isOffseason?'none':'');
+
   _renderRankings();
+
 }
+
+
+
+
 
 
 
 // ── WAIVER ─────────────────────────────────────────────────
 
+
+
 async function loadWaiver(){
+
+
 
   const d=await load('waiver_targets.json');if(!d||!d.targets)return;
 
+
+
   set('sn-adds',d.targets.add?.length||0);
+
+
 
   set('sn-monitor',d.targets.monitor?.length||0);
 
+
+
   set('sn-drop',d.targets.drop?.length||0);
+
+
 
   const topAdd=d.targets.add?.[0];
 
+
+
   if(topAdd){
+
+
 
     set('ctx-topadd',topAdd.name.split(' ').pop());
 
+
+
     set('ctx-topbid','$'+(topAdd.faab_bid||0));
+
+
 
     set('ctx-owned',(topAdd.ownership_pct||'—')+'%');
 
+
+
     set('sn-topbid','$'+(topAdd.faab_bid||0));
 
+
+
   }
+
+
 
   function wRow(p,action){
 
+
+
     const owned=p.ownership_pct!=null?p.ownership_pct+'%':'—';
+
+
 
     const faab=p.faab_bid>0?'$'+p.faab_bid:'—';
 
+
+
     const cls=action==='add'?'action-add':action==='monitor'?'action-monitor':'action-drop';
+
+
 
     const lbl=action==='add'?'▲ ADD':action==='monitor'?'~ MONITOR':'▼ DROP';
 
+
+
     return`<tr class="tbl-row"><td><div class="player-name">${posBadge(p.position)}${p.name}</div><div class="player-meta">${p.team} · ${p.reason}</div></td><td><div class="${cls}">${lbl}</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">${owned}</div></td><td><div class="faab">${faab}<div class="faab-label">${faab!=='—'?'BID':''}</div></div></td></tr>`;
+
+
 
   }
 
+
+
   ['add','monitor','drop'].forEach(a=>{
+
+
 
     const el=document.getElementById('waiver-'+a);
 
+
+
     if(!el)return;
+
+
 
     const list=d.targets[a]||[];
 
+
+
     el.innerHTML=list.length?list.map(p=>wRow(p,a)).join(''):`<tr><td colspan="4" style="padding:12px 14px;font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.3);letter-spacing:0.1em">// NO DATA YET //</td></tr>`;
+
+
 
   });
 
+
+
 }
+
+
+
+
 
 
 
 // ── INJURIES ───────────────────────────────────────────────
 
+
+
 async function loadInjuries(){
+
+
 
   const d=await load('injury_alerts.json');if(!d)return;
 
+
+
   const alerts=d.alerts||[];
+
+
 
   const critical=alerts.filter(a=>a.alert_type==='CRITICAL'||a.new_status==='O'||a.new_status==='IR'||a.new_status==='PUP').length;
 
+
+
   const warn=alerts.filter(a=>a.new_status==='Q'||a.new_status==='D').length;
+
+
 
   const cleared=alerts.filter(a=>a.alert_type==='CLEARED').length;
 
+
+
   set('sn-critical',critical);set('sn-warn',warn);set('sn-cleared',cleared);
+
+
 
   set('sn-updated',timeAgo(d.generated_at));
 
+
+
   const body=document.getElementById('injury-body');
+
+
 
   if(!body)return;
 
+
+
   if(!alerts.length){body.innerHTML='<div style="padding:16px;font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(16,185,129,0.4);text-align:center;letter-spacing:0.1em">// NO INJURY ALERTS IN LAST 7 DAYS //</div>';return;}
+
+
 
   body.innerHTML=alerts.slice(0,10).map(a=>`
 
+
+
     <div class="alert-item">
+
+
 
       <div style="flex:1">
 
+
+
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+
+
 
           <span class="${alertCls(a)}">${alertLbl(a)}</span>
 
+
+
           <span class="player-name" style="font-size:14px">${a.name}</span>
+
+
 
           <span class="player-meta">${a.team} · ${a.position}</span>
 
+
+
         </div>
+
+
 
         <div class="player-meta">${a.alert_type==='CLEARED'?'Cleared from injury report — active.':`Status: ${a.old_status||'healthy'} → ${a.new_status}`}</div>
 
+
+
       </div>
+
+
 
       <div class="alert-time">${timeAgo(a.detected_at)}</div>
 
+
+
     </div>`).join('');
 
+
+
 }
+
+
+
+
 
 
 
 // ── PROJECTIONS ────────────────────────────────────────────
 
+
+
 async function loadProjections(){
-
-  const d=await load('season_projections.json');if(!d||!d.positions)return;
-
+  const d=await load('season_projections.json');if(!d||!d.players)return;
+  const TIER_BREAKS={QB:[3,8,16],RB:[8,20,35],WR:[8,20,35],TE:[3,8,16]};
   ['QB','RB','WR','TE'].forEach(pos=>{
-
-    const list=d.positions[pos]||[];
-
+    const list=d.players[pos]||[];
     const top=list[0];
-
     if(top){
-
-      const short=top.name.split(' ').slice(-1)[0];
-
-      set('sn-top'+pos.toLowerCase(),short+' '+Math.round(top.projected_pts));
-
+      const short=top.full_name.split(' ').slice(-1)[0];
+      set('sn-top'+pos.toLowerCase(),short+' '+Math.round(top.projected_season_pts));
     }
-
     const tabId='p-'+pos.toLowerCase();
-
     const el=document.getElementById(tabId);if(!el)return;
-
     if(!list.length){el.innerHTML='<div style="padding:16px;font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(16,185,129,0.4);text-align:center;letter-spacing:0.1em">// NO DATA //</div>';return;}
-
-    el.innerHTML=list.map(p=>`
-
-      <div class="season-row">
-
-        <div><div class="player-name">${p.name}${p.is_pivot?' <span class="pivot-tag" style="font-size:9px;vertical-align:middle">▲ PIVOT</span>':p.is_fade?' <span class="fade-tag" style="font-size:9px;vertical-align:middle">▼ FADE</span>':''}</div><div class="player-meta">${p.team}${p.bye_week?' · Bye '+p.bye_week:''}${p.data_source==='rookie_model'?' · ROOKIE':''}</div></div>
-
-        <div style="text-align:right"><div class="season-pts">${Math.round(p.projected_pts)}</div><div class="season-range">Floor ${Math.round(p.floor)} · Ceil ${Math.round(p.ceiling)}</div></div>
-
-      </div>`).join('');
-
+    const breaks=TIER_BREAKS[pos]||[5,15,25];
+    let tierNum=1;
+    const trendColors={BREAKOUT:'rgba(16,185,129,0.8)',TRENDING_UP:'rgba(52,211,153,0.6)',STABLE:'rgba(255,255,255,0.15)',DECLINING:'rgba(251,191,36,0.6)',BUST:'rgba(239,68,68,0.7)'};
+    let rows='';
+    list.forEach((p,i)=>{
+      const nextTierStart=breaks[tierNum-1];
+      if(nextTierStart!==undefined&&i===nextTierStart){
+        tierNum++;
+        rows+='<tr><td colspan="7" style="padding:4px 8px 2px;font-family:\'Share Tech Mono\',monospace;font-size:9px;color:rgba(16,185,129,0.4);letter-spacing:0.12em">── TIER '+tierNum+' ──</td></tr>';
+      }
+      const conf=p.confidence_score||0;
+      const confPct=Math.round(conf*100);
+      const confBar='<div style="width:'+confPct+'%;height:3px;background:rgba(16,185,129,0.6);border-radius:2px;min-width:2px"></div><div style="font-size:9px;color:rgba(255,255,255,0.35)">'+confPct+'%</div>';
+      const injRisk=p.injury_risk_pct!=null?Math.round(p.injury_risk_pct*100)+'%':'—';
+      const ecr=p.ecr_position_rank?'#'+p.ecr_position_rank:'—';
+      let badge='';
+      if(p.is_pivot)badge='<span class="pivot-tag" style="font-size:8px;padding:1px 4px">▲ PIVOT</span>';
+      else if(p.is_fade)badge='<span class="fade-tag" style="font-size:8px;padding:1px 4px">▼ FADE</span>';
+      const trendPill=p.trend_label?'<span style="font-size:8px;padding:1px 5px;border-radius:3px;margin-left:2px;background:'+(trendColors[p.trend_label]||trendColors.STABLE)+'">'+p.trend_label+'</span>':'';
+      const ageTag=p.age?' <span style="font-size:9px;color:rgba(255,255,255,0.3)">('+p.age+')</span>':'';
+      const meta=(p.team||'—')+(p.bye_week?' · Bye '+p.bye_week:'')+(p.data_source==='rookie_model'?' · ROOKIE':'');
+      rows+='<tr class="tbl-row">'
+        +'<td class="rank-num">'+(i+1)+'</td>'
+        +'<td><div class="player-name">'+p.full_name+ageTag+'</div><div class="player-meta">'+meta+'</div></td>'
+        +'<td style="text-align:right"><div class="season-pts">'+Math.round(p.projected_season_pts)+'</div><div class="season-range">'+Math.round(p.season_floor||0)+'–'+Math.round(p.season_ceiling||0)+'</div></td>'
+        +'<td style="width:52px">'+confBar+'</td>'
+        +'<td style="font-size:10px;color:rgba(255,255,255,0.45);text-align:center">'+injRisk+'</td>'
+        +'<td style="font-size:10px;color:rgba(255,255,255,0.35);text-align:center">'+ecr+'</td>'
+        +'<td>'+badge+trendPill+'</td>'
+        +'</tr>';
+    });
+    el.innerHTML='<table><thead class="tbl-head"><tr><th></th><th>Player</th><th>Proj</th><th>Conf</th><th>Inj%</th><th>ECR</th><th>Signal</th></tr></thead><tbody>'+rows+'</tbody></table>';
   });
-
 }
-
-
-
-// ── SNAP & TARGET TRENDS ──────────────────────────────────
-
 async function loadTrends(){
+
+
 
   const d=await load('player_trends.json');if(!d||!d.trends)return;
 
+
+
   const rising=d.trends.filter(t=>t.trend_label==='BREAKOUT'||t.trend_label==='TRENDING_UP');
+
+
 
   const falling=d.trends.filter(t=>t.trend_label==='BUST'||t.trend_label==='DECLINING');
 
+
+
   set('sn-rising',rising.length);set('sn-falling',falling.length);
+
+
 
   if(rising.length)set('sn-top-riser',rising[0].name.split(' ').pop());
 
+
+
   function trendRow(t,isRising){
+
+
 
     const pos=t.position;
 
+
+
     let metric,val;
+
+
 
     if((pos==='WR'||pos==='TE')&&t.target_share_chg!=null){
 
+
+
       metric='Tgt Share';
+
+
 
       const prev=((t.target_share_last-t.target_share_chg)*100);
 
+
+
       val=prev.toFixed(0)+'% → '+(t.target_share_last*100).toFixed(0)+'%';
+
+
 
     } else if(t.snap_pct_chg!=null){
 
+
+
       metric='Snap%';
+
+
 
       const prev=((t.snap_pct_last-t.snap_pct_chg)*100);
 
+
+
       val=prev.toFixed(0)+'% → '+(t.snap_pct_last*100).toFixed(0)+'%';
+
+
 
     } else {
 
+
+
       metric='PPG';val=t.ppg_last!=null?t.ppg_last.toFixed(1):'—';
+
+
 
     }
 
+
+
     const tag=isRising?`<div class="pivot-tag">▲ ${val}</div>`:`<div class="fade-tag">▼ ${val}</div>`;
+
+
 
     return`<tr class="tbl-row"><td><div class="player-name">${posBadge(pos)}${t.name}</div><div class="player-meta">${t.team} · ${pos}</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">${metric}</div></td><td>${tag}</td></tr>`;
 
+
+
   }
+
+
 
   const TABLE_HEAD='<table><thead class="tbl-head"><tr><th>Player</th><th>Metric</th><th>Trend</th></tr></thead><tbody>';
 
+
+
   const risingEl=document.getElementById('snap-rising');
+
+
 
   if(risingEl)risingEl.innerHTML=rising.length?TABLE_HEAD+rising.slice(0,10).map(t=>trendRow(t,true)).join('')+'</tbody></table>':'<div style="padding:16px;font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(16,185,129,0.4);letter-spacing:0.1em">// NO BREAKOUT SIGNALS YET //</div>';
 
+
+
   const fallingEl=document.getElementById('snap-falling');
+
+
 
   if(fallingEl)fallingEl.innerHTML=falling.length?TABLE_HEAD+falling.slice(0,10).map(t=>trendRow(t,false)).join('')+'</tbody></table>':'<div style="padding:16px;font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(16,185,129,0.4);letter-spacing:0.1em">// NO DECLINING SIGNALS YET //</div>';
 
+
+
 }
+
+
+
+
 
 
 
 // ── SLEEPER PICKS ─────────────────────────────────────────
 
+
+
 async function loadSleeperPicks(){
+
+
 
   const d=await load('waiver_targets.json');if(!d||!d.targets)return;
 
+
+
   const adds=(d.targets.add||[]).filter(p=>p.ownership_pct!=null&&p.ownership_pct<35).slice(0,3);
+
+
 
   if(!adds.length)return;
 
+
+
   const top=adds[0];
+
+
 
   set('sn-sleeper-name',top.name.split(' ').pop());
 
+
+
   set('sn-sleeper-owned',(top.ownership_pct||0)+'%');
+
+
 
   set('sn-sleeper-proj',top.projected_pts||'—');
 
+
+
   set('ctx-sleeper-name',top.name.split(' ').pop());
+
+
 
   set('ctx-sleeper-owned',(top.ownership_pct||0)+'%');
 
+
+
   set('ctx-sleeper-proj',top.projected_pts||'—');
+
+
 
   const el=document.getElementById('sleeper-cards');if(!el)return;
 
+
+
   el.innerHTML=adds.map(p=>`
+
+
 
     <div class="sleeper-card">
 
+
+
       <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(16,185,129,0.5);letter-spacing:0.15em;margin-bottom:6px">${p.position} — LOW OWNERSHIP</div>
+
+
 
       <div class="player-name" style="font-size:19px;margin-bottom:2px">${p.name}</div>
 
+
+
       <div class="player-meta" style="margin-bottom:10px">${p.team} · ${p.ownership_pct!=null?p.ownership_pct+'% owned':'—'}</div>
+
+
 
       <div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.5;font-weight:300">${p.reason||'Low ownership opportunity flagged as high-priority add.'}</div>
 
+
+
       <div style="margin-top:10px;display:flex;justify-content:space-between"><div class="pts">${p.projected_pts||'—'}</div><div class="pivot-tag">▲ ADD</div></div>
 
+
+
     </div>`).join('');
+
+
 
 }
 
 
 
+
+
+
+
 Promise.all([loadMeta(),loadRankings(),loadWaiver(),loadInjuries(),loadProjections(),loadTrends(),loadSleeperPicks()])
+
+
 
   .then(()=>console.log('[dashboard] all data loaded'));
 
+
+
 </script>
+
+
 
 </body>
 
+
+
 </html>
+
+
 
