@@ -72,7 +72,7 @@ nav {
   align-items: center;
   justify-content: space-between;
   padding: 20px 48px;
-  border-bottom: 1px solid rgba(16,185,129,0.12);
+  border-bottom: 1px solid rgba(16,185,129,0.22);
 }
 
 .nav-logo { display: flex; align-items: center; gap: 12px; }
@@ -103,10 +103,10 @@ nav {
 
 .nav-tag {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--accent);
   letter-spacing: 0.1em;
-  opacity: 0.7;
+  opacity: 0.9;
 }
 
 .nav-cta {
@@ -199,7 +199,7 @@ nav {
 
 .btn-ghost {
   background: transparent;
-  color: rgba(255,255,255,0.5);
+  color: rgba(255,255,255,0.65);
   border: none;
   font-family: 'Share Tech Mono', monospace;
   font-size: 12px;
@@ -223,8 +223,8 @@ nav {
 
 /* ── SIGNAL CARD ── */
 .signal-card {
-  border: 1px solid rgba(16,185,129,0.2);
-  background: rgba(0,43,43,0.6);
+  border: 1px solid rgba(16,185,129,0.32);
+  background: rgba(0,43,43,0.78);
   padding: 28px;
   position: relative;
 }
@@ -253,7 +253,7 @@ nav {
   align-items: center;
   margin-bottom: 20px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(16,185,129,0.1);
+  border-bottom: 1px solid rgba(16,185,129,0.2);
 }
 
 .card-title {
@@ -291,7 +291,7 @@ nav {
   justify-content: space-between;
   align-items: flex-start;
   padding: 12px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.09);
   gap: 12px;
 }
 
@@ -301,8 +301,8 @@ nav {
 
 .intel-label {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
-  color: rgba(16,185,129,0.6);
+  font-size: 11px;
+  color: rgba(16,185,129,0.82);
   letter-spacing: 0.15em;
   text-transform: uppercase;
   margin-bottom: 3px;
@@ -318,7 +318,7 @@ nav {
 
 .intel-detail {
   font-size: 12px;
-  color: rgba(255,255,255,0.4);
+  color: rgba(255,255,255,0.62);
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 300;
   margin-top: 2px;
@@ -335,8 +335,8 @@ nav {
 
 .score-label {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
-  color: rgba(16,185,129,0.5);
+  font-size: 11px;
+  color: rgba(16,185,129,0.75);
   letter-spacing: 0.1em;
 }
 
@@ -386,7 +386,7 @@ nav {
 
 .feature-card {
   background: rgba(0,28,28,0.8);
-  border: 1px solid rgba(16,185,129,0.08);
+  border: 1px solid rgba(16,185,129,0.18);
   padding: 28px 24px;
   position: relative;
   overflow: hidden;
@@ -431,7 +431,7 @@ nav {
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 13px;
   font-weight: 300;
-  color: rgba(255,255,255,0.4);
+  color: rgba(255,255,255,0.62);
   letter-spacing: 0.04em;
   line-height: 1.4;
 }
@@ -450,8 +450,8 @@ nav {
 }
 
 .issue-card {
-  border: 1px solid rgba(16,185,129,0.15);
-  background: rgba(0,28,28,0.6);
+  border: 1px solid rgba(16,185,129,0.28);
+  background: rgba(0,28,28,0.75);
   text-decoration: none;
   display: block;
   position: relative;
@@ -468,8 +468,8 @@ nav {
   position: absolute;
   top: 12px; left: 16px;
   font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
-  color: rgba(16,185,129,0.35);
+  font-size: 10px;
+  color: rgba(16,185,129,0.55);
   letter-spacing: 0.15em;
 }
 
@@ -477,11 +477,11 @@ nav {
 
 .issue-meta {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--accent);
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  opacity: 0.6;
+  opacity: 0.82;
   margin-bottom: 10px;
 }
 
@@ -500,17 +500,17 @@ nav {
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 13px;
   font-weight: 300;
-  color: rgba(255,255,255,0.35);
+  color: rgba(255,255,255,0.58);
   line-height: 1.5;
   margin-bottom: 20px;
 }
 
 .issue-read {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--accent);
   letter-spacing: 0.15em;
-  opacity: 0.7;
+  opacity: 0.9;
   transition: opacity 0.2s;
 }
 
@@ -518,9 +518,9 @@ nav {
 
 /* ── SUBSCRIBE ── */
 .subscribe-section {
-  background: rgba(0,43,43,0.4);
-  border-top: 1px solid rgba(16,185,129,0.1);
-  border-bottom: 1px solid rgba(16,185,129,0.1);
+  background: rgba(0,43,43,0.62);
+  border-top: 1px solid rgba(16,185,129,0.2);
+  border-bottom: 1px solid rgba(16,185,129,0.2);
   padding: 72px 48px;
   text-align: center;
   position: relative;
@@ -559,7 +559,7 @@ nav {
 
 .sub-desc {
   font-size: 16px;
-  color: rgba(255,255,255,0.5);
+  color: rgba(255,255,255,0.65);
   font-weight: 300;
   max-width: 480px;
   margin: 0 auto 36px;
@@ -615,8 +615,8 @@ nav {
 .sub-fine {
   margin-top: 14px;
   font-family: 'Share Tech Mono', monospace;
-  font-size: 10px;
-  color: rgba(255,255,255,0.2);
+  font-size: 11px;
+  color: rgba(255,255,255,0.42);
   letter-spacing: 0.12em;
   position: relative;
   z-index: 1;
@@ -628,7 +628,7 @@ footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px solid rgba(16,185,129,0.08);
+  border-top: 1px solid rgba(16,185,129,0.18);
 }
 
 .footer-left {
@@ -637,15 +637,15 @@ footer {
   font-size: 14px;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.5);
 }
 
 .footer-left span { color: var(--accent); }
 
 .footer-right {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 10px;
-  color: rgba(255,255,255,0.15);
+  font-size: 11px;
+  color: rgba(255,255,255,0.35);
   letter-spacing: 0.1em;
 }
 
