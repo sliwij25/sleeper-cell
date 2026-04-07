@@ -685,11 +685,21 @@ async function loadProjections(){
     const tabId='p-'+pos.toLowerCase();
     const el=document.getElementById(tabId);if(!el)return;
     if(!list.length){el.innerHTML='<div style="padding:16px;font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(16,185,129,0.4);text-align:center;letter-spacing:0.1em">// NO DATA //</div>';return;}
-    el.innerHTML=list.map(p=>`
-      <div class="season-row">
-        <div><div class="player-name">${p.name}</div><div class="player-meta">${p.team}${p.bye_week?' · Bye '+p.bye_week:''}${p.data_source==='rookie_model'?' · ROOKIE':''}</div></div>
-        <div style="text-align:right"><div class="season-pts">${Math.round(p.projected_pts)}</div><div class="season-range">Floor ${Math.round(p.floor)} · Ceil ${Math.round(p.ceiling)}</div></div>
-      </div>`).join('');
+    const hdr='<table><thead class="tbl-head"><tr><th></th><th>Player</th><th>Proj</th><th>Conf</th><th>INJ%</th><th>ECR</th><th>Signal</th></tr></thead><tbody>';
+    el.innerHTML=hdr+list.map((p,i)=>{
+      const name=p.full_name||p.name||'—';
+      const pts=Math.round(p.projected_season_pts||p.projected_pts||0);
+      const fl=Math.round(p.season_floor||p.floor||0);
+      const cl=Math.round(p.season_ceiling||p.ceiling||0);
+      const conf=Math.round(((p.confidence_score||p.confidence||0))*100);
+      const confBar=conf>0?`<div style="display:flex;align-items:center;gap:6px"><div style="width:40px;height:3px;background:rgba(16,185,129,0.2);position:relative;flex-shrink:0"><div style="position:absolute;left:0;top:0;height:100%;width:${Math.min(conf,100)}%;background:#10B981"></div></div><span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#10B981">${conf}%</span></div>`:'—';
+      const injVal=p.injury_risk_pct!=null?Math.round(p.injury_risk_pct*100)+'%':'—';
+      const ecr=p.ecr_position_rank||p.ecr_rank||'—';
+      const range=fl&&cl?`<div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">${fl}–${cl}</div>`:'';
+      const rookie=p.data_source==='rookie_model'?' · ROOKIE':'';
+      const bye=p.bye_week?' · Bye '+p.bye_week:'';
+      return`<tr class="tbl-row"><td class="rank-num">${i+1}</td><td><div class="player-name">${posBadge(p.position)}${name}</div><div class="player-meta">${p.team}${bye}${rookie}</div></td><td><div class="pts">${pts}</div>${range}</td><td>${confBar}</td><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">${injVal}</td><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">${ecr}</td><td>${sig(p)}</td></tr>`;
+    }).join('')+'</tbody></table>';
   });
 }
 
