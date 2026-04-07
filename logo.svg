@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" width="320" height="80">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@700&amp;family=Share+Tech+Mono&amp;display=swap');
+    </style>
+  </defs>
+
+  <!-- Icon mark: crosshair + football -->
+  <g transform="translate(0,0)">
+
+    <!-- Football body -->
+    <ellipse cx="40" cy="40" rx="22" ry="14" fill="none" stroke="#10B981" stroke-width="2"/>
+
+    <!-- Football laces (center vertical line) -->
+    <line x1="40" y1="29" x2="40" y2="51" stroke="#10B981" stroke-width="1.5"/>
+    <!-- Lace stitches -->
+    <line x1="36" y1="34" x2="44" y2="34" stroke="#10B981" stroke-width="1.5"/>
+    <line x1="36" y1="40" x2="44" y2="40" stroke="#10B981" stroke-width="1.5"/>
+    <line x1="36" y1="46" x2="44" y2="46" stroke="#10B981" stroke-width="1.5"/>
+
+    <!-- Crosshair lines — horizontal -->
+    <line x1="4"  y1="40" x2="14" y2="40" stroke="#10B981" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="66" y1="40" x2="76" y2="40" stroke="#10B981" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- Crosshair lines — vertical -->
+    <line x1="40" y1="4"  x2="40" y2="14" stroke="#10B981" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="40" y1="66" x2="40" y2="76" stroke="#10B981" stroke-width="1.5" stroke-linecap="round"/>
+
+    <!-- Corner bracket marks — top left -->
+    <polyline points="10,20 10,10 20,10" fill="none" stroke="#10B981" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- top right -->
+    <polyline points="60,10 70,10 70,20" fill="none" stroke="#10B981" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- bottom left -->
+    <polyline points="10,60 10,70 20,70" fill="none" stroke="#10B981" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- bottom right -->
+    <polyline points="60,70 70,70 70,60" fill="none" stroke="#10B981" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Center dot -->
+    <circle cx="40" cy="40" r="2" fill="#10B981"/>
+
+  </g>
+
+  <!-- Wordmark -->
+  <g transform="translate(92, 0)">
+    <!-- SLEEPER CELL -->
+    <text
+      x="0" y="46"
+      font-family="Rajdhani, sans-serif"
+      font-weight="700"
+      font-size="34"
+      letter-spacing="3"
+      fill="#E2FFF5">SLEEPER <tspan fill="#10B981">CELL</tspan>
+    </text>
+    <!-- tagline -->
+    <text
+      x="2" y="62"
+      font-family="'Share Tech Mono', monospace"
+      font-size="10"
+      letter-spacing="2.5"
+      fill="#10B981"
+      opacity="0.75">// FANTASY INTELLIGENCE //</text>
+  </g>
+</svg>
