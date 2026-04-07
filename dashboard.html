@@ -266,7 +266,7 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
       <div class="stat-trend-up" id="val-players-sub"></div>
       <div class="card-hint">↓ VIEW PROJECTIONS</div>
     </div>
-    <div class="stat-card" id="card-proj" onclick="activateSection('s-rank','card-proj')">
+    <div class="stat-card" id="card-proj" onclick="activateSection('s-proj','card-proj')">
       <div class="stat-label">Projections Generated</div>
       <div class="stat-value" id="val-proj">—</div>
       <div class="stat-sub" id="val-proj-sub"></div>
@@ -557,7 +557,7 @@ function set(id,v){const el=document.getElementById(id);if(el)el.textContent=v;}
 
 // ── SECTION SWITCHING ──────────────────────────────────────
 const SEC_IDS=['s-proj','s-rank','s-waiver','s-startsit','s-sleeper','s-snap','s-injury'];
-const BTN_MAP={'s-proj':['btn-proj','card-players'],'s-rank':['btn-rank','card-proj','ctx-rank'],'s-waiver':['btn-waiver','card-waiver','ctx-waiver'],'s-startsit':['btn-startsit','ctx-startsit'],'s-sleeper':['btn-sleeper','ctx-sleeper'],'s-snap':['btn-snap'],'s-injury':['btn-injury','card-injury']};
+const BTN_MAP={'s-proj':['btn-proj','card-players','card-proj'],'s-rank':['btn-rank','ctx-rank'],'s-waiver':['btn-waiver','card-waiver','ctx-waiver'],'s-startsit':['btn-startsit','ctx-startsit'],'s-sleeper':['btn-sleeper','ctx-sleeper'],'s-snap':['btn-snap'],'s-injury':['btn-injury','card-injury']};
 
 function activateSection(secId, triggerId){
   SEC_IDS.forEach(id=>{
