@@ -229,19 +229,17 @@ async function loadIntelFeed(){
     const d = await r.json();
 
     // pick top player from each position
+    const projData = d.players || d.positions || {};
     const picks = ['QB','RB','WR','TE'].map(pos => {
-      const list = (d.positions[pos]||[]);
+      const list = (projData[pos]||[]);
       if(!list.length) return null;
       const top = list[0];
-      const rank1pts = list[0].projected_pts;
-      const rank3pts = list[2] ? list[2].projected_pts : 0;
-      // signal: top 2 = BUY, middle = HOLD, bottom half = FADE
+      // signal: use is_pivot/is_fade if available, else rank-based
       let signal, signalClass;
-      const idx = list.indexOf(top);
-      if(idx <= 1){ signal='▲ BUY'; signalClass='trend-up'; }
-      else if(idx <= 5){ signal='— HOLD'; signalClass=''; }
-      else { signal='▼ FADE'; signalClass='trend-down'; }
-      const score = Math.min(99, Math.round(top.confidence * 100));
+      if(top.is_pivot){ signal='▲ PIVOT'; signalClass='trend-up'; }
+      else if(top.is_fade){ signal='▼ FADE'; signalClass='trend-down'; }
+      else { signal='— HOLD'; signalClass=''; }
+      const score = Math.min(99, Math.round((top.confidence_score||top.confidence||0) * 100));
       return {pos, top, signal, signalClass, score};
     }).filter(Boolean);
 
@@ -250,8 +248,8 @@ async function loadIntelFeed(){
       <div class="intel-item">
         <div class="intel-left">
           <div class="intel-label">${LABEL[pos]}</div>
-          <div class="intel-player">${top.name}</div>
-          <div class="intel-detail">${top.team} · ${top.projected_pts} proj pts · ${top.avg_ppg} ppg</div>
+          <div class="intel-player">${top.full_name||top.name||'—'}</div>
+          <div class="intel-detail">${top.team||'—'} · ${Math.round(top.projected_season_pts||top.projected_pts||0)} proj pts · ${(top.avg_pts_per_game||top.avg_ppg||0).toFixed(1)} ppg</div>
         </div>
         <div class="intel-score">
           <div class="score-value">${score}</div>
