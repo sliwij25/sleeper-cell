@@ -680,8 +680,8 @@ async function loadProjections(){
     const list=projData[pos]||[];
     const top=list[0];
     if(top){
-      const short=top.name.split(' ').slice(-1)[0];
-      set('sn-top'+pos.toLowerCase(),short+' '+Math.round(top.projected_pts));
+      const short=(top.full_name||top.name||'').split(' ').slice(-1)[0];
+      set('sn-top'+pos.toLowerCase(),short+' '+Math.round(top.projected_season_pts||top.projected_pts||0));
     }
     const tabId='p-'+pos.toLowerCase();
     const el=document.getElementById(tabId);if(!el)return;
