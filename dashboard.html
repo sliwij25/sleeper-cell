@@ -103,6 +103,9 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 4
 .itab.active{color:var(--accent);border-bottom-color:var(--accent)}
 .itab:hover{color:var(--primary)}
 .itab-content{display:none}.itab-content.active{display:block}
+.fmt-btn{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:5px 10px;cursor:pointer;color:var(--muted);background:none;border:1px solid rgba(16,185,129,0.2);transition:all 0.2s}
+.fmt-btn.active{color:var(--accent);border-color:var(--accent);background:rgba(16,185,129,0.08)}
+.fmt-btn:hover{color:var(--primary);border-color:rgba(16,185,129,0.5)}
 
 /* TABLES */
 table{width:100%;border-collapse:collapse}
@@ -413,11 +416,25 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
 
   <!-- RANKINGS -->
   <div id="s-rank" class="sec-content">
-    <div class="inner-tabs">
-      <button class="itab active" onclick="innerTab(this,'r-qb')">QB</button>
-      <button class="itab" onclick="innerTab(this,'r-rb')">RB</button>
-      <button class="itab" onclick="innerTab(this,'r-wr')">WR</button>
-      <button class="itab" onclick="innerTab(this,'r-te')">TE</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:2px">
+      <div class="inner-tabs" style="margin-bottom:0">
+        <button class="itab active" onclick="innerTab(this,'r-qb')">QB</button>
+        <button class="itab" onclick="innerTab(this,'r-rb')">RB</button>
+        <button class="itab" onclick="innerTab(this,'r-wr')">WR</button>
+        <button class="itab" onclick="innerTab(this,'r-te')">TE</button>
+      </div>
+      <div id="rank-toggles" style="display:none;gap:4px;flex-wrap:wrap">
+        <div style="display:flex;gap:4px;margin-right:8px">
+          <button class="fmt-btn active" data-sf="no_ppr"   onclick="rankFmt(this)">STD</button>
+          <button class="fmt-btn"        data-sf="half_ppr" onclick="rankFmt(this)">0.5 PPR</button>
+          <button class="fmt-btn"        data-sf="full_ppr" onclick="rankFmt(this)">PPR</button>
+        </div>
+        <div style="display:flex;gap:4px">
+          <button class="fmt-btn active" data-lf="1qb"        onclick="rankFmt(this)">1QB</button>
+          <button class="fmt-btn"        data-lf="superflex"  onclick="rankFmt(this)">SUPERFLEX</button>
+          <button class="fmt-btn"        data-lf="te_premium" onclick="rankFmt(this)">TE+</button>
+        </div>
+      </div>
     </div>
     <div id="r-qb" class="itab-content active"></div>
     <div id="r-rb" class="itab-content"></div>
@@ -579,23 +596,58 @@ async function loadMeta(){
 }
 
 // ── RANKINGS ───────────────────────────────────────────────
-async function loadRankings(){
-  const d=await load('rankings.json');if(!d||!d.positions)return;
-  const wk=d.week||'—';
-  set('ctx-week',wk);set('sn-week',wk);
+let _rankData=null;
+let _rankSF='half_ppr', _rankLF='1qb';
+
+function _renderRankings(positions){
   let pivots=0,fades=0,ranked=0;
   ['QB','RB','WR','TE'].forEach(pos=>{
-    const list=d.positions[pos]||[];
+    const list=(positions[pos]||[]);
     ranked+=list.length;
     list.forEach(r=>{if(r.is_pivot)pivots++;if(r.is_fade)fades++;});
-    const tabId='r-'+pos.toLowerCase();
-    const el=document.getElementById(tabId);if(!el)return;
+    const el=document.getElementById('r-'+pos.toLowerCase());if(!el)return;
     if(!list.length){el.innerHTML='<div style="padding:16px;font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(16,185,129,0.4);text-align:center;letter-spacing:0.1em">// NO DATA YET — RANKINGS POPULATE IN-SEASON //</div>';return;}
     el.innerHTML='<table><thead class="tbl-head"><tr><th></th><th>Player</th><th>Tier</th><th>Proj</th><th>Signal</th></tr></thead><tbody>'+list.map(r=>`<tr class="tbl-row"><td class="rank-num">${r.rank}</td><td><div class="player-name">${r.name}</div><div class="player-meta">${r.team} · ${r.position}</div></td><td><span class="tier-badge">TIER ${r.tier}</span></td><td><div class="pts">${r.projected_pts.toFixed(1)}</div></td><td>${sig(r)}</td></tr>`).join('')+'</tbody></table>';
   });
   set('ctx-pivots',pivots);set('sn-pivots',pivots);
   set('ctx-fades',fades);set('sn-fades',fades);
   set('ctx-ranked',ranked);set('sn-ranked',ranked);
+}
+
+function rankFmt(btn){
+  if(btn.dataset.sf){
+    document.querySelectorAll('#rank-toggles [data-sf]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    _rankSF=btn.dataset.sf;
+  } else {
+    document.querySelectorAll('#rank-toggles [data-lf]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    _rankLF=btn.dataset.lf;
+  }
+  if(_rankData&&_rankData.formats){
+    const slice=(_rankData.formats[_rankSF]||{});
+    _renderRankings(slice[_rankLF]||_rankData.positions);
+  }
+}
+
+async function loadRankings(){
+  const d=await load('rankings.json');if(!d||!d.positions)return;
+  _rankData=d;
+  _rankSF=d.default_scoring||'half_ppr';
+  _rankLF=d.default_league||'1qb';
+  const wk=d.week||'—';
+  set('ctx-week',wk);set('sn-week',wk);
+  // Show format toggles only in-season (when formats key exists)
+  const toggles=document.getElementById('rank-toggles');
+  if(toggles&&d.formats){
+    toggles.style.display='flex';
+    // Set active state to match defaults
+    toggles.querySelectorAll('[data-sf]').forEach(b=>b.classList.toggle('active',b.dataset.sf===_rankSF));
+    toggles.querySelectorAll('[data-lf]').forEach(b=>b.classList.toggle('active',b.dataset.lf===_rankLF));
+  }
+  // Render default slice
+  const positions=d.formats?.(d.formats[_rankSF]||{})[_rankLF]||d.positions : d.positions;
+  _renderRankings(positions);
 }
 
 // ── WAIVER ─────────────────────────────────────────────────
