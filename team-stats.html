@@ -270,10 +270,10 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
       <div class="search-row">
         <input class="search-input" id="matchup-search" type="text" placeholder="Search team…" oninput="searchMatchup(this.value)">
         <div style="display:flex;gap:4px">
-          <button class="fmt-btn active" data-val="easy" onclick="filterMatchup(this,'easy')">▲ EASY</button>
+          <button class="fmt-btn" data-val="easy" onclick="filterMatchup(this,'easy')">▲ EASY</button>
           <button class="fmt-btn" data-val="mid" onclick="filterMatchup(this,'mid')">— MID</button>
           <button class="fmt-btn" data-val="hard" onclick="filterMatchup(this,'hard')">▼ HARD</button>
-          <button class="fmt-btn" data-val="all" onclick="filterMatchup(this,'all')">ALL</button>
+          <button class="fmt-btn active" data-val="all" onclick="filterMatchup(this,'all')">ALL</button>
         </div>
       </div>
       <div id="matchup-table-wrap"></div>
@@ -373,7 +373,7 @@ function gradeLabelDef(val,threshLow,threshHigh){
 let _teamData=null;
 let _offSortCol='pts_per_game', _offSortDir='desc', _offSearch='';
 let _defSortCol='pts_allowed_pg', _defSortDir='asc', _defSearch='';
-let _matchupPos='QB', _matchupSearch='', _matchupFilter='easy';
+let _matchupPos='QB', _matchupSearch='', _matchupFilter='all';
 
 // ── OFFENSE TABLE ────────────────────────────────────────
 function renderOffense(){
@@ -476,7 +476,7 @@ function renderMatchups(){
   if(!el)return;
   if(!_teamData?.defense?.length){el.innerHTML=emptyState('// MATCHUP DATA POPULATES IN-SEASON //');return;}
   const posKey='fpts_vs_'+_matchupPos.toLowerCase();
-  const thresholds={QB:[18,26],RB:[16,22],WR:[20,30],TE:[8,14]};
+  const thresholds={QB:[19,24],RB:[16,22],WR:[20,28],TE:[8,13]};
   const [lo,hi]=thresholds[_matchupPos]||[15,25];
 
   let list=[..._teamData.defense].filter(t=>t[posKey]!=null);
