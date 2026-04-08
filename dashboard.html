@@ -402,7 +402,7 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
 
   <!-- PROJECTIONS -->
   <div id="s-proj" class="sec-content">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:2px">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:2px;padding:8px 14px;border-bottom:1px solid rgba(16,185,129,0.1)">
       <div class="inner-tabs" style="margin-bottom:0">
         <button class="itab active" onclick="innerTab(this,'p-qb')">QB</button>
         <button class="itab" onclick="innerTab(this,'p-rb')">RB</button>
@@ -418,6 +418,15 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
         <button class="fmt-btn"        data-sf="te_plus"  onclick="projFmt(this)">TE+</button>
       </div>
     </div>
+    <div style="display:flex;align-items:center;gap:8px;padding:7px 14px;border-bottom:1px solid rgba(16,185,129,0.08);flex-wrap:wrap">
+      <input id="proj-search" type="text" placeholder="Search player or team…" oninput="searchProj(this.value)" style="flex:1;min-width:160px;background:rgba(0,43,43,0.8);border:1px solid rgba(16,185,129,0.2);color:#fff;font-family:'Share Tech Mono',monospace;font-size:11px;padding:5px 10px;outline:none;letter-spacing:0.05em">
+      <div id="proj-sig-btns" style="display:flex;gap:4px">
+        <button class="fmt-btn active" data-sig="all"   onclick="filterProjSig(this,'all')">ALL</button>
+        <button class="fmt-btn"        data-sig="pivot" onclick="filterProjSig(this,'pivot')">▲ PIVOT</button>
+        <button class="fmt-btn"        data-sig="fade"  onclick="filterProjSig(this,'fade')">▼ FADE</button>
+        <button class="fmt-btn"        data-sig="hold"  onclick="filterProjSig(this,'hold')">— HOLD</button>
+      </div>
+    </div>
     <div id="p-qb" class="itab-content active"></div>
     <div id="p-rb" class="itab-content"></div>
     <div id="p-wr" class="itab-content"></div>
@@ -428,7 +437,7 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
 
   <!-- RANKINGS -->
   <div id="s-rank" class="sec-content">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:2px">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:2px;padding:8px 14px;border-bottom:1px solid rgba(16,185,129,0.1)">
       <div class="inner-tabs" style="margin-bottom:0">
         <button class="itab active" onclick="innerTab(this,'r-qb')">QB</button>
         <button class="itab" onclick="innerTab(this,'r-rb')">RB</button>
@@ -442,6 +451,15 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
         <button class="fmt-btn"        data-sf="half_ppr" onclick="rankFmt(this)">HALF PPR</button>
         <button class="fmt-btn"        data-sf="no_ppr"   onclick="rankFmt(this)">STANDARD</button>
         <button class="fmt-btn"        data-sf="te_plus"  onclick="rankFmt(this)">TE+</button>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;padding:7px 14px;border-bottom:1px solid rgba(16,185,129,0.08);flex-wrap:wrap">
+      <input id="rank-search" type="text" placeholder="Search player or team…" oninput="searchRank(this.value)" style="flex:1;min-width:160px;background:rgba(0,43,43,0.8);border:1px solid rgba(16,185,129,0.2);color:#fff;font-family:'Share Tech Mono',monospace;font-size:11px;padding:5px 10px;outline:none;letter-spacing:0.05em">
+      <div id="rank-sig-btns" style="display:flex;gap:4px">
+        <button class="fmt-btn active" data-sig="all"   onclick="filterRankSig(this,'all')">ALL</button>
+        <button class="fmt-btn"        data-sig="pivot" onclick="filterRankSig(this,'pivot')">▲ PIVOT</button>
+        <button class="fmt-btn"        data-sig="fade"  onclick="filterRankSig(this,'fade')">▼ FADE</button>
+        <button class="fmt-btn"        data-sig="hold"  onclick="filterRankSig(this,'hold')">— HOLD</button>
       </div>
     </div>
     <div id="r-qb" class="itab-content active"></div>
@@ -606,34 +624,37 @@ async function loadMeta(){
 }
 
 // ── RANKINGS ───────────────────────────────────────────────
-let _rankData=null;
-let _rankSF='full_ppr';
+let _rankData=null, _rankSF='full_ppr';
+let _rankSort={col:'_dp',dir:'desc'};
+let _rankFilter={search:'',signal:'all'};
+let _rankPositions=null; // current positions slice
 
 function _renderRankings(positions,sf){
-  // positions = {QB:[...],RB:[...],WR:[...],TE:[...]}
-  // For in-season data the pts are already format-adjusted by backend for std/half/ppr.
-  // For te_plus and off-season we apply _pprAdj client-side.
+  _rankPositions=positions;
   const base={QB:positions.QB||[],RB:positions.RB||[],WR:positions.WR||[],TE:positions.TE||[]};
-  const views={
-    QB:base.QB, RB:base.RB, WR:base.WR, TE:base.TE,
+  const views={QB:base.QB,RB:base.RB,WR:base.WR,TE:base.TE,
     FLEX:[...base.RB,...base.WR,...base.TE],
-    SUPERFLEX:[...base.QB,...base.RB,...base.WR,...base.TE]
-  };
+    SUPERFLEX:[...base.QB,...base.RB,...base.WR,...base.TE]};
   let pivots=0,fades=0,ranked=0;
   Object.entries(views).forEach(([pos,rawList])=>{
-    // Apply client-side PPR adj only when backend didn't handle it (te_plus always, or off-season)
     const needsAdj=sf==='te_plus'||!_rankData?.formats;
-    const list=rawList
-      .map(r=>({...r,_dp:(r.projected_pts||0)+(needsAdj?_pprAdj(r.position||pos,sf):0)}))
-      .sort((a,b)=>b._dp-a._dp);
+    const enriched=rawList.map(r=>({...r,
+      _dp:(r.projected_pts||0)+(needsAdj?_pprAdj(r.position||pos,sf):0),
+      _tier:r.tier||99,
+      _sig:r.is_pivot?2:r.is_fade?0:1
+    }));
     if(['QB','RB','WR','TE'].includes(pos)){
-      ranked+=list.length;
-      list.forEach(r=>{if(r.is_pivot)pivots++;if(r.is_fade)fades++;});
+      ranked+=enriched.length;
+      enriched.forEach(r=>{if(r.is_pivot)pivots++;if(r.is_fade)fades++;});
     }
+    const list=_sfApply(enriched,_rankSort,_rankFilter);
     const el=document.getElementById('r-'+pos.toLowerCase());if(!el)return;
-    const noDataMsg='<div style="padding:16px;font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(16,185,129,0.4);text-align:center;letter-spacing:0.1em">// NO DATA YET — RANKINGS POPULATE IN-SEASON //</div>';
-    if(!list.length){el.innerHTML=noDataMsg;return;}
-    el.innerHTML='<table><thead class="tbl-head"><tr><th></th><th>Player</th><th>Tier</th><th>Proj</th><th>Signal</th></tr></thead><tbody>'+
+    if(!list.length){
+      const msg=_rankFilter.search||_rankFilter.signal!=='all'?'// NO MATCHES //':'// NO DATA YET — RANKINGS POPULATE IN-SEASON //';
+      el.innerHTML=`<div style="padding:16px;font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.4);text-align:center;letter-spacing:0.1em">${msg}</div>`;return;
+    }
+    const S=(col,lbl)=>_th(col,lbl,_rankSort,'sortRank');
+    el.innerHTML=`<table><thead class="tbl-head"><tr><th></th>${S('full_name','Player')}${S('_tier','Tier')}${S('_dp','Proj')}${S('_sig','Signal')}</tr></thead><tbody>`+
       list.map((r,i)=>`<tr class="tbl-row"><td class="rank-num">${r.rank||i+1}</td><td><div class="player-name">${posBadge(r.position)}${r.name||r.full_name||'—'}</div><div class="player-meta">${r.team||'—'} · ${r.position||'—'}</div></td><td><span class="tier-badge">TIER ${r.tier||'—'}</span></td><td><div class="pts">${r._dp.toFixed(1)}</div></td><td>${sig(r)}</td></tr>`).join('')+
       '</tbody></table>';
   });
@@ -641,29 +662,32 @@ function _renderRankings(positions,sf){
   set('ctx-fades',fades);set('sn-fades',fades);
   set('ctx-ranked',ranked);set('sn-ranked',ranked);
 }
-
+function sortRank(col){
+  _rankSort={col,dir:_rankSort.col===col&&_rankSort.dir==='desc'?'asc':'desc'};
+  if(_rankPositions)_renderRankings(_rankPositions,_rankSF);
+}
+function filterRankSig(btn,val){
+  document.querySelectorAll('#rank-sig-btns [data-sig]').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');_rankFilter.signal=val;
+  if(_rankPositions)_renderRankings(_rankPositions,_rankSF);
+}
+function searchRank(val){
+  _rankFilter.search=val.trim();
+  if(_rankPositions)_renderRankings(_rankPositions,_rankSF);
+}
 function rankFmt(btn){
   document.querySelectorAll('#rank-toggles [data-sf]').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  _rankSF=btn.dataset.sf;
+  btn.classList.add('active');_rankSF=btn.dataset.sf;
   if(!_rankData)return;
-  // Use backend format slice for std/half/ppr when available; te_plus uses full_ppr base + client adj
   const backendSF=_rankSF==='te_plus'?'full_ppr':_rankSF;
-  const positions=_rankData.formats
-    ?((_rankData.formats[backendSF]||{})['1qb']||_rankData.positions)
-    :_rankData.positions;
+  const positions=_rankData.formats?((_rankData.formats[backendSF]||{})['1qb']||_rankData.positions):_rankData.positions;
   _renderRankings(positions,_rankSF);
 }
-
 async function loadRankings(){
   const d=await load('rankings.json');if(!d||!d.positions)return;
-  _rankData=d;
-  _rankSF=d.default_scoring||'full_ppr';
-  const wk=d.week||'—';
-  set('ctx-week',wk);set('sn-week',wk);
-  // Set active toggle state
+  _rankData=d;_rankSF=d.default_scoring||'full_ppr';
+  const wk=d.week||'—';set('ctx-week',wk);set('sn-week',wk);
   document.querySelectorAll('#rank-toggles [data-sf]').forEach(b=>b.classList.toggle('active',b.dataset.sf===_rankSF));
-  // Render default slice
   const positions=d.formats?((d.formats[_rankSF]||{})['1qb']||d.positions):d.positions;
   _renderRankings(positions,_rankSF);
 }
@@ -723,65 +747,103 @@ async function loadInjuries(){
 }
 
 // ── PPR SCORING ENGINE ──────────────────────────────────────
-// Average receptions per season by position (used for client-side PPR calc).
-// Base data is always half_ppr (0.5 pts/rec already baked in).
-const AVG_REC = {QB:5,RB:40,WR:70,TE:50};
+const AVG_REC={QB:5,RB:40,WR:70,TE:50};
 function _pprAdj(pos,sf){
   const rec=AVG_REC[pos]||0;
-  if(sf==='no_ppr')   return -0.5*rec;   // remove the 0.5 already baked in
-  if(sf==='half_ppr') return 0;           // baseline — no change
-  if(sf==='full_ppr') return 0.5*rec;    // add another 0.5/rec
-  if(sf==='te_plus')  return pos==='TE'?1.0*rec:0.5*rec; // TE gets 1.5 total, others 1.0
+  if(sf==='no_ppr')  return -0.5*rec;
+  if(sf==='half_ppr')return 0;
+  if(sf==='full_ppr')return 0.5*rec;
+  if(sf==='te_plus') return pos==='TE'?1.0*rec:0.5*rec;
   return 0;
 }
 
+// ── SHARED SORT / FILTER UTILITIES ─────────────────────────
+function _sfApply(list,sort,filter){
+  let r=list;
+  if(filter.search){
+    const q=filter.search.toLowerCase();
+    r=r.filter(p=>(p.full_name||p.name||'').toLowerCase().includes(q)||(p.team||'').toLowerCase().includes(q));
+  }
+  if(filter.signal!=='all'){
+    r=r.filter(p=>filter.signal==='pivot'?p.is_pivot:filter.signal==='fade'?p.is_fade:!p.is_pivot&&!p.is_fade);
+  }
+  return [...r].sort((a,b)=>{
+    let av=a[sort.col]??0, bv=b[sort.col]??0;
+    if(typeof av==='string')av=av.toLowerCase();
+    if(typeof bv==='string')bv=bv.toLowerCase();
+    return sort.dir==='desc'?(bv>av?1:bv<av?-1:0):(av>bv?1:av<bv?-1:0);
+  });
+}
+function _th(col,label,sort,fn){
+  const on=sort.col===col;
+  const arr=on?(sort.dir==='desc'?' ↓':' ↑'):'';
+  return`<th onclick="${fn}('${col}')" style="cursor:pointer;user-select:none;white-space:nowrap">${label}<span style="font-size:9px;opacity:${on?1:0.3}">${arr||' ↕'}</span></th>`;
+}
+
 // ── PROJECTIONS ────────────────────────────────────────────
-let _projData=null;
-let _projSF='full_ppr';
+let _projData=null, _projSF='full_ppr';
+let _projSort={col:'_dp',dir:'desc'};
+let _projFilter={search:'',signal:'all'};
 
 function _renderProjections(projData,sf){
   const base={QB:projData.QB||[],RB:projData.RB||[],WR:projData.WR||[],TE:projData.TE||[]};
-  const views={
-    QB:base.QB, RB:base.RB, WR:base.WR, TE:base.TE,
+  const views={QB:base.QB,RB:base.RB,WR:base.WR,TE:base.TE,
     FLEX:[...base.RB,...base.WR,...base.TE],
-    SUPERFLEX:[...base.QB,...base.RB,...base.WR,...base.TE]
-  };
+    SUPERFLEX:[...base.QB,...base.RB,...base.WR,...base.TE]};
   Object.entries(views).forEach(([pos,rawList])=>{
-    const list=rawList
-      .map(p=>({...p,_dp:Math.round((p.projected_season_pts||p.projected_pts||0)+_pprAdj(p.position||pos,sf))}))
-      .sort((a,b)=>b._dp-a._dp);
-    // Update nav bar top-player snippet (individual positions only)
-    if(['QB','RB','WR','TE'].includes(pos)&&list[0]){
-      const short=(list[0].full_name||list[0].name||'').split(' ').slice(-1)[0];
-      set('sn-top'+pos.toLowerCase(),short+' '+list[0]._dp);
+    // Enrich with sortable computed fields
+    const enriched=rawList.map(p=>({...p,
+      _dp:Math.round((p.projected_season_pts||p.projected_pts||0)+_pprAdj(p.position||pos,sf)),
+      _fl:Math.round(p.season_floor||p.floor||0),
+      _cl:Math.round(p.season_ceiling||p.ceiling||0),
+      _conf:Math.round((p.confidence_score||p.confidence||0)*100),
+      _inj:p.injury_risk_pct!=null?Math.round(p.injury_risk_pct):-1,
+      _ecr:p.ecr_position_rank||p.ecr_rank||999,
+      _sig:p.is_pivot?2:p.is_fade?0:1
+    }));
+    // Nav bar uses unfiltered top
+    if(['QB','RB','WR','TE'].includes(pos)){
+      const top=[...enriched].sort((a,b)=>b._dp-a._dp)[0];
+      if(top)set('sn-top'+pos.toLowerCase(),(top.full_name||top.name||'').split(' ').slice(-1)[0]+' '+top._dp);
     }
+    const list=_sfApply(enriched,_projSort,_projFilter);
     const el=document.getElementById('p-'+pos.toLowerCase());if(!el)return;
-    if(!list.length){el.innerHTML='<div style="padding:16px;font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(16,185,129,0.4);text-align:center;letter-spacing:0.1em">// NO DATA //</div>';return;}
-    const hdr='<table><thead class="tbl-head"><tr><th></th><th>Player</th><th>Proj</th><th>Range</th><th>Conf</th><th>INJ%</th><th>ECR</th><th>Signal</th></tr></thead><tbody>';
+    if(!list.length){
+      const msg=_projFilter.search||_projFilter.signal!=='all'?'// NO MATCHES //':'// NO DATA //';
+      el.innerHTML=`<div style="padding:16px;font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.4);text-align:center;letter-spacing:0.1em">${msg}</div>`;return;
+    }
+    const S=(col,lbl)=>_th(col,lbl,_projSort,'sortProj');
+    const hdr=`<table><thead class="tbl-head"><tr><th></th>${S('full_name','Player')}${S('_dp','Proj')}${S('_fl','Range')}${S('_conf','Conf')}${S('_inj','INJ%')}${S('_ecr','ECR')}${S('_sig','Signal')}</tr></thead><tbody>`;
     el.innerHTML=hdr+list.map((p,i)=>{
       const name=p.full_name||p.name||'—';
-      const pts=p._dp;
-      const fl=Math.round(p.season_floor||p.floor||0);
-      const cl=Math.round(p.season_ceiling||p.ceiling||0);
-      const conf=Math.round((p.confidence_score||p.confidence||0)*100);
-      const confBar=conf>0?`<div style="display:flex;align-items:center;gap:6px"><div style="width:40px;height:3px;background:rgba(16,185,129,0.2);position:relative;flex-shrink:0"><div style="position:absolute;left:0;top:0;height:100%;width:${Math.min(conf,100)}%;background:#10B981"></div></div><span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#10B981">${conf}%</span></div>`:'—';
-      const injVal=p.injury_risk_pct!=null?Math.round(p.injury_risk_pct)+'%':'—';
+      const confBar=p._conf>0?`<div style="display:flex;align-items:center;gap:6px"><div style="width:40px;height:3px;background:rgba(16,185,129,0.2);position:relative;flex-shrink:0"><div style="position:absolute;left:0;top:0;height:100%;width:${Math.min(p._conf,100)}%;background:#10B981"></div></div><span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#10B981">${p._conf}%</span></div>`:'—';
+      const injVal=p._inj>=0?p._inj+'%':'—';
       const ecr=p.ecr_position_rank||p.ecr_rank||'—';
-      const rangeVal=fl&&cl?`${fl}–${cl}`:'—';
+      const rangeVal=p._fl&&p._cl?`${p._fl}–${p._cl}`:'—';
       const rookie=p.data_source==='rookie_model'?' · ROOKIE':'';
       const bye=p.bye_week?' · Bye '+p.bye_week:'';
-      return`<tr class="tbl-row"><td class="rank-num">${i+1}</td><td><div class="player-name">${posBadge(p.position)}${name}</div><div class="player-meta">${p.team||'—'}${bye}${rookie}</div></td><td><div class="pts">${pts}</div></td><td style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);white-space:nowrap">${rangeVal}</td><td>${confBar}</td><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">${injVal}</td><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">${ecr}</td><td>${sig(p)}</td></tr>`;
+      return`<tr class="tbl-row"><td class="rank-num">${i+1}</td><td><div class="player-name">${posBadge(p.position)}${name}</div><div class="player-meta">${p.team||'—'}${bye}${rookie}</div></td><td><div class="pts">${p._dp}</div></td><td style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);white-space:nowrap">${rangeVal}</td><td>${confBar}</td><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">${injVal}</td><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">${ecr}</td><td>${sig(p)}</td></tr>`;
     }).join('')+'</tbody></table>';
   });
 }
-
+function sortProj(col){
+  _projSort={col,dir:_projSort.col===col&&_projSort.dir==='desc'?'asc':'desc'};
+  if(_projData)_renderProjections(_projData,_projSF);
+}
+function filterProjSig(btn,val){
+  document.querySelectorAll('#proj-sig-btns [data-sig]').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');_projFilter.signal=val;
+  if(_projData)_renderProjections(_projData,_projSF);
+}
+function searchProj(val){
+  _projFilter.search=val.trim();
+  if(_projData)_renderProjections(_projData,_projSF);
+}
 function projFmt(btn){
   document.querySelectorAll('#proj-sf-btns [data-sf]').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  _projSF=btn.dataset.sf;
-  if(_projData) _renderProjections(_projData,_projSF);
+  btn.classList.add('active');_projSF=btn.dataset.sf;
+  if(_projData)_renderProjections(_projData,_projSF);
 }
-
 async function loadProjections(){
   const d=await load('season_projections.json');if(!d||(!d.players&&!d.positions))return;
   _projData=d.players||d.positions;
