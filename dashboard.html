@@ -646,7 +646,7 @@ async function loadRankings(){
     toggles.querySelectorAll('[data-lf]').forEach(b=>b.classList.toggle('active',b.dataset.lf===_rankLF));
   }
   // Render default slice
-  const positions=d.formats?.(d.formats[_rankSF]||{})[_rankLF]||d.positions : d.positions;
+  const positions=d.formats ? ((d.formats[_rankSF]||{})[_rankLF]||d.positions) : d.positions;
   _renderRankings(positions);
 }
 
