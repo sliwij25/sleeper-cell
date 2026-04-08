@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<title>Sleeper Cell | Team Statistics</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--core:#001C1C;--accent:#10B981;--primary:#FFFFFF;--tertiary:#002B2B;--accent-dim:rgba(16,185,129,0.15);--grid-color:rgba(16,185,129,0.06);--muted:rgba(255,255,255,0.62);--border:rgba(16,185,129,0.28)}
+html{scroll-behavior:smooth}
+body{background-color:var(--core);color:var(--primary);font-family:'Barlow Condensed',sans-serif;min-height:100vh;overflow-x:hidden}
+.grid-bg{position:fixed;inset:0;background-image:linear-gradient(var(--grid-color) 1px,transparent 1px),linear-gradient(90deg,var(--grid-color) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.scanline{position:fixed;top:-100%;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent,rgba(16,185,129,0.4),transparent);animation:scan 6s linear infinite;z-index:1;pointer-events:none}
+@keyframes scan{0%{top:-2px}100%{top:100vh}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.page{position:relative;z-index:2}
+
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:20px 48px;border-bottom:1px solid rgba(16,185,129,0.22)}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none}
+.logo-icon{width:36px;height:36px;border:1.5px solid var(--accent);display:flex;align-items:center;justify-content:center}
+.eye-svg{width:20px;height:14px}
+.logo-text{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;letter-spacing:0.15em;color:var(--primary);text-transform:uppercase}
+.logo-text span{color:var(--accent)}
+.nav-tag{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);letter-spacing:0.1em;opacity:0.9}
+.nav-links{display:flex;align-items:center;gap:24px}
+.nav-link{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.1em;text-decoration:none;text-transform:uppercase;transition:color 0.2s}
+.nav-link:hover,.nav-link.active{color:var(--accent)}
+.nav-cta{background:transparent;border:1px solid var(--accent);color:var(--accent);font-family:'Rajdhani',sans-serif;font-weight:600;font-size:13px;letter-spacing:0.12em;text-transform:uppercase;padding:8px 20px;cursor:pointer;text-decoration:none;transition:all 0.2s;display:inline-block}
+.nav-cta:hover{background:var(--accent);color:var(--core)}
+
+/* PAGE HEADER */
+.page-header{padding:32px 48px 20px;max-width:1400px;margin:0 auto}
+.dash-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.eyebrow-line{width:32px;height:1px;background:var(--accent)}
+.eyebrow-text{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase}
+.page-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:32px;text-transform:uppercase;letter-spacing:0.05em;color:var(--primary)}
+.page-title span{color:var(--accent)}
+
+/* PIPELINE STRIP */
+.pipeline-strip{display:flex;align-items:center;gap:24px;padding:8px 16px;border:1px solid var(--border);border-bottom:none;background:rgba(0,28,28,0.85)}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 1.5s ease-in-out infinite}
+.strip-item{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.1em}
+.strip-item.live{color:var(--accent);display:flex;align-items:center;gap:6px}
+
+/* STAT CARDS */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-bottom:12px}
+.stat-card{background:rgba(0,43,43,0.75);border:1px solid var(--border);padding:16px 18px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:-1px;left:-1px;width:10px;height:10px;border-top:2px solid var(--accent);border-left:2px solid var(--accent)}
+.stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.82);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:6px}
+.stat-value{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:28px;color:var(--primary);line-height:1}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.stat-trend-up{color:#10B981;font-size:11px;font-family:'Share Tech Mono',monospace;margin-top:3px}
+.stat-trend-dn{color:#ef4444;font-size:11px;font-family:'Share Tech Mono',monospace;margin-top:3px}
+
+/* MAIN PANEL */
+.panel{background:rgba(0,43,43,0.65);border:1px solid var(--border);position:relative;margin-bottom:2px}
+.panel::before{content:'';position:absolute;top:-1px;left:-1px;width:14px;height:14px;border-top:2px solid var(--accent);border-left:2px solid var(--accent)}
+.panel::after{content:'';position:absolute;bottom:-1px;right:-1px;width:14px;height:14px;border-bottom:2px solid var(--accent);border-right:2px solid var(--accent)}
+.panel-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:8px 14px;border-bottom:1px solid rgba(16,185,129,0.1)}
+
+/* INNER TABS */
+.inner-tabs{display:flex;border-bottom:none}
+.itab{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;padding:9px 18px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;transition:all 0.2s}
+.itab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.itab:hover{color:var(--primary)}
+.itab-content{display:none}.itab-content.active{display:block}
+
+/* FORMAT BUTTONS */
+.fmt-btn{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:5px 10px;cursor:pointer;color:var(--muted);background:none;border:1px solid rgba(16,185,129,0.2);transition:all 0.2s}
+.fmt-btn.active{color:var(--accent);border-color:var(--accent);background:rgba(16,185,129,0.08)}
+.fmt-btn:hover{color:var(--primary);border-color:rgba(16,185,129,0.5)}
+
+/* SEARCH BAR */
+.search-row{display:flex;align-items:center;gap:8px;padding:7px 14px;border-bottom:1px solid rgba(16,185,129,0.08);flex-wrap:wrap}
+.search-input{flex:1;min-width:160px;background:rgba(0,43,43,0.8);border:1px solid rgba(16,185,129,0.2);color:#fff;font-family:'Share Tech Mono',monospace;font-size:11px;padding:5px 10px;outline:none;letter-spacing:0.05em}
+.search-input::placeholder{color:rgba(255,255,255,0.25)}
+
+/* TABLES */
+table{width:100%;border-collapse:collapse}
+.tbl-head th{font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(16,185,129,0.75);letter-spacing:0.15em;text-transform:uppercase;padding:8px 14px;text-align:left;border-bottom:1px solid rgba(16,185,129,0.2)}
+.tbl-row td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.09);vertical-align:middle}
+.tbl-row:last-child td{border-bottom:none}
+.tbl-row:hover td{background:rgba(16,185,129,0.04)}
+.team-name{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:15px;color:var(--primary);letter-spacing:0.03em}
+.team-code{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:10px;padding:2px 6px;border:1px solid rgba(16,185,129,0.3);color:var(--accent);margin-right:6px}
+.rank-num{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:rgba(16,185,129,0.5);width:28px;text-align:right;padding-right:6px}
+.stat-val{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--primary)}
+.stat-mono{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)}
+
+/* MATCHUP GRADES */
+.grade-easy{color:#10B981;font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:700;padding:2px 6px;border:1px solid rgba(16,185,129,0.4)}
+.grade-mid{color:#fbbf24;font-family:'Share Tech Mono',monospace;font-size:11px;padding:2px 6px;border:1px solid rgba(251,191,36,0.4)}
+.grade-hard{color:#ef4444;font-family:'Share Tech Mono',monospace;font-size:11px;padding:2px 6px;border:1px solid rgba(239,68,68,0.4)}
+.pts{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;color:var(--accent);white-space:nowrap}
+.sub-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.75);padding:6px 14px;background:rgba(0,28,28,0.4);border-bottom:1px solid rgba(16,185,129,0.08);letter-spacing:0.15em}
+
+/* MATCHUP GRID */
+.matchup-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
+.matchup-card{background:rgba(0,28,28,0.7);border:1px solid rgba(16,185,129,0.15);padding:14px}
+.matchup-card::before{content:'';display:block;font-family:'Share Tech Mono',monospace}
+.matchup-pos{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--accent);letter-spacing:0.2em;margin-bottom:8px}
+.matchup-item{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.06)}
+.matchup-item:last-child{border-bottom:none}
+.matchup-team{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)}
+.matchup-pts{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px}
+
+footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(16,185,129,0.18)}
+.footer-left{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:14px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.5)}
+.footer-left span{color:var(--accent)}
+.footer-right{font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:0.1em}
+
+@media(max-width:600px){
+  nav{padding:14px 20px}
+  .nav-tag,.nav-links{display:none}
+  .logo-text{font-size:15px}
+  .logo-icon{width:28px;height:28px}
+  .nav-cta{font-size:11px;padding:6px 12px}
+  .page-header{padding:20px 16px 16px}
+  .page-title{font-size:24px}
+  div[style*="padding:32px 48px"]{padding:20px 16px 40px !important}
+  .pipeline-strip{gap:12px;padding:7px 12px;flex-wrap:wrap}
+  .strip-item{font-size:8px}
+  .stat-grid{grid-template-columns:1fr 1fr}
+  .stat-card{padding:12px 14px}
+  .stat-value{font-size:22px}
+  .matchup-grid{grid-template-columns:1fr 1fr}
+  .tbl-head th{padding:6px 10px;font-size:8px}
+  .tbl-row td{padding:8px 10px}
+  table{table-layout:fixed;width:100%}
+  footer{padding:20px 16px;flex-direction:column;gap:8px;text-align:center}
+}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="scanline"></div>
+<div class="page">
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="logo-icon">
+      <svg class="eye-svg" viewBox="0 0 20 14" fill="none">
+        <path d="M1 7C1 7 4.5 1.5 10 1.5C15.5 1.5 19 7 19 7C19 7 15.5 12.5 10 12.5C4.5 12.5 1 7 1 7Z" stroke="#10B981" stroke-width="1.2"/>
+        <circle cx="10" cy="7" r="2.5" stroke="#10B981" stroke-width="1.2"/>
+        <circle cx="10" cy="7" r="1" fill="#10B981"/>
+      </svg>
+    </div>
+    <div class="logo-text">Sleeper <span>Cell</span></div>
+    <svg viewBox="0 0 15 15" width="22" height="22" fill="#10B981" style="margin-left:6px;flex-shrink:0" xmlns="http://www.w3.org/2000/svg"><path d="M7.53,3C3.09,3,1,7.5,1,7.5S3.09,12,7.53,12S14,7.5,14,7.5S12,3,7.53,3z M11,7v1.5C11,8.7761,10.7761,9,10.5,9S10,8.7761,10,8.5V8H8v0.5C8,8.7761,7.7761,9,7.5,9S7,8.7761,7,8.5V8H5v0.5C5,8.7761,4.7761,9,4.5,9S4,8.7761,4,8.5v-2C4,6.2239,4.2239,6,4.5,6S5,6.2239,5,6.5V7h2V6.5C7,6.2239,7.2239,6,7.5,6S8,6.2239,8,6.5V7h2V6.5C10,6.2239,10.2239,6,10.5,6S11,6.2239,11,6.5V7z"/></svg>
+  </a>
+  <div class="nav-tag">// FANTASY INTEL NETWORK //</div>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">Home</a>
+    <a href="dashboard.html" class="nav-link">Dashboard</a>
+    <a href="team-stats.html" class="nav-link active">Teams</a>
+    <a href="index.html#subscribe" class="nav-link">Newsletter</a>
+  </div>
+  <a href="index.html#subscribe" class="nav-cta">Join the Cell</a>
+</nav>
+
+<div style="max-width:1400px;margin:0 auto;padding:32px 48px 64px">
+
+  <div class="page-header" style="padding:0 0 20px">
+    <div class="dash-eyebrow"><div class="eyebrow-line"></div><span class="eyebrow-text">Team Intelligence</span></div>
+    <div class="page-title">Team <span>Statistics</span></div>
+  </div>
+
+  <!-- PIPELINE STRIP -->
+  <div class="pipeline-strip" id="pipeline-strip">
+    <div class="strip-item live"><div class="live-dot"></div>PIPELINE ACTIVE</div>
+    <div class="strip-item" id="meta-season">2026 SEASON</div>
+    <div class="strip-item" id="meta-lastrun">LAST RUN: —</div>
+    <div class="strip-item" id="meta-weeks">— WEEKS</div>
+  </div>
+
+  <!-- HEADLINE STAT CARDS -->
+  <div class="stat-grid" style="margin-top:2px">
+    <div class="stat-card">
+      <div class="stat-label">Best Offense</div>
+      <div class="stat-value" id="best-off-team">—</div>
+      <div class="stat-sub" id="best-off-ppg">— pts/game</div>
+      <div class="stat-trend-up" id="best-off-rank"></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Best Defense</div>
+      <div class="stat-value" id="best-def-team">—</div>
+      <div class="stat-sub" id="best-def-ppg">— pts allowed/game</div>
+      <div class="stat-trend-up" id="best-def-rank"></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Most Passing</div>
+      <div class="stat-value" id="best-pass-team">—</div>
+      <div class="stat-sub" id="best-pass-ypg">— pass yds/game</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Easiest Def vs WR</div>
+      <div class="stat-value" id="best-matchup-wr">—</div>
+      <div class="stat-sub" id="best-matchup-wr-pts">— fantasy pts allowed</div>
+    </div>
+  </div>
+
+  <!-- MAIN PANEL: OFFENSE / DEFENSE / MATCHUPS TABS -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="inner-tabs" style="border-bottom:none">
+        <button class="itab active" onclick="mainTab(this,'tab-offense')">▸ Offense</button>
+        <button class="itab" onclick="mainTab(this,'tab-defense')">▸ Defense</button>
+        <button class="itab" onclick="mainTab(this,'tab-matchups')">▸ Fantasy Matchups</button>
+      </div>
+    </div>
+
+    <!-- OFFENSE TAB -->
+    <div id="tab-offense" class="itab-content active">
+      <div class="search-row">
+        <input class="search-input" id="off-search" type="text" placeholder="Search team…" oninput="searchOff(this.value)">
+        <div style="display:flex;gap:4px;flex-wrap:wrap" id="off-sort-btns">
+          <button class="fmt-btn active" data-col="pts_per_game" onclick="sortOffBy(this,'pts_per_game')">PTS</button>
+          <button class="fmt-btn" data-col="pass_yds_per_game" onclick="sortOffBy(this,'pass_yds_per_game')">PASS YDS</button>
+          <button class="fmt-btn" data-col="rush_yds_per_game" onclick="sortOffBy(this,'rush_yds_per_game')">RUSH YDS</button>
+          <button class="fmt-btn" data-col="pass_tds_per_game" onclick="sortOffBy(this,'pass_tds_per_game')">PASS TDs</button>
+          <button class="fmt-btn" data-col="targets_per_game" onclick="sortOffBy(this,'targets_per_game')">TARGETS</button>
+        </div>
+      </div>
+      <div id="off-table-wrap"></div>
+    </div>
+
+    <!-- DEFENSE TAB -->
+    <div id="tab-defense" class="itab-content">
+      <div class="search-row">
+        <input class="search-input" id="def-search" type="text" placeholder="Search team…" oninput="searchDef(this.value)">
+        <div style="display:flex;gap:4px;flex-wrap:wrap" id="def-sort-btns">
+          <button class="fmt-btn active" data-col="pts_allowed_pg" onclick="sortDefBy(this,'pts_allowed_pg')">PTS ALLOWED</button>
+          <button class="fmt-btn" data-col="pass_yds_allowed_pg" onclick="sortDefBy(this,'pass_yds_allowed_pg')">PASS YDS</button>
+          <button class="fmt-btn" data-col="rush_yds_allowed_pg" onclick="sortDefBy(this,'rush_yds_allowed_pg')">RUSH YDS</button>
+          <button class="fmt-btn" data-col="sacks_per_game" onclick="sortDefBy(this,'sacks_per_game')">SACKS</button>
+          <button class="fmt-btn" data-col="ints_per_game" onclick="sortDefBy(this,'ints_per_game')">INTs</button>
+        </div>
+      </div>
+      <div id="def-table-wrap"></div>
+    </div>
+
+    <!-- MATCHUPS TAB -->
+    <div id="tab-matchups" class="itab-content">
+      <div class="panel-header" style="border-bottom:1px solid rgba(16,185,129,0.1)">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.1em">FANTASY PTS ALLOWED BY POSITION — LOWER = HARDER MATCHUP, HIGHER = EASIER TARGET</div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap" id="matchup-pos-btns">
+          <button class="fmt-btn active" data-pos="WR" onclick="switchMatchupPos(this,'WR')">WR</button>
+          <button class="fmt-btn" data-pos="RB" onclick="switchMatchupPos(this,'RB')">RB</button>
+          <button class="fmt-btn" data-pos="QB" onclick="switchMatchupPos(this,'QB')">QB</button>
+          <button class="fmt-btn" data-pos="TE" onclick="switchMatchupPos(this,'TE')">TE</button>
+        </div>
+      </div>
+      <div class="search-row">
+        <input class="search-input" id="matchup-search" type="text" placeholder="Search team…" oninput="searchMatchup(this.value)">
+        <div style="display:flex;gap:4px">
+          <button class="fmt-btn active" data-val="easy" onclick="filterMatchup(this,'easy')">▲ EASY</button>
+          <button class="fmt-btn" data-val="mid" onclick="filterMatchup(this,'mid')">— MID</button>
+          <button class="fmt-btn" data-val="hard" onclick="filterMatchup(this,'hard')">▼ HARD</button>
+          <button class="fmt-btn" data-val="all" onclick="filterMatchup(this,'all')">ALL</button>
+        </div>
+      </div>
+      <div id="matchup-table-wrap"></div>
+    </div>
+  </div>
+
+  <!-- TRENDS PANEL -->
+  <div class="panel" style="margin-top:12px">
+    <div class="panel-header">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.15em">// WEEKLY PACE LEADERS //</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.08em" id="pace-week-label"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0" id="pace-grid">
+      <div style="padding:16px;border-right:1px solid rgba(16,185,129,0.08)">
+        <div class="sub-label" style="padding:0 0 8px;border-bottom:1px solid rgba(16,185,129,0.08);margin-bottom:10px">// HIGHEST SCORING OFFENSES //</div>
+        <div id="pace-off"></div>
+      </div>
+      <div style="padding:16px;border-right:1px solid rgba(16,185,129,0.08)">
+        <div class="sub-label" style="padding:0 0 8px;border-bottom:1px solid rgba(16,185,129,0.08);margin-bottom:10px">// BEST DEFENSES //</div>
+        <div id="pace-def"></div>
+      </div>
+      <div style="padding:16px">
+        <div class="sub-label" style="padding:0 0 8px;border-bottom:1px solid rgba(16,185,129,0.08);margin-bottom:10px">// MOST PASS ATTEMPTS //</div>
+        <div id="pace-pass"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-left">Sleeper <span>Cell</span> &nbsp;·&nbsp; Fantasy Intelligence</div>
+  <div class="footer-right">// CLASSIFIED // FANTASY OPERATIONS DIVISION //</div>
+</footer>
+
+</div>
+<script>
+const BASE='https://cdn.jsdelivr.net/gh/sliwij25/sleeper-cell@main/data/';
+
+async function load(f){try{const r=await fetch(BASE+f+'?t='+Date.now());if(!r.ok)throw new Error(r.status);return await r.json();}catch(e){console.warn('Could not load '+f,e);return null;}}
+function set(id,v){const el=document.getElementById(id);if(el)el.textContent=v;}
+
+// ── MAIN TAB SWITCHING ───────────────────────────────────
+function mainTab(btn,id){
+  document.querySelectorAll('.itab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.itab-content').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+
+// ── SHARED HELPERS ───────────────────────────────────────
+function _th(col,label,sortCol,fn){
+  const on=sortCol===col;
+  const arr=on?' ↓':'';
+  return`<th onclick="${fn}('${col}')" style="cursor:pointer;user-select:none;white-space:nowrap">${label}<span style="font-size:9px;opacity:${on?1:0.3}">${arr||' ↕'}</span></th>`;
+}
+function emptyState(msg){
+  return`<div style="padding:24px;font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.4);text-align:center;letter-spacing:0.1em">${msg}</div>`;
+}
+function gradeClass(val,threshHigh,threshLow){
+  // For offense metrics — high is good
+  if(val>=threshHigh)return'grade-easy';
+  if(val<=threshLow)return'grade-hard';
+  return'grade-mid';
+}
+function gradeClassDef(val,threshLow,threshHigh){
+  // For defense metrics — low pts allowed is good (hard matchup)
+  if(val<=threshLow)return'grade-hard';
+  if(val>=threshHigh)return'grade-easy';
+  return'grade-mid';
+}
+function gradeLabelDef(val,threshLow,threshHigh){
+  if(val<=threshLow)return'▼ HARD';
+  if(val>=threshHigh)return'▲ EASY';
+  return'— MID';
+}
+
+// ── STATE ────────────────────────────────────────────────
+let _teamData=null;
+let _offSortCol='pts_per_game', _offSearch='';
+let _defSortCol='pts_allowed_pg', _defSearch='';
+let _matchupPos='WR', _matchupSearch='', _matchupFilter='easy';
+
+// ── OFFENSE TABLE ────────────────────────────────────────
+function renderOffense(){
+  const el=document.getElementById('off-table-wrap');
+  if(!el)return;
+  if(!_teamData?.offense?.length){el.innerHTML=emptyState('// OFFENSIVE STATS POPULATE IN-SEASON //');return;}
+  let list=[..._teamData.offense];
+  if(_offSearch){const q=_offSearch.toLowerCase();list=list.filter(t=>(t.team||'').toLowerCase().includes(q)||(t.team_name||'').toLowerCase().includes(q));}
+  list.sort((a,b)=>(b[_offSortCol]||0)-(a[_offSortCol]||0));
+  const T=col=>_th(col,{pts_per_game:'PTS/G',pass_yds_per_game:'PASS YDS',rush_yds_per_game:'RUSH YDS',pass_tds_per_game:'PASS TDs',rush_tds_per_game:'RUSH TDs',targets_per_game:'TARGETS',red_zone_pct:'RZ%'}[col]||col,_offSortCol,'sortOffCol');
+  el.innerHTML=`<table><thead class="tbl-head"><tr><th>#</th><th>Team</th>${T('pts_per_game')}${T('pass_yds_per_game')}${T('rush_yds_per_game')}${T('pass_tds_per_game')}${T('rush_tds_per_game')}${T('targets_per_game')}${T('red_zone_pct')}</tr></thead><tbody>`+
+    list.map((t,i)=>{
+      const rz=t.red_zone_pct!=null?(t.red_zone_pct*100).toFixed(0)+'%':'—';
+      const ppg=(t.pts_per_game||0).toFixed(1);
+      const ppgCls=gradeClass(t.pts_per_game||0,27,18);
+      return`<tr class="tbl-row">
+        <td class="rank-num">${i+1}</td>
+        <td><span class="team-code">${t.team||'—'}</span><span class="team-name">${t.team_name||t.team||'—'}</span></td>
+        <td><span class="${ppgCls}">${ppg}</span></td>
+        <td class="stat-mono">${(t.pass_yds_per_game||0).toFixed(0)}</td>
+        <td class="stat-mono">${(t.rush_yds_per_game||0).toFixed(0)}</td>
+        <td class="stat-mono">${(t.pass_tds_per_game||0).toFixed(2)}</td>
+        <td class="stat-mono">${(t.rush_tds_per_game||0).toFixed(2)}</td>
+        <td class="stat-mono">${(t.targets_per_game||0).toFixed(1)}</td>
+        <td class="stat-mono">${rz}</td>
+      </tr>`;
+    }).join('')+'</tbody></table>';
+}
+function sortOffBy(btn,col){
+  document.querySelectorAll('#off-sort-btns .fmt-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  _offSortCol=col;
+  renderOffense();
+}
+function sortOffCol(col){_offSortCol=col;renderOffense();}
+function searchOff(val){_offSearch=val.trim();renderOffense();}
+
+// ── DEFENSE TABLE ─────────────────────────────────────────
+function renderDefense(){
+  const el=document.getElementById('def-table-wrap');
+  if(!el)return;
+  if(!_teamData?.defense?.length){el.innerHTML=emptyState('// DEFENSIVE STATS POPULATE IN-SEASON //');return;}
+  let list=[..._teamData.defense];
+  if(_defSearch){const q=_defSearch.toLowerCase();list=list.filter(t=>(t.team||'').toLowerCase().includes(q)||(t.team_name||'').toLowerCase().includes(q));}
+  list.sort((a,b)=>{
+    // For defense, lower pts_allowed is better — sort asc by default for those cols
+    const ascCols=['pts_allowed_pg','pass_yds_allowed_pg','rush_yds_allowed_pg'];
+    if(ascCols.includes(_defSortCol))return(a[_defSortCol]||0)-(b[_defSortCol]||0);
+    return(b[_defSortCol]||0)-(a[_defSortCol]||0);
+  });
+  const T=col=>_th(col,{pts_allowed_pg:'PTS ALLOWED',pass_yds_allowed_pg:'PASS YDS',rush_yds_allowed_pg:'RUSH YDS',sacks_per_game:'SACKS',ints_per_game:'INTs',fpts_vs_qb:'vs QB',fpts_vs_rb:'vs RB',fpts_vs_wr:'vs WR',fpts_vs_te:'vs TE'}[col]||col,_defSortCol,'sortDefCol');
+  el.innerHTML=`<table><thead class="tbl-head"><tr><th>#</th><th>Team</th>${T('pts_allowed_pg')}${T('pass_yds_allowed_pg')}${T('rush_yds_allowed_pg')}${T('sacks_per_game')}${T('ints_per_game')}${T('fpts_vs_qb')}${T('fpts_vs_rb')}${T('fpts_vs_wr')}${T('fpts_vs_te')}</tr></thead><tbody>`+
+    list.map((t,i)=>{
+      const pa=(t.pts_allowed_pg||0).toFixed(1);
+      const paCls=gradeClassDef(t.pts_allowed_pg||0,17,27);
+      const qbCls=gradeClassDef(t.fpts_vs_qb||0,18,26);
+      const rbCls=gradeClassDef(t.fpts_vs_rb||0,16,22);
+      const wrCls=gradeClassDef(t.fpts_vs_wr||0,20,30);
+      const teCls=gradeClassDef(t.fpts_vs_te||0,8,14);
+      return`<tr class="tbl-row">
+        <td class="rank-num">${i+1}</td>
+        <td><span class="team-code">${t.team||'—'}</span><span class="team-name">${t.team_name||t.team||'—'}</span></td>
+        <td><span class="${paCls}">${pa}</span></td>
+        <td class="stat-mono">${(t.pass_yds_allowed_pg||0).toFixed(0)}</td>
+        <td class="stat-mono">${(t.rush_yds_allowed_pg||0).toFixed(0)}</td>
+        <td class="stat-mono">${(t.sacks_per_game||0).toFixed(2)}</td>
+        <td class="stat-mono">${(t.ints_per_game||0).toFixed(2)}</td>
+        <td><span class="${qbCls}">${t.fpts_vs_qb!=null?(t.fpts_vs_qb).toFixed(1):'—'}</span></td>
+        <td><span class="${rbCls}">${t.fpts_vs_rb!=null?(t.fpts_vs_rb).toFixed(1):'—'}</span></td>
+        <td><span class="${wrCls}">${t.fpts_vs_wr!=null?(t.fpts_vs_wr).toFixed(1):'—'}</span></td>
+        <td><span class="${teCls}">${t.fpts_vs_te!=null?(t.fpts_vs_te).toFixed(1):'—'}</span></td>
+      </tr>`;
+    }).join('')+'</tbody></table>';
+}
+function sortDefBy(btn,col){
+  document.querySelectorAll('#def-sort-btns .fmt-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  _defSortCol=col;
+  renderDefense();
+}
+function sortDefCol(col){_defSortCol=col;renderDefense();}
+function searchDef(val){_defSearch=val.trim();renderDefense();}
+
+// ── MATCHUP TABLE ─────────────────────────────────────────
+function switchMatchupPos(btn,pos){
+  document.querySelectorAll('#matchup-pos-btns .fmt-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  _matchupPos=pos;
+  renderMatchups();
+}
+function filterMatchup(btn,val){
+  document.querySelectorAll('#matchup-pos-btns').forEach(()=>{});
+  // find parent row
+  btn.closest('div').querySelectorAll('.fmt-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  _matchupFilter=val;
+  renderMatchups();
+}
+function searchMatchup(val){_matchupSearch=val.trim();renderMatchups();}
+
+function renderMatchups(){
+  const el=document.getElementById('matchup-table-wrap');
+  if(!el)return;
+  if(!_teamData?.defense?.length){el.innerHTML=emptyState('// MATCHUP DATA POPULATES IN-SEASON //');return;}
+  const posKey='fpts_vs_'+_matchupPos.toLowerCase();
+  const thresholds={QB:[18,26],RB:[16,22],WR:[20,30],TE:[8,14]};
+  const [lo,hi]=thresholds[_matchupPos]||[15,25];
+
+  let list=[..._teamData.defense].filter(t=>t[posKey]!=null);
+  if(_matchupSearch){const q=_matchupSearch.toLowerCase();list=list.filter(t=>(t.team||'').toLowerCase().includes(q)||(t.team_name||'').toLowerCase().includes(q));}
+  if(_matchupFilter!=='all'){
+    list=list.filter(t=>{
+      const v=t[posKey];
+      if(_matchupFilter==='easy')return v>=hi;
+      if(_matchupFilter==='hard')return v<=lo;
+      return v>lo&&v<hi;
+    });
+  }
+  // sort easiest first (highest pts allowed)
+  list.sort((a,b)=>(b[posKey]||0)-(a[posKey]||0));
+
+  if(!list.length){el.innerHTML=emptyState(_matchupSearch||_matchupFilter!=='all'?'// NO MATCHES //':'// MATCHUP DATA POPULATES IN-SEASON //');return;}
+  const posColor={QB:'#60a5fa',RB:'#34d399',WR:'#a78bfa',TE:'#fbbf24'};
+  const col=posColor[_matchupPos]||'#fff';
+  el.innerHTML=`<table><thead class="tbl-head"><tr><th>#</th><th>Defense</th>
+    <th style="color:${col}">${_matchupPos} PTS ALLOWED</th>
+    <th>GRADE</th>
+    <th>vs QB</th><th>vs RB</th><th>vs WR</th><th>vs TE</th>
+  </tr></thead><tbody>`+
+    list.map((t,i)=>{
+      const v=(t[posKey]||0).toFixed(1);
+      const grade=gradeLabelDef(t[posKey]||0,lo,hi);
+      const gradeCls=gradeClassDef(t[posKey]||0,lo,hi);
+      return`<tr class="tbl-row">
+        <td class="rank-num">${i+1}</td>
+        <td><span class="team-code">${t.team||'—'}</span><span class="team-name">${t.team_name||t.team||'—'}</span></td>
+        <td><div class="pts">${v}</div></td>
+        <td><span class="${gradeCls}">${grade}</span></td>
+        <td class="stat-mono">${t.fpts_vs_qb!=null?(t.fpts_vs_qb).toFixed(1):'—'}</td>
+        <td class="stat-mono">${t.fpts_vs_rb!=null?(t.fpts_vs_rb).toFixed(1):'—'}</td>
+        <td class="stat-mono">${t.fpts_vs_wr!=null?(t.fpts_vs_wr).toFixed(1):'—'}</td>
+        <td class="stat-mono">${t.fpts_vs_te!=null?(t.fpts_vs_te).toFixed(1):'—'}</td>
+      </tr>`;
+    }).join('')+'</tbody></table>';
+}
+
+// ── PACE LEADERS (side panel) ─────────────────────────────
+function renderPaceLeaders(){
+  if(!_teamData)return;
+  const off=(_teamData.offense||[]).slice().sort((a,b)=>(b.pts_per_game||0)-(a.pts_per_game||0)).slice(0,5);
+  const def=(_teamData.defense||[]).slice().sort((a,b)=>(a.pts_allowed_pg||0)-(b.pts_allowed_pg||0)).slice(0,5);
+  const pass=(_teamData.offense||[]).slice().sort((a,b)=>(b.pass_yds_per_game||0)-(a.pass_yds_per_game||0)).slice(0,5);
+
+  function paceRow(t,val,unit){
+    return`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">${t.team||'—'}</div>
+      <div class="pts" style="font-size:15px">${val}${unit}</div>
+    </div>`;
+  }
+  const offEl=document.getElementById('pace-off');
+  const defEl=document.getElementById('pace-def');
+  const passEl=document.getElementById('pace-pass');
+  if(offEl)offEl.innerHTML=off.length?off.map(t=>paceRow(t,(t.pts_per_game||0).toFixed(1),' PPG')).join(''):'<div class="stat-mono" style="padding:8px 0">// NO DATA //</div>';
+  if(defEl)defEl.innerHTML=def.length?def.map(t=>paceRow(t,(t.pts_allowed_pg||0).toFixed(1),' PPG')).join(''):'<div class="stat-mono" style="padding:8px 0">// NO DATA //</div>';
+  if(passEl)passEl.innerHTML=pass.length?pass.map(t=>paceRow(t,Math.round(t.pass_yds_per_game||0),' YPG')).join(''):'<div class="stat-mono" style="padding:8px 0">// NO DATA //</div>';
+}
+
+// ── HEADLINE CARDS ───────────────────────────────────────
+function renderHeadlineCards(){
+  if(!_teamData)return;
+  const off=_teamData.offense||[];
+  const def=_teamData.defense||[];
+  if(off.length){
+    const top=[...off].sort((a,b)=>(b.pts_per_game||0)-(a.pts_per_game||0))[0];
+    set('best-off-team',top.team||'—');
+    set('best-off-ppg',(top.pts_per_game||0).toFixed(1)+' pts/game');
+    set('best-off-rank','#1 scoring offense');
+    const topPass=[...off].sort((a,b)=>(b.pass_yds_per_game||0)-(a.pass_yds_per_game||0))[0];
+    set('best-pass-team',topPass.team||'—');
+    set('best-pass-ypg',Math.round(topPass.pass_yds_per_game||0)+' pass yds/game');
+  }
+  if(def.length){
+    const top=[...def].sort((a,b)=>(a.pts_allowed_pg||0)-(b.pts_allowed_pg||0))[0];
+    set('best-def-team',top.team||'—');
+    set('best-def-ppg',(top.pts_allowed_pg||0).toFixed(1)+' pts allowed/game');
+    set('best-def-rank','#1 scoring defense');
+    const easiestWR=[...def].sort((a,b)=>(b.fpts_vs_wr||0)-(a.fpts_vs_wr||0))[0];
+    if(easiestWR?.fpts_vs_wr){
+      set('best-matchup-wr',easiestWR.team||'—');
+      set('best-matchup-wr-pts',(easiestWR.fpts_vs_wr||0).toFixed(1)+' fpts allowed vs WR');
+    }
+  }
+}
+
+// ── LOAD META ────────────────────────────────────────────
+async function loadMeta(){
+  const d=await load('meta.json');if(!d)return;
+  set('meta-season',d.season+' SEASON');
+  if(d.last_run)set('meta-lastrun','LAST RUN: '+new Date(d.last_run).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',timeZoneName:'short'}));
+}
+
+// ── LOAD TEAM STATS ──────────────────────────────────────
+async function loadTeamStats(){
+  const d=await load('team_stats.json');
+  if(!d){
+    // No data file yet — show placeholders everywhere
+    ['off-table-wrap','def-table-wrap','matchup-table-wrap'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el)el.innerHTML=emptyState('// TEAM STATS POPULATE IN-SEASON — PIPELINE RUNNING //');
+    });
+    ['pace-off','pace-def','pace-pass'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el)el.innerHTML='<div style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(16,185,129,0.4);padding:8px 0;letter-spacing:0.1em">// IN-SEASON //</div>';
+    });
+    return;
+  }
+  _teamData=d;
+  if(d.weeks_played)set('meta-weeks',d.weeks_played+' WEEKS');
+  renderHeadlineCards();
+  renderOffense();
+  renderDefense();
+  renderMatchups();
+  renderPaceLeaders();
+}
+
+Promise.all([loadMeta(),loadTeamStats()])
+  .then(()=>console.log('[team-stats] data loaded'));
+</script>
+</body>
+</html>
