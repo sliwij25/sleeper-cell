@@ -412,8 +412,8 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
         <button class="itab" onclick="innerTab(this,'p-superflex')">SUPERFLEX</button>
       </div>
       <div id="proj-sf-btns" style="display:flex;gap:4px;flex-wrap:wrap">
-        <button class="fmt-btn"        data-sf="full_ppr" onclick="projFmt(this)">PPR</button>
-        <button class="fmt-btn active" data-sf="half_ppr" onclick="projFmt(this)">HALF PPR</button>
+        <button class="fmt-btn active" data-sf="full_ppr" onclick="projFmt(this)">PPR</button>
+        <button class="fmt-btn"        data-sf="half_ppr" onclick="projFmt(this)">HALF PPR</button>
         <button class="fmt-btn"        data-sf="no_ppr"   onclick="projFmt(this)">STANDARD</button>
         <button class="fmt-btn"        data-sf="te_plus"  onclick="projFmt(this)">TE+</button>
       </div>
@@ -438,8 +438,8 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
         <button class="itab" onclick="innerTab(this,'r-superflex')">SUPERFLEX</button>
       </div>
       <div id="rank-toggles" style="display:flex;gap:4px;flex-wrap:wrap">
-        <button class="fmt-btn"        data-sf="full_ppr" onclick="rankFmt(this)">PPR</button>
-        <button class="fmt-btn active" data-sf="half_ppr" onclick="rankFmt(this)">HALF PPR</button>
+        <button class="fmt-btn active" data-sf="full_ppr" onclick="rankFmt(this)">PPR</button>
+        <button class="fmt-btn"        data-sf="half_ppr" onclick="rankFmt(this)">HALF PPR</button>
         <button class="fmt-btn"        data-sf="no_ppr"   onclick="rankFmt(this)">STANDARD</button>
         <button class="fmt-btn"        data-sf="te_plus"  onclick="rankFmt(this)">TE+</button>
       </div>
@@ -607,7 +607,7 @@ async function loadMeta(){
 
 // ── RANKINGS ───────────────────────────────────────────────
 let _rankData=null;
-let _rankSF='half_ppr';
+let _rankSF='full_ppr';
 
 function _renderRankings(positions,sf){
   // positions = {QB:[...],RB:[...],WR:[...],TE:[...]}
@@ -737,7 +737,7 @@ function _pprAdj(pos,sf){
 
 // ── PROJECTIONS ────────────────────────────────────────────
 let _projData=null;
-let _projSF='half_ppr';
+let _projSF='full_ppr';
 
 function _renderProjections(projData,sf){
   const base={QB:projData.QB||[],RB:projData.RB||[],WR:projData.WR||[],TE:projData.TE||[]};
