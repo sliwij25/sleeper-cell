@@ -165,7 +165,7 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
 
   <div class="page-header" style="padding:0 0 20px">
     <div class="dash-eyebrow"><div class="eyebrow-line"></div><span class="eyebrow-text">Team Intelligence</span></div>
-    <div class="page-title">Team <span>Statistics</span></div>
+    <div class="page-title">Team <span>Statistics</span> <svg viewBox="0 0 15 15" width="32" height="32" fill="#10B981" style="display:inline-block;vertical-align:middle;margin-left:10px;opacity:0.9" xmlns="http://www.w3.org/2000/svg"><path d="M7.53,3C3.09,3,1,7.5,1,7.5S3.09,12,7.53,12S14,7.5,14,7.5S12,3,7.53,3z M11,7v1.5C11,8.7761,10.7761,9,10.5,9S10,8.7761,10,8.5V8H8v0.5C8,8.7761,7.7761,9,7.5,9S7,8.7761,7,8.5V8H5v0.5C5,8.7761,4.7761,9,4.5,9S4,8.7761,4,8.5v-2C4,6.2239,4.2239,6,4.5,6S5,6.2239,5,6.5V7h2V6.5C7,6.2239,7.2239,6,7.5,6S8,6.2239,8,6.5V7h2V6.5C10,6.2239,10.2239,6,10.5,6S11,6.2239,11,6.5V7z"/></svg></div>
   </div>
 
   <!-- PIPELINE STRIP -->
@@ -270,10 +270,10 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
       <div class="search-row">
         <input class="search-input" id="matchup-search" type="text" placeholder="Search team…" oninput="searchMatchup(this.value)">
         <div style="display:flex;gap:4px">
+          <button class="fmt-btn active" data-val="all" onclick="filterMatchup(this,'all')">ALL</button>
           <button class="fmt-btn" data-val="easy" onclick="filterMatchup(this,'easy')">▲ EASY</button>
           <button class="fmt-btn" data-val="mid" onclick="filterMatchup(this,'mid')">— MID</button>
           <button class="fmt-btn" data-val="hard" onclick="filterMatchup(this,'hard')">▼ HARD</button>
-          <button class="fmt-btn active" data-val="all" onclick="filterMatchup(this,'all')">ALL</button>
         </div>
       </div>
       <div id="matchup-table-wrap"></div>
@@ -476,8 +476,11 @@ function renderMatchups(){
   if(!el)return;
   if(!_teamData?.defense?.length){el.innerHTML=emptyState('// MATCHUP DATA POPULATES IN-SEASON //');return;}
   const posKey='fpts_vs_'+_matchupPos.toLowerCase();
-  const thresholds={QB:[19,24],RB:[16,22],WR:[20,28],TE:[8,13]};
-  const [lo,hi]=thresholds[_matchupPos]||[15,25];
+
+  // Dynamic thresholds: split actual data into thirds so ~⅓ always shows as easy/hard
+  const allVals=[..._teamData.defense].filter(t=>t[posKey]!=null).map(t=>t[posKey]).sort((a,b)=>a-b);
+  const lo=allVals.length>=3?allVals[Math.floor(allVals.length/3)]:15;
+  const hi=allVals.length>=3?allVals[Math.floor(allVals.length*2/3)]:25;
 
   let list=[..._teamData.defense].filter(t=>t[posKey]!=null);
   if(_matchupSearch){const q=_matchupSearch.toLowerCase();list=list.filter(t=>(t.team||'').toLowerCase().includes(q)||(t.team_name||'').toLowerCase().includes(q));}
@@ -495,10 +498,31 @@ function renderMatchups(){
   if(!list.length){el.innerHTML=emptyState(_matchupSearch||_matchupFilter!=='all'?'// NO MATCHES //':'// MATCHUP DATA POPULATES IN-SEASON //');return;}
   const posColor={QB:'#60a5fa',RB:'#34d399',WR:'#a78bfa',TE:'#fbbf24'};
   const col=posColor[_matchupPos]||'#fff';
+
+  // Position-specific extra column headers
+  const extraHdr={
+    QB:`<th>PASS YDS/G</th><th>PASS ATT/G</th><th>PASS TDs/G</th>`,
+    RB:`<th>RUSH YDS/G</th><th>RUSH TDs/G</th>`,
+    WR:`<th>REC YDS/G</th><th>REC/G</th><th>REC TDs/G</th>`,
+    TE:`<th>REC YDS/G</th><th>REC/G</th><th>REC TDs/G</th>`,
+  }[_matchupPos]||'';
+
+  // Position-specific extra cells per row
+  function extraCells(t){
+    const f1=(v)=>v!=null?v.toFixed(0):'—';
+    const f2=(v)=>v!=null?v.toFixed(1):'—';
+    const f3=(v)=>v!=null?v.toFixed(2):'—';
+    if(_matchupPos==='QB')return`<td class="stat-mono">${f1(t.qb_pass_yds_pg)}</td><td class="stat-mono">${f2(t.qb_pass_att_pg)}</td><td class="stat-mono">${f3(t.qb_pass_tds_pg)}</td>`;
+    if(_matchupPos==='RB')return`<td class="stat-mono">${f1(t.rb_rush_yds_pg)}</td><td class="stat-mono">${f3(t.rb_rush_tds_pg)}</td>`;
+    if(_matchupPos==='WR')return`<td class="stat-mono">${f1(t.wr_rec_yds_pg)}</td><td class="stat-mono">${f2(t.wr_rec_pg)}</td><td class="stat-mono">${f3(t.wr_rec_tds_pg)}</td>`;
+    if(_matchupPos==='TE')return`<td class="stat-mono">${f1(t.te_rec_yds_pg)}</td><td class="stat-mono">${f2(t.te_rec_pg)}</td><td class="stat-mono">${f3(t.te_rec_tds_pg)}</td>`;
+    return'';
+  }
+
   el.innerHTML=`<table><thead class="tbl-head"><tr><th>#</th><th>Defense</th>
-    <th style="color:${col}">${_matchupPos} PTS ALLOWED</th>
+    <th style="color:${col}">${_matchupPos} FPTS/G</th>
     <th>GRADE</th>
-    <th>vs QB</th><th>vs RB</th><th>vs WR</th><th>vs TE</th>
+    ${extraHdr}
   </tr></thead><tbody>`+
     list.map((t,i)=>{
       const v=(t[posKey]||0).toFixed(1);
@@ -509,10 +533,7 @@ function renderMatchups(){
         <td><span class="team-code">${t.team||'—'}</span><span class="team-name">${t.team_name||t.team||'—'}</span></td>
         <td><div class="pts">${v}</div></td>
         <td><span class="${gradeCls}">${grade}</span></td>
-        <td class="stat-mono">${t.fpts_vs_qb!=null?(t.fpts_vs_qb).toFixed(1):'—'}</td>
-        <td class="stat-mono">${t.fpts_vs_rb!=null?(t.fpts_vs_rb).toFixed(1):'—'}</td>
-        <td class="stat-mono">${t.fpts_vs_wr!=null?(t.fpts_vs_wr).toFixed(1):'—'}</td>
-        <td class="stat-mono">${t.fpts_vs_te!=null?(t.fpts_vs_te).toFixed(1):'—'}</td>
+        ${extraCells(t)}
       </tr>`;
     }).join('')+'</tbody></table>';
 }
