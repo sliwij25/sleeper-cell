@@ -225,9 +225,11 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
         <input class="search-input" id="off-search" type="text" placeholder="Search team…" oninput="searchOff(this.value)">
         <div style="display:flex;gap:4px;flex-wrap:wrap" id="off-sort-btns">
           <button class="fmt-btn active" data-col="pts_per_game" onclick="sortOffBy(this,'pts_per_game')">FPTS/G</button>
+          <button class="fmt-btn" data-col="est_pts_pg" onclick="sortOffBy(this,'est_pts_pg')">PTS/G</button>
           <button class="fmt-btn" data-col="pass_yds_per_game" onclick="sortOffBy(this,'pass_yds_per_game')">PASS YDS</button>
           <button class="fmt-btn" data-col="rush_yds_per_game" onclick="sortOffBy(this,'rush_yds_per_game')">RUSH YDS</button>
           <button class="fmt-btn" data-col="pass_tds_per_game" onclick="sortOffBy(this,'pass_tds_per_game')">PASS TDs</button>
+          <button class="fmt-btn" data-col="rush_tds_per_game" onclick="sortOffBy(this,'rush_tds_per_game')">RUSH TDs</button>
           <button class="fmt-btn" data-col="targets_per_game" onclick="sortOffBy(this,'targets_per_game')">TARGETS</button>
         </div>
       </div>
@@ -239,11 +241,16 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
       <div class="search-row">
         <input class="search-input" id="def-search" type="text" placeholder="Search team…" oninput="searchDef(this.value)">
         <div style="display:flex;gap:4px;flex-wrap:wrap" id="def-sort-btns">
-          <button class="fmt-btn active" data-col="pts_allowed_pg" onclick="sortDefBy(this,'pts_allowed_pg')">FPTS/G ALLOWED</button>
+          <button class="fmt-btn active" data-col="pts_allowed_pg" onclick="sortDefBy(this,'pts_allowed_pg')">FPTS/G</button>
+          <button class="fmt-btn" data-col="est_def_pts_pg" onclick="sortDefBy(this,'est_def_pts_pg')">PTS/G</button>
           <button class="fmt-btn" data-col="pass_yds_allowed_pg" onclick="sortDefBy(this,'pass_yds_allowed_pg')">PASS YDS</button>
           <button class="fmt-btn" data-col="rush_yds_allowed_pg" onclick="sortDefBy(this,'rush_yds_allowed_pg')">RUSH YDS</button>
           <button class="fmt-btn" data-col="sacks_per_game" onclick="sortDefBy(this,'sacks_per_game')">SACKS</button>
           <button class="fmt-btn" data-col="ints_per_game" onclick="sortDefBy(this,'ints_per_game')">INTs</button>
+          <button class="fmt-btn" data-col="fpts_vs_qb" onclick="sortDefBy(this,'fpts_vs_qb')">vs QB</button>
+          <button class="fmt-btn" data-col="fpts_vs_rb" onclick="sortDefBy(this,'fpts_vs_rb')">vs RB</button>
+          <button class="fmt-btn" data-col="fpts_vs_wr" onclick="sortDefBy(this,'fpts_vs_wr')">vs WR</button>
+          <button class="fmt-btn" data-col="fpts_vs_te" onclick="sortDefBy(this,'fpts_vs_te')">vs TE</button>
         </div>
       </div>
       <div id="def-table-wrap"></div>
@@ -254,9 +261,9 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
       <div class="panel-header" style="border-bottom:1px solid rgba(16,185,129,0.1)">
         <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.1em">FANTASY PTS ALLOWED BY POSITION — LOWER = HARDER MATCHUP, HIGHER = EASIER TARGET</div>
         <div style="display:flex;gap:4px;flex-wrap:wrap" id="matchup-pos-btns">
-          <button class="fmt-btn active" data-pos="WR" onclick="switchMatchupPos(this,'WR')">WR</button>
+          <button class="fmt-btn active" data-pos="QB" onclick="switchMatchupPos(this,'QB')">QB</button>
           <button class="fmt-btn" data-pos="RB" onclick="switchMatchupPos(this,'RB')">RB</button>
-          <button class="fmt-btn" data-pos="QB" onclick="switchMatchupPos(this,'QB')">QB</button>
+          <button class="fmt-btn" data-pos="WR" onclick="switchMatchupPos(this,'WR')">WR</button>
           <button class="fmt-btn" data-pos="TE" onclick="switchMatchupPos(this,'TE')">TE</button>
         </div>
       </div>
@@ -296,7 +303,8 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
         <div style="display:flex;justify-content:space-between;padding:4px 0 6px;border-bottom:1px solid rgba(16,185,129,0.06);margin-bottom:4px">
           <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(16,185,129,0.5);letter-spacing:0.1em">TEAM</span>
           <div style="display:flex;gap:24px">
-            <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(16,185,129,0.6);letter-spacing:0.08em">FPTS/G ALLOWED</span>
+            <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(255,255,255,0.3);letter-spacing:0.08em">PTS/G</span>
+            <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(16,185,129,0.6);letter-spacing:0.08em">FPTS/G</span>
           </div>
         </div>
         <div id="pace-def"></div>
@@ -365,7 +373,7 @@ function gradeLabelDef(val,threshLow,threshHigh){
 let _teamData=null;
 let _offSortCol='pts_per_game', _offSortDir='desc', _offSearch='';
 let _defSortCol='pts_allowed_pg', _defSortDir='asc', _defSearch='';
-let _matchupPos='WR', _matchupSearch='', _matchupFilter='easy';
+let _matchupPos='QB', _matchupSearch='', _matchupFilter='easy';
 
 // ── OFFENSE TABLE ────────────────────────────────────────
 function renderOffense(){
@@ -381,12 +389,11 @@ function renderOffense(){
       const rz=t.red_zone_pct!=null?(t.red_zone_pct*100).toFixed(0)+'%':'—';
       const ppg=(t.pts_per_game||0).toFixed(1);
       const ppgCls=gradeClass(t.pts_per_game||0,27,18);
-      const estPts=((t.pass_tds_per_game||0)+(t.rush_tds_per_game||0))*7;
       return`<tr class="tbl-row">
         <td class="rank-num">${i+1}</td>
         <td><span class="team-code">${t.team||'—'}</span><span class="team-name">${t.team_name||t.team||'—'}</span></td>
         <td><span class="${ppgCls}">${ppg}</span></td>
-        <td class="stat-mono">${estPts.toFixed(1)}</td>
+        <td class="stat-mono">${(t.est_pts_pg||0).toFixed(1)}</td>
         <td class="stat-mono">${(t.pass_yds_per_game||0).toFixed(0)}</td>
         <td class="stat-mono">${(t.rush_yds_per_game||0).toFixed(0)}</td>
         <td class="stat-mono">${(t.pass_tds_per_game||0).toFixed(2)}</td>
@@ -413,8 +420,8 @@ function renderDefense(){
   let list=[..._teamData.defense];
   if(_defSearch){const q=_defSearch.toLowerCase();list=list.filter(t=>(t.team||'').toLowerCase().includes(q)||(t.team_name||'').toLowerCase().includes(q));}
   list.sort((a,b)=>_defSortDir==='asc'?(a[_defSortCol]||0)-(b[_defSortCol]||0):(b[_defSortCol]||0)-(a[_defSortCol]||0));
-  const T=col=>_th(col,{pts_allowed_pg:'FPTS/G',pass_yds_allowed_pg:'PASS YDS',rush_yds_allowed_pg:'RUSH YDS',sacks_per_game:'SACKS',ints_per_game:'INTs',fpts_vs_qb:'vs QB',fpts_vs_rb:'vs RB',fpts_vs_wr:'vs WR',fpts_vs_te:'vs TE'}[col]||col,_defSortCol,_defSortDir,'sortDefCol');
-  el.innerHTML=`<table><thead class="tbl-head"><tr><th>#</th><th>Team</th>${T('pts_allowed_pg')}${T('pass_yds_allowed_pg')}${T('rush_yds_allowed_pg')}${T('sacks_per_game')}${T('ints_per_game')}${T('fpts_vs_qb')}${T('fpts_vs_rb')}${T('fpts_vs_wr')}${T('fpts_vs_te')}</tr></thead><tbody>`+
+  const T=col=>_th(col,{pts_allowed_pg:'FPTS/G',est_def_pts_pg:'PTS/G',pass_yds_allowed_pg:'PASS YDS',rush_yds_allowed_pg:'RUSH YDS',sacks_per_game:'SACKS',ints_per_game:'INTs',fpts_vs_qb:'vs QB',fpts_vs_rb:'vs RB',fpts_vs_wr:'vs WR',fpts_vs_te:'vs TE'}[col]||col,_defSortCol,_defSortDir,'sortDefCol');
+  el.innerHTML=`<table><thead class="tbl-head"><tr><th>#</th><th>Team</th>${T('pts_allowed_pg')}${T('est_def_pts_pg')}${T('pass_yds_allowed_pg')}${T('rush_yds_allowed_pg')}${T('sacks_per_game')}${T('ints_per_game')}${T('fpts_vs_qb')}${T('fpts_vs_rb')}${T('fpts_vs_wr')}${T('fpts_vs_te')}</tr></thead><tbody>`+
     list.map((t,i)=>{
       const pa=(t.pts_allowed_pg||0).toFixed(1);
       const paCls=gradeClassDef(t.pts_allowed_pg||0,65,85);
@@ -426,6 +433,7 @@ function renderDefense(){
         <td class="rank-num">${i+1}</td>
         <td><span class="team-code">${t.team||'—'}</span><span class="team-name">${t.team_name||t.team||'—'}</span></td>
         <td><span class="${paCls}">${pa}</span></td>
+        <td class="stat-mono">${t.est_def_pts_pg||0}</td>
         <td class="stat-mono">${(t.pass_yds_allowed_pg||0).toFixed(0)}</td>
         <td class="stat-mono">${(t.rush_yds_allowed_pg||0).toFixed(0)}</td>
         <td class="stat-mono">${(t.sacks_per_game||0).toFixed(2)}</td>
@@ -537,10 +545,16 @@ function renderPaceLeaders(){
   const defEl=document.getElementById('pace-def');
   const passEl=document.getElementById('pace-pass');
   if(offEl)offEl.innerHTML=off.length?off.map(paceRowOff).join(''):'<div class="stat-mono" style="padding:8px 0">// NO DATA //</div>';
-  if(defEl)defEl.innerHTML=def.length?def.map(t=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
+  if(defEl)defEl.innerHTML=def.length?def.map(t=>{
+    const estDef=t.est_def_pts_pg||Math.round((t.pts_allowed_pg||0)*0.31);
+    return`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
       <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">${t.team||'—'}</div>
-      <div class="pts" style="font-size:15px">${(t.pts_allowed_pg||0).toFixed(1)} <span style="font-size:10px;opacity:0.6">FPTS</span></div>
-    </div>`).join(''):'<div class="stat-mono" style="padding:8px 0">// NO DATA //</div>';
+      <div style="display:flex;gap:10px;align-items:baseline">
+        <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(255,255,255,0.4)">${estDef} PTS</span>
+        <div class="pts" style="font-size:15px">${(t.pts_allowed_pg||0).toFixed(1)} FPTS</div>
+      </div>
+    </div>`;
+  }).join(''):'<div class="stat-mono" style="padding:8px 0">// NO DATA //</div>';
   if(passEl)passEl.innerHTML=pass.length?pass.map(t=>paceRow(t,Math.round(t.pass_att_per_game||0),' ATT')).join(''):'<div class="stat-mono" style="padding:8px 0">// NO DATA //</div>';
 }
 
@@ -594,6 +608,9 @@ async function loadTeamStats(){
     return;
   }
   _teamData=d;
+  // Precompute virtual fields so sort buttons work on them
+  (_teamData.offense||[]).forEach(t=>{t.est_pts_pg=((t.pass_tds_per_game||0)+(t.rush_tds_per_game||0))*7;});
+  (_teamData.defense||[]).forEach(t=>{t.est_def_pts_pg=Math.round((t.pts_allowed_pg||0)*0.31);});
 
   // Show data season in strip and banner
   const dataSeason=d.data_season||d.season;
