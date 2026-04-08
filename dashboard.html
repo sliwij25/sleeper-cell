@@ -464,28 +464,8 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
 
   <!-- SLEEPER PICKS -->
   <div id="s-sleeper" class="sec-content">
-    <div class="three-col">
-      <div class="sleeper-card">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(16,185,129,0.5);letter-spacing:0.15em;margin-bottom:6px">WR — LOW OWNERSHIP</div>
-        <div class="player-name" style="font-size:19px;margin-bottom:2px">Jalen McMillan</div>
-        <div class="player-meta" style="margin-bottom:10px">TB · 18% owned</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.5;font-weight:300">Snap share jumped to 91%. Soft matchup vs ATL secondary ranked #29. Target share trending hard.</div>
-        <div style="margin-top:10px;display:flex;justify-content:space-between"><div class="pts">16.8</div><div class="pivot-tag">▲ PIVOT</div></div>
-      </div>
-      <div class="sleeper-card">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(16,185,129,0.5);letter-spacing:0.15em;margin-bottom:6px">RB — LOW OWNERSHIP</div>
-        <div class="player-name" style="font-size:19px;margin-bottom:2px">Tyjae Spears</div>
-        <div class="player-meta" style="margin-bottom:10px">TEN · 31% owned</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.5;font-weight:300">Confirmed lead back role. 19 carries last week. Faces NYJ run defense ranked #31.</div>
-        <div style="margin-top:10px;display:flex;justify-content:space-between"><div class="pts">15.2</div><div class="pivot-tag">▲ PIVOT</div></div>
-      </div>
-      <div class="sleeper-card">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(16,185,129,0.5);letter-spacing:0.15em;margin-bottom:6px">TE — LOW OWNERSHIP</div>
-        <div class="player-name" style="font-size:19px;margin-bottom:2px">Tucker Kraft</div>
-        <div class="player-meta" style="margin-bottom:10px">GB · 8% owned</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.5;font-weight:300">Routes up 72% over 3 weeks. Emerging as Love's safety valve. TE defense ranked #28.</div>
-        <div style="margin-top:10px;display:flex;justify-content:space-between"><div class="pts">11.4</div><div class="pivot-tag">▲ PIVOT</div></div>
-      </div>
+    <div class="three-col" id="sleeper-cards">
+      <div class="sleeper-card" style="color:rgba(16,185,129,0.4);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.1em;padding:20px">// SLEEPER PICKS POPULATE IN-SEASON //</div>
     </div>
   </div>
 
@@ -704,7 +684,37 @@ async function loadProjections(){
   });
 }
 
-Promise.all([loadMeta(),loadRankings(),loadWaiver(),loadInjuries(),loadProjections()])
+// ── SLEEPER PICKS ──────────────────────────────────────────
+async function loadSleeper(){
+  const d=await load('waiver_targets.json');if(!d||!d.targets)return;
+  // Criteria: add targets with ownership_pct <= 50 (or unknown), sorted by projected_pts desc
+  const picks=(d.targets.add||[])
+    .filter(p=>p.ownership_pct==null||p.ownership_pct<=50)
+    .slice(0,3);
+  const el=document.getElementById('sleeper-cards');if(!el)return;
+  if(!picks.length){
+    el.innerHTML='<div class="sleeper-card" style="color:rgba(16,185,129,0.4);font-family:\'Share Tech Mono\',monospace;font-size:10px;letter-spacing:0.1em;padding:20px">// SLEEPER PICKS POPULATE IN-SEASON //</div>';
+    return;
+  }
+  el.innerHTML=picks.map(p=>{
+    const owned=p.ownership_pct!=null?p.ownership_pct+'% owned':'ownership unknown';
+    const pts=(p.projected_pts||0).toFixed(1);
+    return`<div class="sleeper-card">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(16,185,129,0.5);letter-spacing:0.15em;margin-bottom:6px">${p.position||'—'} — LOW OWNERSHIP</div>
+      <div class="player-name" style="font-size:19px;margin-bottom:2px">${p.name||'—'}</div>
+      <div class="player-meta" style="margin-bottom:10px">${p.team||'—'} · ${owned}</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.5;font-weight:300">${p.reason||'—'}</div>
+      <div style="margin-top:10px;display:flex;justify-content:space-between"><div class="pts">${pts}</div>${p.faab_bid>0?`<div class="faab">$${p.faab_bid}<div class="faab-label">BID</div></div>`:''}</div>
+    </div>`;
+  }).join('');
+  // update ctx card
+  if(picks[0]){
+    set('ctx-sleeper-name',picks[0].name.split(' ').pop());
+    set('ctx-sleeper-owned',(picks[0].ownership_pct||'—')+'%');
+  }
+}
+
+Promise.all([loadMeta(),loadRankings(),loadWaiver(),loadInjuries(),loadProjections(),loadSleeper()])
   .then(()=>console.log('[dashboard] all data loaded'));
 </script>
 </body>
