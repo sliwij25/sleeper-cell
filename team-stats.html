@@ -188,7 +188,7 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
     <div class="stat-card">
       <div class="stat-label">Best Offense</div>
       <div class="stat-value" id="best-off-team">—</div>
-      <div class="stat-sub" id="best-off-ppg">— pts/game</div>
+      <div class="stat-sub" id="best-off-ppg">— fpts/game</div>
       <div class="stat-trend-up" id="best-off-rank"></div>
     </div>
     <div class="stat-card">
@@ -224,7 +224,7 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
       <div class="search-row">
         <input class="search-input" id="off-search" type="text" placeholder="Search team…" oninput="searchOff(this.value)">
         <div style="display:flex;gap:4px;flex-wrap:wrap" id="off-sort-btns">
-          <button class="fmt-btn active" data-col="pts_per_game" onclick="sortOffBy(this,'pts_per_game')">PTS</button>
+          <button class="fmt-btn active" data-col="pts_per_game" onclick="sortOffBy(this,'pts_per_game')">FPTS/G</button>
           <button class="fmt-btn" data-col="pass_yds_per_game" onclick="sortOffBy(this,'pass_yds_per_game')">PASS YDS</button>
           <button class="fmt-btn" data-col="rush_yds_per_game" onclick="sortOffBy(this,'rush_yds_per_game')">RUSH YDS</button>
           <button class="fmt-btn" data-col="pass_tds_per_game" onclick="sortOffBy(this,'pass_tds_per_game')">PASS TDs</button>
@@ -358,7 +358,7 @@ function renderOffense(){
   let list=[..._teamData.offense];
   if(_offSearch){const q=_offSearch.toLowerCase();list=list.filter(t=>(t.team||'').toLowerCase().includes(q)||(t.team_name||'').toLowerCase().includes(q));}
   list.sort((a,b)=>(b[_offSortCol]||0)-(a[_offSortCol]||0));
-  const T=col=>_th(col,{pts_per_game:'PTS/G',pass_yds_per_game:'PASS YDS',rush_yds_per_game:'RUSH YDS',pass_tds_per_game:'PASS TDs',rush_tds_per_game:'RUSH TDs',targets_per_game:'TARGETS',red_zone_pct:'RZ%'}[col]||col,_offSortCol,'sortOffCol');
+  const T=col=>_th(col,{pts_per_game:'FPTS/G',pass_yds_per_game:'PASS YDS',rush_yds_per_game:'RUSH YDS',pass_tds_per_game:'PASS TDs',rush_tds_per_game:'RUSH TDs',targets_per_game:'TARGETS',red_zone_pct:'RZ%'}[col]||col,_offSortCol,'sortOffCol');
   el.innerHTML=`<table><thead class="tbl-head"><tr><th>#</th><th>Team</th>${T('pts_per_game')}${T('pass_yds_per_game')}${T('rush_yds_per_game')}${T('pass_tds_per_game')}${T('rush_tds_per_game')}${T('targets_per_game')}${T('red_zone_pct')}</tr></thead><tbody>`+
     list.map((t,i)=>{
       const rz=t.red_zone_pct!=null?(t.red_zone_pct*100).toFixed(0)+'%':'—';
@@ -524,7 +524,7 @@ function renderHeadlineCards(){
   if(off.length){
     const top=[...off].sort((a,b)=>(b.pts_per_game||0)-(a.pts_per_game||0))[0];
     set('best-off-team',top.team||'—');
-    set('best-off-ppg',(top.pts_per_game||0).toFixed(1)+' pts/game');
+    set('best-off-ppg',(top.pts_per_game||0).toFixed(1)+' fpts/game');
     set('best-off-rank','#1 scoring offense');
     const topPass=[...off].sort((a,b)=>(b.pass_yds_per_game||0)-(a.pass_yds_per_game||0))[0];
     set('best-pass-team',topPass.team||'—');
