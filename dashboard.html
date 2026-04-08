@@ -658,7 +658,7 @@ function rankFmt(btn){
 async function loadRankings(){
   const d=await load('rankings.json');if(!d||!d.positions)return;
   _rankData=d;
-  _rankSF=d.default_scoring||'half_ppr';
+  _rankSF=d.default_scoring||'full_ppr';
   const wk=d.week||'—';
   set('ctx-week',wk);set('sn-week',wk);
   // Set active toggle state
