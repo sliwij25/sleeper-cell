@@ -120,7 +120,7 @@ table{width:100%;border-collapse:collapse}
 .pos-RB{color:#34d399;border-color:rgba(52,211,153,0.4)}
 .pos-WR{color:#a78bfa;border-color:rgba(167,139,250,0.4)}
 .pos-TE{color:#fbbf24;border-color:rgba(251,191,36,0.4)}
-.pts{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;color:var(--accent);text-align:left;white-space:nowrap}
+.pts{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;color:var(--accent);white-space:nowrap}
 .tier-badge{font-family:'Share Tech Mono',monospace;font-size:10px;padding:2px 7px;border:1px solid rgba(16,185,129,0.3);color:var(--accent);white-space:nowrap}
 .rank-num{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:rgba(16,185,129,0.5);width:28px;text-align:right;padding-right:6px}
 .pivot-tag{color:#10B981;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:0.1em}
@@ -757,7 +757,7 @@ function _renderProjections(projData,sf){
     }
     const el=document.getElementById('p-'+pos.toLowerCase());if(!el)return;
     if(!list.length){el.innerHTML='<div style="padding:16px;font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(16,185,129,0.4);text-align:center;letter-spacing:0.1em">// NO DATA //</div>';return;}
-    const hdr='<table><thead class="tbl-head"><tr><th></th><th>Player</th><th>Proj</th><th>Conf</th><th>INJ%</th><th>ECR</th><th>Signal</th></tr></thead><tbody>';
+    const hdr='<table><thead class="tbl-head"><tr><th></th><th>Player</th><th>Proj</th><th>Range</th><th>Conf</th><th>INJ%</th><th>ECR</th><th>Signal</th></tr></thead><tbody>';
     el.innerHTML=hdr+list.map((p,i)=>{
       const name=p.full_name||p.name||'—';
       const pts=p._dp;
@@ -767,10 +767,10 @@ function _renderProjections(projData,sf){
       const confBar=conf>0?`<div style="display:flex;align-items:center;gap:6px"><div style="width:40px;height:3px;background:rgba(16,185,129,0.2);position:relative;flex-shrink:0"><div style="position:absolute;left:0;top:0;height:100%;width:${Math.min(conf,100)}%;background:#10B981"></div></div><span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#10B981">${conf}%</span></div>`:'—';
       const injVal=p.injury_risk_pct!=null?Math.round(p.injury_risk_pct)+'%':'—';
       const ecr=p.ecr_position_rank||p.ecr_rank||'—';
-      const range=fl&&cl?`<div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">${fl}–${cl}</div>`:'';
+      const rangeVal=fl&&cl?`${fl}–${cl}`:'—';
       const rookie=p.data_source==='rookie_model'?' · ROOKIE':'';
       const bye=p.bye_week?' · Bye '+p.bye_week:'';
-      return`<tr class="tbl-row"><td class="rank-num">${i+1}</td><td><div class="player-name">${posBadge(p.position)}${name}</div><div class="player-meta">${p.team||'—'}${bye}${rookie}</div></td><td><div class="pts">${pts}</div>${range}</td><td>${confBar}</td><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">${injVal}</td><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">${ecr}</td><td>${sig(p)}</td></tr>`;
+      return`<tr class="tbl-row"><td class="rank-num">${i+1}</td><td><div class="player-name">${posBadge(p.position)}${name}</div><div class="player-meta">${p.team||'—'}${bye}${rookie}</div></td><td><div class="pts">${pts}</div></td><td style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);white-space:nowrap">${rangeVal}</td><td>${confBar}</td><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">${injVal}</td><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">${ecr}</td><td>${sig(p)}</td></tr>`;
     }).join('')+'</tbody></table>';
   });
 }
