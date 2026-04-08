@@ -402,16 +402,28 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
 
   <!-- PROJECTIONS -->
   <div id="s-proj" class="sec-content">
-    <div class="inner-tabs">
-      <button class="itab active" onclick="innerTab(this,'p-qb')">QB</button>
-      <button class="itab" onclick="innerTab(this,'p-rb')">RB</button>
-      <button class="itab" onclick="innerTab(this,'p-wr')">WR</button>
-      <button class="itab" onclick="innerTab(this,'p-te')">TE</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:2px">
+      <div class="inner-tabs" style="margin-bottom:0">
+        <button class="itab active" onclick="innerTab(this,'p-qb')">QB</button>
+        <button class="itab" onclick="innerTab(this,'p-rb')">RB</button>
+        <button class="itab" onclick="innerTab(this,'p-wr')">WR</button>
+        <button class="itab" onclick="innerTab(this,'p-te')">TE</button>
+        <button class="itab" onclick="innerTab(this,'p-flex')">FLEX</button>
+        <button class="itab" onclick="innerTab(this,'p-superflex')">SUPERFLEX</button>
+      </div>
+      <div id="proj-sf-btns" style="display:flex;gap:4px;flex-wrap:wrap">
+        <button class="fmt-btn active" data-sf="half_ppr" onclick="projFmt(this)">HALF PPR</button>
+        <button class="fmt-btn"        data-sf="no_ppr"   onclick="projFmt(this)">STANDARD</button>
+        <button class="fmt-btn"        data-sf="full_ppr" onclick="projFmt(this)">PPR</button>
+        <button class="fmt-btn"        data-sf="te_plus"  onclick="projFmt(this)">TE+</button>
+      </div>
     </div>
     <div id="p-qb" class="itab-content active"></div>
     <div id="p-rb" class="itab-content"></div>
     <div id="p-wr" class="itab-content"></div>
     <div id="p-te" class="itab-content"></div>
+    <div id="p-flex" class="itab-content"></div>
+    <div id="p-superflex" class="itab-content"></div>
   </div>
 
   <!-- RANKINGS -->
@@ -422,24 +434,22 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
         <button class="itab" onclick="innerTab(this,'r-rb')">RB</button>
         <button class="itab" onclick="innerTab(this,'r-wr')">WR</button>
         <button class="itab" onclick="innerTab(this,'r-te')">TE</button>
+        <button class="itab" onclick="innerTab(this,'r-flex')">FLEX</button>
+        <button class="itab" onclick="innerTab(this,'r-superflex')">SUPERFLEX</button>
       </div>
-      <div id="rank-toggles" style="display:none;gap:4px;flex-wrap:wrap">
-        <div style="display:flex;gap:4px;margin-right:8px">
-          <button class="fmt-btn active" data-sf="no_ppr"   onclick="rankFmt(this)">STD</button>
-          <button class="fmt-btn"        data-sf="half_ppr" onclick="rankFmt(this)">0.5 PPR</button>
-          <button class="fmt-btn"        data-sf="full_ppr" onclick="rankFmt(this)">PPR</button>
-        </div>
-        <div style="display:flex;gap:4px">
-          <button class="fmt-btn active" data-lf="1qb"        onclick="rankFmt(this)">1QB</button>
-          <button class="fmt-btn"        data-lf="superflex"  onclick="rankFmt(this)">SUPERFLEX</button>
-          <button class="fmt-btn"        data-lf="te_premium" onclick="rankFmt(this)">TE+</button>
-        </div>
+      <div id="rank-toggles" style="display:flex;gap:4px;flex-wrap:wrap">
+        <button class="fmt-btn active" data-sf="half_ppr" onclick="rankFmt(this)">HALF PPR</button>
+        <button class="fmt-btn"        data-sf="no_ppr"   onclick="rankFmt(this)">STANDARD</button>
+        <button class="fmt-btn"        data-sf="full_ppr" onclick="rankFmt(this)">PPR</button>
+        <button class="fmt-btn"        data-sf="te_plus"  onclick="rankFmt(this)">TE+</button>
       </div>
     </div>
     <div id="r-qb" class="itab-content active"></div>
     <div id="r-rb" class="itab-content"></div>
     <div id="r-wr" class="itab-content"></div>
     <div id="r-te" class="itab-content"></div>
+    <div id="r-flex" class="itab-content"></div>
+    <div id="r-superflex" class="itab-content"></div>
   </div>
 
   <!-- WAIVER WIRE -->
@@ -597,17 +607,35 @@ async function loadMeta(){
 
 // ── RANKINGS ───────────────────────────────────────────────
 let _rankData=null;
-let _rankSF='half_ppr', _rankLF='1qb';
+let _rankSF='half_ppr';
 
-function _renderRankings(positions){
+function _renderRankings(positions,sf){
+  // positions = {QB:[...],RB:[...],WR:[...],TE:[...]}
+  // For in-season data the pts are already format-adjusted by backend for std/half/ppr.
+  // For te_plus and off-season we apply _pprAdj client-side.
+  const base={QB:positions.QB||[],RB:positions.RB||[],WR:positions.WR||[],TE:positions.TE||[]};
+  const views={
+    QB:base.QB, RB:base.RB, WR:base.WR, TE:base.TE,
+    FLEX:[...base.RB,...base.WR,...base.TE],
+    SUPERFLEX:[...base.QB,...base.RB,...base.WR,...base.TE]
+  };
   let pivots=0,fades=0,ranked=0;
-  ['QB','RB','WR','TE'].forEach(pos=>{
-    const list=(positions[pos]||[]);
-    ranked+=list.length;
-    list.forEach(r=>{if(r.is_pivot)pivots++;if(r.is_fade)fades++;});
+  Object.entries(views).forEach(([pos,rawList])=>{
+    // Apply client-side PPR adj only when backend didn't handle it (te_plus always, or off-season)
+    const needsAdj=sf==='te_plus'||!_rankData?.formats;
+    const list=rawList
+      .map(r=>({...r,_dp:(r.projected_pts||0)+(needsAdj?_pprAdj(r.position||pos,sf):0)}))
+      .sort((a,b)=>b._dp-a._dp);
+    if(['QB','RB','WR','TE'].includes(pos)){
+      ranked+=list.length;
+      list.forEach(r=>{if(r.is_pivot)pivots++;if(r.is_fade)fades++;});
+    }
     const el=document.getElementById('r-'+pos.toLowerCase());if(!el)return;
-    if(!list.length){el.innerHTML='<div style="padding:16px;font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(16,185,129,0.4);text-align:center;letter-spacing:0.1em">// NO DATA YET — RANKINGS POPULATE IN-SEASON //</div>';return;}
-    el.innerHTML='<table><thead class="tbl-head"><tr><th></th><th>Player</th><th>Tier</th><th>Proj</th><th>Signal</th></tr></thead><tbody>'+list.map(r=>`<tr class="tbl-row"><td class="rank-num">${r.rank}</td><td><div class="player-name">${r.name}</div><div class="player-meta">${r.team} · ${r.position}</div></td><td><span class="tier-badge">TIER ${r.tier}</span></td><td><div class="pts">${r.projected_pts.toFixed(1)}</div></td><td>${sig(r)}</td></tr>`).join('')+'</tbody></table>';
+    const noDataMsg='<div style="padding:16px;font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(16,185,129,0.4);text-align:center;letter-spacing:0.1em">// NO DATA YET — RANKINGS POPULATE IN-SEASON //</div>';
+    if(!list.length){el.innerHTML=noDataMsg;return;}
+    el.innerHTML='<table><thead class="tbl-head"><tr><th></th><th>Player</th><th>Tier</th><th>Proj</th><th>Signal</th></tr></thead><tbody>'+
+      list.map((r,i)=>`<tr class="tbl-row"><td class="rank-num">${r.rank||i+1}</td><td><div class="player-name">${posBadge(r.position)}${r.name||r.full_name||'—'}</div><div class="player-meta">${r.team||'—'} · ${r.position||'—'}</div></td><td><span class="tier-badge">TIER ${r.tier||'—'}</span></td><td><div class="pts">${r._dp.toFixed(1)}</div></td><td>${sig(r)}</td></tr>`).join('')+
+      '</tbody></table>';
   });
   set('ctx-pivots',pivots);set('sn-pivots',pivots);
   set('ctx-fades',fades);set('sn-fades',fades);
@@ -615,39 +643,29 @@ function _renderRankings(positions){
 }
 
 function rankFmt(btn){
-  if(btn.dataset.sf){
-    document.querySelectorAll('#rank-toggles [data-sf]').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    _rankSF=btn.dataset.sf;
-  } else {
-    document.querySelectorAll('#rank-toggles [data-lf]').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    _rankLF=btn.dataset.lf;
-  }
-  if(_rankData&&_rankData.formats){
-    const slice=(_rankData.formats[_rankSF]||{});
-    _renderRankings(slice[_rankLF]||_rankData.positions);
-  }
+  document.querySelectorAll('#rank-toggles [data-sf]').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  _rankSF=btn.dataset.sf;
+  if(!_rankData)return;
+  // Use backend format slice for std/half/ppr when available; te_plus uses full_ppr base + client adj
+  const backendSF=_rankSF==='te_plus'?'full_ppr':_rankSF;
+  const positions=_rankData.formats
+    ?((_rankData.formats[backendSF]||{})['1qb']||_rankData.positions)
+    :_rankData.positions;
+  _renderRankings(positions,_rankSF);
 }
 
 async function loadRankings(){
   const d=await load('rankings.json');if(!d||!d.positions)return;
   _rankData=d;
   _rankSF=d.default_scoring||'half_ppr';
-  _rankLF=d.default_league||'1qb';
   const wk=d.week||'—';
   set('ctx-week',wk);set('sn-week',wk);
-  // Show format toggles only in-season (when formats key exists)
-  const toggles=document.getElementById('rank-toggles');
-  if(toggles&&d.formats){
-    toggles.style.display='flex';
-    // Set active state to match defaults
-    toggles.querySelectorAll('[data-sf]').forEach(b=>b.classList.toggle('active',b.dataset.sf===_rankSF));
-    toggles.querySelectorAll('[data-lf]').forEach(b=>b.classList.toggle('active',b.dataset.lf===_rankLF));
-  }
+  // Set active toggle state
+  document.querySelectorAll('#rank-toggles [data-sf]').forEach(b=>b.classList.toggle('active',b.dataset.sf===_rankSF));
   // Render default slice
-  const positions=d.formats ? ((d.formats[_rankSF]||{})[_rankLF]||d.positions) : d.positions;
-  _renderRankings(positions);
+  const positions=d.formats?((d.formats[_rankSF]||{})['1qb']||d.positions):d.positions;
+  _renderRankings(positions,_rankSF);
 }
 
 // ── WAIVER ─────────────────────────────────────────────────
@@ -704,36 +722,70 @@ async function loadInjuries(){
     </div>`).join('');
 }
 
+// ── PPR SCORING ENGINE ──────────────────────────────────────
+// Average receptions per season by position (used for client-side PPR calc).
+// Base data is always half_ppr (0.5 pts/rec already baked in).
+const AVG_REC = {QB:5,RB:40,WR:70,TE:50};
+function _pprAdj(pos,sf){
+  const rec=AVG_REC[pos]||0;
+  if(sf==='no_ppr')   return -0.5*rec;   // remove the 0.5 already baked in
+  if(sf==='half_ppr') return 0;           // baseline — no change
+  if(sf==='full_ppr') return 0.5*rec;    // add another 0.5/rec
+  if(sf==='te_plus')  return pos==='TE'?1.0*rec:0.5*rec; // TE gets 1.5 total, others 1.0
+  return 0;
+}
+
 // ── PROJECTIONS ────────────────────────────────────────────
-async function loadProjections(){
-  const d=await load('season_projections.json');if(!d||(! d.players&&!d.positions))return;
-  const projData=d.players||d.positions;
-  ['QB','RB','WR','TE'].forEach(pos=>{
-    const list=projData[pos]||[];
-    const top=list[0];
-    if(top){
-      const short=(top.full_name||top.name||'').split(' ').slice(-1)[0];
-      set('sn-top'+pos.toLowerCase(),short+' '+Math.round(top.projected_season_pts||top.projected_pts||0));
+let _projData=null;
+let _projSF='half_ppr';
+
+function _renderProjections(projData,sf){
+  const base={QB:projData.QB||[],RB:projData.RB||[],WR:projData.WR||[],TE:projData.TE||[]};
+  const views={
+    QB:base.QB, RB:base.RB, WR:base.WR, TE:base.TE,
+    FLEX:[...base.RB,...base.WR,...base.TE],
+    SUPERFLEX:[...base.QB,...base.RB,...base.WR,...base.TE]
+  };
+  Object.entries(views).forEach(([pos,rawList])=>{
+    const list=rawList
+      .map(p=>({...p,_dp:Math.round((p.projected_season_pts||p.projected_pts||0)+_pprAdj(p.position||pos,sf))}))
+      .sort((a,b)=>b._dp-a._dp);
+    // Update nav bar top-player snippet (individual positions only)
+    if(['QB','RB','WR','TE'].includes(pos)&&list[0]){
+      const short=(list[0].full_name||list[0].name||'').split(' ').slice(-1)[0];
+      set('sn-top'+pos.toLowerCase(),short+' '+list[0]._dp);
     }
-    const tabId='p-'+pos.toLowerCase();
-    const el=document.getElementById(tabId);if(!el)return;
+    const el=document.getElementById('p-'+pos.toLowerCase());if(!el)return;
     if(!list.length){el.innerHTML='<div style="padding:16px;font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(16,185,129,0.4);text-align:center;letter-spacing:0.1em">// NO DATA //</div>';return;}
     const hdr='<table><thead class="tbl-head"><tr><th></th><th>Player</th><th>Proj</th><th>Conf</th><th>INJ%</th><th>ECR</th><th>Signal</th></tr></thead><tbody>';
     el.innerHTML=hdr+list.map((p,i)=>{
       const name=p.full_name||p.name||'—';
-      const pts=Math.round(p.projected_season_pts||p.projected_pts||0);
+      const pts=p._dp;
       const fl=Math.round(p.season_floor||p.floor||0);
       const cl=Math.round(p.season_ceiling||p.ceiling||0);
-      const conf=Math.round(((p.confidence_score||p.confidence||0))*100);
+      const conf=Math.round((p.confidence_score||p.confidence||0)*100);
       const confBar=conf>0?`<div style="display:flex;align-items:center;gap:6px"><div style="width:40px;height:3px;background:rgba(16,185,129,0.2);position:relative;flex-shrink:0"><div style="position:absolute;left:0;top:0;height:100%;width:${Math.min(conf,100)}%;background:#10B981"></div></div><span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#10B981">${conf}%</span></div>`:'—';
       const injVal=p.injury_risk_pct!=null?Math.round(p.injury_risk_pct)+'%':'—';
       const ecr=p.ecr_position_rank||p.ecr_rank||'—';
       const range=fl&&cl?`<div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">${fl}–${cl}</div>`:'';
       const rookie=p.data_source==='rookie_model'?' · ROOKIE':'';
       const bye=p.bye_week?' · Bye '+p.bye_week:'';
-      return`<tr class="tbl-row"><td class="rank-num">${i+1}</td><td><div class="player-name">${posBadge(p.position)}${name}</div><div class="player-meta">${p.team}${bye}${rookie}</div></td><td><div class="pts">${pts}</div>${range}</td><td>${confBar}</td><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">${injVal}</td><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">${ecr}</td><td>${sig(p)}</td></tr>`;
+      return`<tr class="tbl-row"><td class="rank-num">${i+1}</td><td><div class="player-name">${posBadge(p.position)}${name}</div><div class="player-meta">${p.team||'—'}${bye}${rookie}</div></td><td><div class="pts">${pts}</div>${range}</td><td>${confBar}</td><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">${injVal}</td><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">${ecr}</td><td>${sig(p)}</td></tr>`;
     }).join('')+'</tbody></table>';
   });
+}
+
+function projFmt(btn){
+  document.querySelectorAll('#proj-sf-btns [data-sf]').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  _projSF=btn.dataset.sf;
+  if(_projData) _renderProjections(_projData,_projSF);
+}
+
+async function loadProjections(){
+  const d=await load('season_projections.json');if(!d||(!d.players&&!d.positions))return;
+  _projData=d.players||d.positions;
+  _renderProjections(_projData,_projSF);
 }
 
 // ── SLEEPER PICKS ──────────────────────────────────────────
