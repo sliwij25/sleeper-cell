@@ -88,8 +88,8 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 4
 .sec-metric span{color:var(--accent)}
 .sec-metric span.red{color:#ef4444}
 .sec-metric span.yellow{color:#fbbf24}
-.sec-arrow{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);opacity:0.65;flex-shrink:0}
-.sec-btn.active .sec-arrow{opacity:1}
+.sec-arrow{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);opacity:0.65;flex-shrink:0;transition:transform 0.2s,opacity 0.2s}
+.sec-btn.active .sec-arrow{opacity:1;transform:rotate(90deg)}
 
 /* CONTENT PANELS */
 .sec-content{display:none;border:1px solid var(--border);background:rgba(0,43,43,0.65);position:relative;margin-bottom:2px}
