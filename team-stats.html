@@ -496,25 +496,35 @@ function renderMatchups(){
   const posColor={QB:'#60a5fa',RB:'#34d399',WR:'#a78bfa',TE:'#fbbf24'};
   const col=posColor[_matchupPos]||'#fff';
 
-  // Position-specific extra column headers
-  const extraHdr={
+  // Check if per-position allowed stats exist in the data (populated by pipeline)
+  const sample=list[0]||{};
+  const hasPosStats={
+    QB: sample.qb_pass_yds_pg!=null,
+    RB: sample.rb_rush_yds_pg!=null,
+    WR: sample.wr_rec_yds_pg!=null,
+    TE: sample.te_rec_yds_pg!=null,
+  }[_matchupPos]||false;
+
+  // Position-specific extra column headers — only if data exists
+  const extraHdr=hasPosStats?{
     QB:`<th>PASS YDS/G</th><th>PASS ATT/G</th><th>PASS TDs/G</th>`,
     RB:`<th>RUSH YDS/G</th><th>RUSH TDs/G</th>`,
     WR:`<th>REC YDS/G</th><th>REC/G</th><th>REC TDs/G</th>`,
     TE:`<th>REC YDS/G</th><th>REC/G</th><th>REC TDs/G</th>`,
-  }[_matchupPos]||'';
+  }[_matchupPos]||'':'';
 
   // Position-specific extra cells per row
-  function extraCells(t){
-    const f1=(v)=>v!=null?v.toFixed(0):'—';
-    const f2=(v)=>v!=null?v.toFixed(1):'—';
-    const f3=(v)=>v!=null?v.toFixed(2):'—';
+  const extraCells=(t)=>{
+    if(!hasPosStats)return'';
+    const f1=(v)=>v!=null?parseFloat(v).toFixed(0):'—';
+    const f2=(v)=>v!=null?parseFloat(v).toFixed(1):'—';
+    const f3=(v)=>v!=null?parseFloat(v).toFixed(2):'—';
     if(_matchupPos==='QB')return`<td class="stat-mono">${f1(t.qb_pass_yds_pg)}</td><td class="stat-mono">${f2(t.qb_pass_att_pg)}</td><td class="stat-mono">${f3(t.qb_pass_tds_pg)}</td>`;
     if(_matchupPos==='RB')return`<td class="stat-mono">${f1(t.rb_rush_yds_pg)}</td><td class="stat-mono">${f3(t.rb_rush_tds_pg)}</td>`;
     if(_matchupPos==='WR')return`<td class="stat-mono">${f1(t.wr_rec_yds_pg)}</td><td class="stat-mono">${f2(t.wr_rec_pg)}</td><td class="stat-mono">${f3(t.wr_rec_tds_pg)}</td>`;
     if(_matchupPos==='TE')return`<td class="stat-mono">${f1(t.te_rec_yds_pg)}</td><td class="stat-mono">${f2(t.te_rec_pg)}</td><td class="stat-mono">${f3(t.te_rec_tds_pg)}</td>`;
     return'';
-  }
+  };
 
   el.innerHTML=`<table><thead class="tbl-head"><tr><th>#</th><th>Defense</th>
     <th style="color:${col}">${_matchupPos} FPTS/G</th>
