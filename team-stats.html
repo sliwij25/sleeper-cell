@@ -184,7 +184,7 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
   </div>
 
   <!-- HEADLINE STAT CARDS -->
-  <div class="stat-grid" style="margin-top:2px">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:2px">
     <div class="stat-card">
       <div class="stat-label">Best Offense</div>
       <div class="stat-value" id="best-off-team">—</div>
@@ -194,18 +194,54 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
     <div class="stat-card">
       <div class="stat-label">Best Defense</div>
       <div class="stat-value" id="best-def-team">—</div>
-      <div class="stat-sub" id="best-def-ppg">— pts allowed/game</div>
+      <div class="stat-sub" id="best-def-ppg">— fpts allowed/game</div>
       <div class="stat-trend-up" id="best-def-rank"></div>
     </div>
+  </div>
+  <!-- EASIEST MATCHUPS -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:2px">
     <div class="stat-card">
-      <div class="stat-label">Most Passing</div>
-      <div class="stat-value" id="best-pass-team">—</div>
-      <div class="stat-sub" id="best-pass-ypg">— pass yds/game</div>
+      <div class="stat-label">Easiest vs QB</div>
+      <div class="stat-value" id="matchup-easy-qb-team">—</div>
+      <div class="stat-sub" id="matchup-easy-qb-pts">— fpts allowed</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Easiest Def vs WR</div>
-      <div class="stat-value" id="best-matchup-wr">—</div>
-      <div class="stat-sub" id="best-matchup-wr-pts">— fantasy pts allowed</div>
+      <div class="stat-label">Easiest vs RB</div>
+      <div class="stat-value" id="matchup-easy-rb-team">—</div>
+      <div class="stat-sub" id="matchup-easy-rb-pts">— fpts allowed</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Easiest vs WR</div>
+      <div class="stat-value" id="matchup-easy-wr-team">—</div>
+      <div class="stat-sub" id="matchup-easy-wr-pts">— fpts allowed</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Easiest vs TE</div>
+      <div class="stat-value" id="matchup-easy-te-team">—</div>
+      <div class="stat-sub" id="matchup-easy-te-pts">— fpts allowed</div>
+    </div>
+  </div>
+  <!-- HARDEST MATCHUPS -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:2px">
+    <div class="stat-card">
+      <div class="stat-label">Hardest vs QB</div>
+      <div class="stat-value" id="matchup-hard-qb-team">—</div>
+      <div class="stat-sub" id="matchup-hard-qb-pts">— fpts allowed</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Hardest vs RB</div>
+      <div class="stat-value" id="matchup-hard-rb-team">—</div>
+      <div class="stat-sub" id="matchup-hard-rb-pts">— fpts allowed</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Hardest vs WR</div>
+      <div class="stat-value" id="matchup-hard-wr-team">—</div>
+      <div class="stat-sub" id="matchup-hard-wr-pts">— fpts allowed</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Hardest vs TE</div>
+      <div class="stat-value" id="matchup-hard-te-team">—</div>
+      <div class="stat-sub" id="matchup-hard-te-pts">— fpts allowed</div>
     </div>
   </div>
 
@@ -280,45 +316,6 @@ footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:
     </div>
   </div>
 
-  <!-- TRENDS PANEL -->
-  <div class="panel" style="margin-top:12px">
-    <div class="panel-header">
-      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.15em">// WEEKLY PACE LEADERS //</div>
-      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.08em" id="pace-week-label"></div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0" id="pace-grid">
-      <div style="padding:16px;border-right:1px solid rgba(16,185,129,0.08)">
-        <div class="sub-label" style="padding:0 0 8px;border-bottom:1px solid rgba(16,185,129,0.08);margin-bottom:6px">// HIGHEST SCORING OFFENSES //</div>
-        <div style="display:flex;justify-content:space-between;padding:4px 0 6px;border-bottom:1px solid rgba(16,185,129,0.06);margin-bottom:4px">
-          <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(16,185,129,0.5);letter-spacing:0.1em">TEAM</span>
-          <div style="display:flex;gap:24px">
-            <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(255,255,255,0.3);letter-spacing:0.08em">PTS/G</span>
-            <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(16,185,129,0.6);letter-spacing:0.08em">FPTS/G</span>
-          </div>
-        </div>
-        <div id="pace-off"></div>
-      </div>
-      <div style="padding:16px;border-right:1px solid rgba(16,185,129,0.08)">
-        <div class="sub-label" style="padding:0 0 8px;border-bottom:1px solid rgba(16,185,129,0.08);margin-bottom:6px">// BEST DEFENSES //</div>
-        <div style="display:flex;justify-content:space-between;padding:4px 0 6px;border-bottom:1px solid rgba(16,185,129,0.06);margin-bottom:4px">
-          <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(16,185,129,0.5);letter-spacing:0.1em">TEAM</span>
-          <div style="display:flex;gap:24px">
-            <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(255,255,255,0.3);letter-spacing:0.08em">PTS/G</span>
-            <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(16,185,129,0.6);letter-spacing:0.08em">FPTS/G</span>
-          </div>
-        </div>
-        <div id="pace-def"></div>
-      </div>
-      <div style="padding:16px">
-        <div class="sub-label" style="padding:0 0 8px;border-bottom:1px solid rgba(16,185,129,0.08);margin-bottom:6px">// MOST PASS ATTEMPTS //</div>
-        <div style="display:flex;justify-content:space-between;padding:4px 0 6px;border-bottom:1px solid rgba(16,185,129,0.06);margin-bottom:4px">
-          <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(16,185,129,0.5);letter-spacing:0.1em">TEAM</span>
-          <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(16,185,129,0.6);letter-spacing:0.08em">ATT/G</span>
-        </div>
-        <div id="pace-pass"></div>
-      </div>
-    </div>
-  </div>
 
 </div>
 
@@ -538,47 +535,6 @@ function renderMatchups(){
     }).join('')+'</tbody></table>';
 }
 
-// ── PACE LEADERS (side panel) ─────────────────────────────
-function renderPaceLeaders(){
-  if(!_teamData)return;
-  const off=(_teamData.offense||[]).slice().sort((a,b)=>(b.pts_per_game||0)-(a.pts_per_game||0)).slice(0,5);
-  const def=(_teamData.defense||[]).slice().sort((a,b)=>(a.pts_allowed_pg||0)-(b.pts_allowed_pg||0)).slice(0,5);
-  const pass=(_teamData.offense||[]).slice().sort((a,b)=>(b.pass_att_per_game||0)-(a.pass_att_per_game||0)).slice(0,5);
-
-  function paceRow(t,val,unit){
-    return`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
-      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">${t.team||'—'}</div>
-      <div class="pts" style="font-size:15px">${val}${unit}</div>
-    </div>`;
-  }
-  function paceRowOff(t){
-    const fpts=(t.pts_per_game||0).toFixed(1);
-    const estPts=Math.round(((t.pass_tds_per_game||0)+(t.rush_tds_per_game||0))*7);
-    return`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
-      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">${t.team||'—'}</div>
-      <div style="display:flex;gap:10px;align-items:baseline">
-        <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(255,255,255,0.4)">${estPts} PTS</span>
-        <div class="pts" style="font-size:15px">${fpts} FPTS</div>
-      </div>
-    </div>`;
-  }
-  const offEl=document.getElementById('pace-off');
-  const defEl=document.getElementById('pace-def');
-  const passEl=document.getElementById('pace-pass');
-  if(offEl)offEl.innerHTML=off.length?off.map(paceRowOff).join(''):'<div class="stat-mono" style="padding:8px 0">// NO DATA //</div>';
-  if(defEl)defEl.innerHTML=def.length?def.map(t=>{
-    const estDef=t.est_def_pts_pg||Math.round((t.pts_allowed_pg||0)*0.31);
-    return`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
-      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">${t.team||'—'}</div>
-      <div style="display:flex;gap:10px;align-items:baseline">
-        <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(255,255,255,0.4)">${estDef} PTS</span>
-        <div class="pts" style="font-size:15px">${(t.pts_allowed_pg||0).toFixed(1)} FPTS</div>
-      </div>
-    </div>`;
-  }).join(''):'<div class="stat-mono" style="padding:8px 0">// NO DATA //</div>';
-  if(passEl)passEl.innerHTML=pass.length?pass.map(t=>paceRow(t,Math.round(t.pass_att_per_game||0),' ATT')).join(''):'<div class="stat-mono" style="padding:8px 0">// NO DATA //</div>';
-}
-
 // ── HEADLINE CARDS ───────────────────────────────────────
 function renderHeadlineCards(){
   if(!_teamData)return;
@@ -589,20 +545,27 @@ function renderHeadlineCards(){
     set('best-off-team',top.team||'—');
     set('best-off-ppg',(top.pts_per_game||0).toFixed(1)+' fpts/game');
     set('best-off-rank','#1 scoring offense');
-    const topPass=[...off].sort((a,b)=>(b.pass_yds_per_game||0)-(a.pass_yds_per_game||0))[0];
-    set('best-pass-team',topPass.team||'—');
-    set('best-pass-ypg',Math.round(topPass.pass_yds_per_game||0)+' pass yds/game');
   }
   if(def.length){
     const top=[...def].sort((a,b)=>(a.pts_allowed_pg||0)-(b.pts_allowed_pg||0))[0];
     set('best-def-team',top.team||'—');
-    set('best-def-ppg',(top.pts_allowed_pg||0).toFixed(1)+' pts allowed/game');
-    set('best-def-rank','#1 scoring defense');
-    const easiestWR=[...def].sort((a,b)=>(b.fpts_vs_wr||0)-(a.fpts_vs_wr||0))[0];
-    if(easiestWR?.fpts_vs_wr){
-      set('best-matchup-wr',easiestWR.team||'—');
-      set('best-matchup-wr-pts',(easiestWR.fpts_vs_wr||0).toFixed(1)+' fpts allowed vs WR');
-    }
+    set('best-def-ppg',(top.pts_allowed_pg||0).toFixed(1)+' fpts allowed/game');
+    set('best-def-rank','#1 fantasy defense');
+    // Easiest + Hardest matchup cards per position
+    ['qb','rb','wr','te'].forEach(pos=>{
+      const key='fpts_vs_'+pos;
+      const valid=[...def].filter(t=>t[key]!=null);
+      const easy=valid.sort((a,b)=>(b[key]||0)-(a[key]||0))[0];
+      const hard=valid.sort((a,b)=>(a[key]||0)-(b[key]||0))[0];
+      if(easy){
+        set('matchup-easy-'+pos+'-team',easy.team||'—');
+        set('matchup-easy-'+pos+'-pts',(easy[key]||0).toFixed(1)+' fpts/g vs '+pos.toUpperCase());
+      }
+      if(hard){
+        set('matchup-hard-'+pos+'-team',hard.team||'—');
+        set('matchup-hard-'+pos+'-pts',(hard[key]||0).toFixed(1)+' fpts/g vs '+pos.toUpperCase());
+      }
+    });
   }
 }
 
@@ -621,10 +584,6 @@ async function loadTeamStats(){
     ['off-table-wrap','def-table-wrap','matchup-table-wrap'].forEach(id=>{
       const el=document.getElementById(id);
       if(el)el.innerHTML=emptyState('// TEAM STATS POPULATE IN-SEASON — PIPELINE RUNNING //');
-    });
-    ['pace-off','pace-def','pace-pass'].forEach(id=>{
-      const el=document.getElementById(id);
-      if(el)el.innerHTML='<div style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(16,185,129,0.4);padding:8px 0;letter-spacing:0.1em">// IN-SEASON //</div>';
     });
     return;
   }
@@ -655,7 +614,6 @@ async function loadTeamStats(){
   renderOffense();
   renderDefense();
   renderMatchups();
-  renderPaceLeaders();
 }
 
 Promise.all([loadMeta(),loadTeamStats()])
