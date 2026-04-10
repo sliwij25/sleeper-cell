@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Sleeper Cell — Team Statistics. Defensive matchup grades, fantasy points allowed by position, and offensive rankings.">
+<meta name="theme-color" content="#001C1C">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<title>Team Analysis | Sleeper Cell</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --core:#001C1C;
+  --accent:#10B981;
+  --accent-dim:rgba(16,185,129,0.12);
+  --border:rgba(16,185,129,0.18);
+  --text:#e2e8f0;
+  --muted:rgba(255,255,255,0.62);
+  --muted2:#94a3b8;
+  --card:rgba(0,35,35,0.9);
+  --tertiary:#002B2B;
+  --grid-color:rgba(16,185,129,0.06);
+}
+html{scroll-behavior:smooth}
+body{background-color:var(--core);color:var(--text);font-family:'Barlow Condensed',sans-serif;min-height:100vh;overflow-x:hidden}
+
+.grid-bg{position:fixed;inset:0;background-image:linear-gradient(var(--grid-color) 1px,transparent 1px),linear-gradient(90deg,var(--grid-color) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.scanline{position:fixed;top:-100%;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent,rgba(16,185,129,0.4),transparent);animation:scan 6s linear infinite;z-index:1;pointer-events:none}
+@keyframes scan{0%{top:-2px}100%{top:100vh}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.page{position:relative;z-index:2}
+
+/* NAV */
+nav{display:flex;align-items:stretch;justify-content:space-between;height:52px;border-bottom:1px solid var(--border);padding:0 32px;background:rgba(0,28,28,0.95)}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+.nav-logo-icon{width:30px;height:30px;flex-shrink:0}
+.nav-wordmark{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;letter-spacing:0.12em;color:var(--text);text-transform:uppercase}
+.nav-wordmark span{color:var(--accent)}
+.nav-links{display:flex;align-items:stretch}
+.nav-link{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.1em;text-decoration:none;text-transform:uppercase;display:flex;align-items:center;padding:0 16px;border-right:1px solid var(--border);transition:color 0.2s,background 0.2s}
+.nav-link:first-child{border-left:1px solid var(--border)}
+.nav-link:hover{color:var(--accent);background:var(--accent-dim)}
+.nav-link.active{color:var(--accent);background:var(--accent-dim)}
+.nav-right{display:flex;align-items:center;gap:16px}
+.nav-status{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.08em;display:flex;align-items:center;gap:6px}
+.nav-pulse{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 1.5s ease-in-out infinite;flex-shrink:0}
+.nav-cta-btn{background:var(--accent);color:#001C1C;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;padding:8px 18px;text-decoration:none;display:inline-block;transition:opacity 0.2s;flex-shrink:0}
+.nav-cta-btn:hover{opacity:0.88}
+
+/* STATUS BAR */
+.status-bar{background:rgba(0,28,28,0.85);border-bottom:1px solid var(--border);padding:0 48px;height:32px;display:flex;align-items:center;gap:20px}
+.status-item{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.status-item .val{color:var(--text)}
+.status-sep{color:rgba(16,185,129,0.3);font-size:10px}
+.status-warn{color:#fbbf24;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:0.08em}
+
+/* BADGES */
+.badge{font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 7px;border-radius:2px;letter-spacing:0.06em;display:inline-block}
+.badge.pivot{background:rgba(16,185,129,0.15);color:#10B981}
+.badge.fade{background:rgba(239,68,68,0.12);color:#f87171}
+.badge.warn{background:rgba(251,191,36,0.12);color:#fbbf24}
+.badge.easy{background:rgba(16,185,129,0.15);color:#10B981}
+.badge.hard{background:rgba(239,68,68,0.12);color:#f87171}
+.badge.mid{background:rgba(100,116,139,0.2);color:#94a3b8}
+.badge.hold{background:rgba(100,116,139,0.15);color:#94a3b8}
+
+.grade-easy{color:#10B981;font-family:'Share Tech Mono',monospace;font-size:11px;padding:2px 6px;border:1px solid rgba(16,185,129,0.4)}
+.grade-mid{color:#fbbf24;font-family:'Share Tech Mono',monospace;font-size:11px;padding:2px 6px;border:1px solid rgba(251,191,36,0.4)}
+.grade-hard{color:#ef4444;font-family:'Share Tech Mono',monospace;font-size:11px;padding:2px 6px;border:1px solid rgba(239,68,68,0.4)}
+
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-bottom:2px}
+.stat-card{background:rgba(0,43,43,0.75);border:1px solid var(--border);padding:16px 18px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:-1px;left:-1px;width:10px;height:10px;border-top:2px solid var(--accent);border-left:2px solid var(--accent)}
+.stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.82);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:6px}
+.stat-value{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:22px;color:#e2e8f0;line-height:1}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:3px;font-family:'Share Tech Mono',monospace}
+
+/* PANEL */
+.panel{background:rgba(0,43,43,0.65);border:1px solid var(--border);position:relative;margin-bottom:2px}
+.panel::before{content:'';position:absolute;top:-1px;left:-1px;width:14px;height:14px;border-top:2px solid var(--accent);border-left:2px solid var(--accent)}
+.panel::after{content:'';position:absolute;bottom:-1px;right:-1px;width:14px;height:14px;border-bottom:2px solid var(--accent);border-right:2px solid var(--accent)}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse}
+.tbl-head th{font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(16,185,129,0.75);letter-spacing:0.15em;text-transform:uppercase;padding:8px 14px;text-align:left;border-bottom:1px solid rgba(16,185,129,0.2)}
+.tbl-row td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.09);vertical-align:middle}
+.tbl-row:last-child td{border-bottom:none}
+.tbl-row:hover td{background:rgba(16,185,129,0.04)}
+.team-name{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:15px;color:#e2e8f0;letter-spacing:0.03em}
+.team-abbr{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:1px}
+.rank-num{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:rgba(16,185,129,0.5)}
+.pts{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;color:var(--accent)}
+.stat-mono{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted)}
+
+/* TABS */
+.tab-row{display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid var(--border)}
+.main-tabs{display:flex}
+.main-tab{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;padding:12px 18px;cursor:pointer;border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;transition:color 0.2s,border-color 0.2s}
+.main-tab:hover{color:var(--accent)}
+.main-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.pos-filter{display:none;gap:4px}
+.pos-filter.visible{display:flex}
+.pos-btn{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;padding:5px 12px;cursor:pointer;border:1px solid var(--border);background:none;transition:color 0.2s,background 0.2s,border-color 0.2s}
+.pos-btn:hover{color:var(--accent);border-color:rgba(16,185,129,0.4)}
+.pos-btn.active{color:var(--accent);background:var(--accent-dim);border-color:rgba(16,185,129,0.4)}
+
+/* GRADE FILTER */
+.grade-filter-row{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.grade-btns{display:flex;gap:4px}
+.grade-btn{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:5px 12px;cursor:pointer;border:1px solid var(--border);background:none;color:var(--muted);transition:all 0.2s}
+.grade-btn:hover{color:var(--accent);border-color:rgba(16,185,129,0.4)}
+.grade-btn.active-all{color:var(--accent);background:var(--accent-dim);border-color:rgba(16,185,129,0.4)}
+.grade-btn.active-easy{color:#10B981;background:rgba(16,185,129,0.12);border-color:rgba(16,185,129,0.4)}
+.grade-btn.active-mid{color:#fbbf24;background:rgba(251,191,36,0.1);border-color:rgba(251,191,36,0.35)}
+.grade-btn.active-hard{color:#ef4444;background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.35)}
+
+/* SEARCH */
+.search-wrap{padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.search-input{width:100%;max-width:300px;background:rgba(0,28,28,0.8);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;padding:7px 12px;letter-spacing:0.06em;outline:none;transition:border-color 0.2s}
+.search-input:focus{border-color:rgba(16,185,129,0.4)}
+.search-input::placeholder{color:rgba(255,255,255,0.25)}
+
+/* INLINE BAR */
+.bar-cell{display:flex;align-items:center;gap:8px;min-width:120px}
+.bar-track{flex:1;height:6px;background:rgba(255,255,255,0.08);overflow:hidden}
+.bar-fill{height:6px;transition:width 0.3s}
+
+/* HEADLINE CARDS */
+.headline-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.headline-card{padding:12px 14px;position:relative;overflow:hidden}
+.headline-card.easy-card{background:rgba(16,185,129,0.07);border:1px solid rgba(16,185,129,0.45)}
+.headline-card.hard-card{background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.45)}
+.headline-label{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted2);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:4px}
+.headline-team{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;color:var(--text);line-height:1}
+.headline-pts{font-family:'Share Tech Mono',monospace;font-size:11px;margin-top:3px}
+.headline-pts.easy-pts{color:#10B981}
+.headline-pts.hard-pts{color:#f87171}
+
+/* PAGE LAYOUT */
+.page-wrap{max-width:1300px;margin:0 auto;padding:0 48px 0}
+.page-header{padding:28px 0 16px}
+.page-eyebrow{font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(16,185,129,0.6);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:8px}
+.page-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:38px;text-transform:uppercase;letter-spacing:0.03em;color:var(--text);display:flex;align-items:center;gap:12px}
+.page-title span{color:var(--accent)}
+
+/* TABLE WRAP */
+.tbl-wrap{overflow-x:auto}
+.tbl-wrap table{min-width:600px}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.empty-state{text-align:center;padding:32px;font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(16,185,129,0.4);letter-spacing:0.12em;text-transform:uppercase}
+
+/* NEWSLETTER BAR */
+.newsletter-bar{background:rgba(16,185,129,0.04);border-top:1px solid var(--border);padding:32px 48px}
+.nl-inner{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.nl-eyebrow{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:10px}
+.nl-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:22px;color:var(--text);letter-spacing:0.04em;margin-bottom:6px}
+.nl-desc{font-family:'Barlow Condensed',sans-serif;font-size:15px;color:var(--muted);line-height:1.5}
+.nl-right{display:flex;flex-direction:column;gap:14px}
+.nl-preview{background:rgba(0,28,28,0.85);border:1px solid var(--border);padding:14px 16px;position:relative}
+.nl-preview::before{content:'';position:absolute;top:-1px;left:-1px;width:8px;height:8px;border-top:1.5px solid var(--accent);border-left:1.5px solid var(--accent)}
+.nl-from{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.06em;margin-bottom:4px}
+.nl-from span{color:var(--accent)}
+.nl-subject{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text);letter-spacing:0.04em;margin-bottom:6px}
+.nl-teaser{font-family:'Barlow Condensed',sans-serif;font-size:13px;color:var(--muted);line-height:1.4}
+.nl-form{display:flex;gap:8px}
+.nl-input{flex:1;background:rgba(0,28,28,0.9);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;padding:10px 14px;letter-spacing:0.06em;outline:none;transition:border-color 0.2s}
+.nl-input:focus{border-color:rgba(16,185,129,0.5)}
+.nl-input::placeholder{color:rgba(255,255,255,0.3)}
+.nl-btn{background:var(--accent);color:#001C1C;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:0.12em;text-transform:uppercase;padding:10px 22px;border:none;cursor:pointer;transition:opacity 0.2s;flex-shrink:0}
+.nl-btn:hover{opacity:0.88}
+.nl-fine{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted2);letter-spacing:0.1em;text-align:center}
+.nl-success{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);letter-spacing:0.1em;display:none;padding:10px 0}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between}
+.footer-left{display:flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase}
+.footer-right{font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(16,185,129,0.4);letter-spacing:0.12em;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="scanline"></div>
+
+<div class="page">
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <svg class="nav-logo-icon" viewBox="0 0 15 15" fill="#10B981" xmlns="http://www.w3.org/2000/svg">
+      <path d="M7.53,3C3.09,3,1,7.5,1,7.5S3.09,12,7.53,12S14,7.5,14,7.5S12,3,7.53,3z M11,7v1.5C11,8.7761,10.7761,9,10.5,9S10,8.7761,10,8.5V8H8v0.5C8,8.7761,7.7761,9,7.5,9S7,8.7761,7,8.5V8H5v0.5C5,8.7761,4.7761,9,4.5,9S4,8.7761,4,8.5v-2C4,6.2239,4.2239,6,4.5,6S5,6.2239,5,6.5V7h2V6.5C7,6.2239,7.2239,6,7.5,6S8,6.2239,8,6.5V7h2V6.5C10,6.2239,10.2239,6,10.5,6S11,6.2239,11,6.5V7z"/>
+    </svg>
+    <span class="nav-wordmark">Sleeper <span>Cell</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">Intel</a>
+    <a href="dashboard.html" class="nav-link">Weekly Rankings</a>
+    <a href="season-outlook.html" class="nav-link">Season Outlook</a>
+    <a href="team-stats.html" class="nav-link active">Team Analysis</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-status"><div class="nav-pulse"></div>Pipeline Active</div>
+    <a href="#subscribe" class="nav-cta-btn">Activate Clearance</a>
+  </div>
+</nav>
+
+<!-- STATUS BAR -->
+<div class="status-bar">
+  <div class="status-item">Season <span class="val" id="sb-season">—</span></div>
+  <div class="status-sep">·</div>
+  <div class="status-item">Data: <span class="val" id="sb-data-season">—</span> Full Season</div>
+  <div class="status-sep" id="sb-warn-sep" style="display:none">·</div>
+  <div class="status-warn" id="sb-warn" style="display:none">⚠ Pre-Season — Prior Season Data</div>
+  <div class="status-sep">·</div>
+  <div class="status-item">2026 Stats Available Wk 1</div>
+</div>
+
+<!-- PAGE CONTENT -->
+<div class="page-wrap">
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="page-eyebrow">// Defensive Intelligence //</div>
+    <div class="page-title">
+      Team <span>Statistics</span>
+      <svg width="32" height="32" viewBox="0 0 15 15" fill="#10B981" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7.53,3C3.09,3,1,7.5,1,7.5S3.09,12,7.53,12S14,7.5,14,7.5S12,3,7.53,3z M11,7v1.5C11,8.7761,10.7761,9,10.5,9S10,8.7761,10,8.5V8H8v0.5C8,8.7761,7.7761,9,7.5,9S7,8.7761,7,8.5V8H5v0.5C5,8.7761,4.7761,9,4.5,9S4,8.7761,4,8.5v-2C4,6.2239,4.2239,6,4.5,6S5,6.2239,5,6.5V7h2V6.5C7,6.2239,7.2239,6,7.5,6S8,6.2239,8,6.5V7h2V6.5C10,6.2239,10.2239,6,10.5,6S11,6.2239,11,6.5V7z"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- MAIN PANEL -->
+  <div class="panel" style="margin-bottom:32px">
+    <!-- SUB TABS + POS FILTER -->
+    <div class="tab-row">
+      <div class="main-tabs">
+        <button class="main-tab active" data-tab="matchups">Fantasy Matchups</button>
+        <button class="main-tab" data-tab="offense">Offense</button>
+        <button class="main-tab" data-tab="defense">Defense</button>
+      </div>
+      <div class="pos-filter visible" id="pos-filter">
+        <button class="pos-btn active" data-pos="ALL">All</button>
+        <button class="pos-btn" data-pos="QB">QB</button>
+        <button class="pos-btn" data-pos="RB">RB</button>
+        <button class="pos-btn" data-pos="WR">WR</button>
+        <button class="pos-btn" data-pos="TE">TE</button>
+      </div>
+    </div>
+
+    <!-- OFFENSE TAB -->
+    <div class="tab-content" id="tab-offense">
+      <div class="search-wrap">
+        <input class="search-input" type="text" placeholder="Search team..." id="search-offense">
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead class="tbl-head">
+            <tr>
+              <th style="width:48px">#</th>
+              <th>Team</th>
+              <th>Pts/G</th>
+              <th>Pass Yds/G</th>
+              <th>Rush Yds/G</th>
+              <th>Pass TDs/G</th>
+              <th>Targets/G</th>
+            </tr>
+          </thead>
+          <tbody id="offense-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- DEFENSE TAB -->
+    <div class="tab-content" id="tab-defense">
+      <div class="search-wrap">
+        <input class="search-input" type="text" placeholder="Search team..." id="search-defense">
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead class="tbl-head">
+            <tr>
+              <th style="width:48px">#</th>
+              <th>Team</th>
+              <th>Fpts Allowed/G</th>
+              <th>vs QB</th>
+              <th>vs RB</th>
+              <th>vs WR</th>
+              <th>vs TE</th>
+            </tr>
+          </thead>
+          <tbody id="defense-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MATCHUPS TAB -->
+    <div class="tab-content active" id="tab-matchups">
+      <!-- HEADLINE CARDS -->
+      <div style="padding:14px 18px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.6);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:8px">// Easiest Matchups //</div>
+        <div class="headline-grid" id="easy-cards" style="padding:0;border-bottom:none;margin-bottom:10px"></div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(239,68,68,0.6);letter-spacing:0.18em;text-transform:uppercase;margin-top:8px;margin-bottom:8px">// Hardest Matchups //</div>
+        <div class="headline-grid" id="hard-cards" style="padding:0;border-bottom:none;margin-bottom:14px"></div>
+      </div>
+
+      <!-- GRADE FILTER + SEARCH -->
+      <div class="grade-filter-row">
+        <div class="grade-btns" id="grade-btns">
+          <button class="grade-btn active-all" data-grade="ALL">All</button>
+          <button class="grade-btn" data-grade="EASY">Easy</button>
+          <button class="grade-btn" data-grade="MID">Mid</button>
+          <button class="grade-btn" data-grade="HARD">Hard</button>
+        </div>
+        <input class="search-input" type="text" placeholder="Search team..." id="search-matchups" style="max-width:220px">
+      </div>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead class="tbl-head">
+            <tr>
+              <th style="width:56px">Rank</th>
+              <th>Team</th>
+              <th style="width:160px" id="bar-col-header">Fpts/G</th>
+              <th style="width:80px">Fpts/G</th>
+              <th style="width:80px">Grade</th>
+            </tr>
+          </thead>
+          <tbody id="matchups-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NEWSLETTER BAR -->
+<div class="newsletter-bar" id="subscribe">
+  <div class="nl-inner">
+    <div class="nl-left">
+      <div class="nl-eyebrow">// Weekly Briefing — Published Every Tuesday Night</div>
+      <div class="nl-title">Matchup Intel. In Your Inbox.</div>
+      <div class="nl-desc">Waiver targets and rankings in your inbox before Wednesday waivers run. Free.</div>
+    </div>
+    <div class="nl-right">
+      <div class="nl-preview">
+        <div class="nl-from">From: <span>intel@sleepercellff.com</span></div>
+        <div class="nl-subject">📡 Weekly Briefing — Wk 1</div>
+        <div class="nl-teaser">Best defensive matchups identified. Target the weak secondaries before your opponents do.</div>
+      </div>
+      <div class="nl-form" id="nl-form">
+        <input class="nl-input" type="email" placeholder="your@email.com" id="nl-email">
+        <button class="nl-btn" id="nl-submit">Activate</button>
+      </div>
+      <div class="nl-success" id="nl-success">// Clearance granted. Transmission incoming. //</div>
+      <div class="nl-fine">No spam · Intel only · Unsubscribe anytime</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <svg width="16" height="16" viewBox="0 0 15 15" fill="#10B981" xmlns="http://www.w3.org/2000/svg">
+      <path d="M7.53,3C3.09,3,1,7.5,1,7.5S3.09,12,7.53,12S14,7.5,14,7.5S12,3,7.53,3z M11,7v1.5C11,8.7761,10.7761,9,10.5,9S10,8.7761,10,8.5V8H8v0.5C8,8.7761,7.7761,9,7.5,9S7,8.7761,7,8.5V8H5v0.5C5,8.7761,4.7761,9,4.5,9S4,8.7761,4,8.5v-2C4,6.2239,4.2239,6,4.5,6S5,6.2239,5,6.5V7h2V6.5C7,6.2239,7.2239,6,7.5,6S8,6.2239,8,6.5V7h2V6.5C10,6.2239,10.2239,6,10.5,6S11,6.2239,11,6.5V7z"/>
+    </svg>
+    Sleeper Cell · Fantasy Intelligence
+  </div>
+  <div class="footer-right">// Classified // Fantasy Operations Division //</div>
+</footer>
+</div>
+
+<script>
+const CDN = 'https://cdn.jsdelivr.net/gh/sliwij25/sleeper-cell@main/data/';
+
+function fmt(v, dec=1){ return (v==null||v===undefined||isNaN(v)) ? '—' : Number(v).toFixed(dec); }
+function esc(s){ if(!s&&s!==0) return '—'; const d=document.createElement('div'); d.textContent=String(s); return d.innerHTML; }
+
+async function loadJSON(name){
+  try{
+    const r=await fetch(CDN+name+'?v='+Date.now());
+    if(!r.ok) throw new Error(r.status);
+    return await r.json();
+  }catch(e){ console.warn('Failed to load',name,e); return null; }
+}
+
+let offenseData=[];
+let defenseData=[];
+let currentPos='ALL';
+let currentGrade='ALL';
+let currentTab='matchups';
+
+// Compute grade thresholds using percentile thirds
+function getGrade(val, sortedVals){
+  if(!sortedVals||!sortedVals.length) return 'MID';
+  const n=sortedVals.length;
+  const lo=sortedVals[Math.floor(n/3)];
+  const hi=sortedVals[Math.floor(n*2/3)];
+  if(val>=hi) return 'EASY';
+  if(val<=lo) return 'HARD';
+  return 'MID';
+}
+
+function getPosKey(pos){
+  const map={'QB':'fpts_vs_qb','RB':'fpts_vs_rb','WR':'fpts_vs_wr','TE':'fpts_vs_te','ALL':'pts_allowed_pg'};
+  return map[pos]||'pts_allowed_pg';
+}
+
+function getPosLabel(pos){
+  const map={'QB':'vs QB','RB':'vs RB','WR':'vs WR','TE':'vs TE','ALL':'Fpts/G'};
+  return map[pos]||'Fpts/G';
+}
+
+function renderOffense(teams, search=''){
+  const tbody=document.getElementById('offense-tbody');
+  if(!tbody) return;
+  let filtered=teams;
+  if(search) filtered=teams.filter(t=>(t.team_name||t.team||'').toLowerCase().includes(search.toLowerCase())||(t.team||'').toLowerCase().includes(search.toLowerCase()));
+  if(!filtered.length){ tbody.innerHTML=`<tr><td colspan="7" class="empty-state">No teams found</td></tr>`; return; }
+
+  tbody.innerHTML=filtered.map((t,i)=>`<tr class="tbl-row">
+    <td><span class="rank-num">${i+1}</span></td>
+    <td>
+      <div class="team-name">${esc(t.team_name||t.team)}</div>
+      <div class="team-abbr">${esc(t.team)}</div>
+    </td>
+    <td><span class="pts">${fmt(t.pts_per_game)}</span></td>
+    <td><span class="stat-mono">${fmt(t.pass_yds_per_game)}</span></td>
+    <td><span class="stat-mono">${fmt(t.rush_yds_per_game)}</span></td>
+    <td><span class="stat-mono">${fmt(t.pass_tds_per_game,2)}</span></td>
+    <td><span class="stat-mono">${fmt(t.targets_per_game)}</span></td>
+  </tr>`).join('');
+}
+
+function renderDefense(teams, search=''){
+  const tbody=document.getElementById('defense-tbody');
+  if(!tbody) return;
+  let filtered=teams;
+  if(search) filtered=teams.filter(t=>(t.team_name||t.team||'').toLowerCase().includes(search.toLowerCase())||(t.team||'').toLowerCase().includes(search.toLowerCase()));
+  if(!filtered.length){ tbody.innerHTML=`<tr><td colspan="7" class="empty-state">No teams found</td></tr>`; return; }
+
+  tbody.innerHTML=filtered.map((t,i)=>`<tr class="tbl-row">
+    <td><span class="rank-num">${i+1}</span></td>
+    <td>
+      <div class="team-name">${esc(t.team_name||t.team)}</div>
+      <div class="team-abbr">${esc(t.team)}</div>
+    </td>
+    <td><span class="pts">${fmt(t.pts_allowed_pg||t.fpts_allowed_pg)}</span></td>
+    <td><span class="stat-mono">${fmt(t.fpts_vs_qb)}</span></td>
+    <td><span class="stat-mono">${fmt(t.fpts_vs_rb)}</span></td>
+    <td><span class="stat-mono">${fmt(t.fpts_vs_wr)}</span></td>
+    <td><span class="stat-mono">${fmt(t.fpts_vs_te)}</span></td>
+  </tr>`).join('');
+}
+
+function renderHeadlineCards(teams){
+  const positions=['QB','RB','WR','TE'];
+  const easyEl=document.getElementById('easy-cards');
+  const hardEl=document.getElementById('hard-cards');
+  if(!easyEl||!hardEl) return;
+
+  easyEl.innerHTML=positions.map(pos=>{
+    const key=getPosKey(pos);
+    const sorted=[...teams].sort((a,b)=>(b[key]||0)-(a[key]||0));
+    const top=sorted[0];
+    if(!top) return `<div class="headline-card easy-card"><div class="headline-label">vs ${pos}</div><div class="headline-team">—</div><div class="headline-pts easy-pts">—</div></div>`;
+    return `<div class="headline-card easy-card">
+      <div class="headline-label">Easiest vs ${pos}</div>
+      <div class="headline-team">${esc(top.team_name||top.team)}</div>
+      <div class="headline-pts easy-pts">${fmt(top[key])} fpts/g</div>
+    </div>`;
+  }).join('');
+
+  hardEl.innerHTML=positions.map(pos=>{
+    const key=getPosKey(pos);
+    const sorted=[...teams].sort((a,b)=>(a[key]||0)-(b[key]||0));
+    const bot=sorted[0];
+    if(!bot) return `<div class="headline-card hard-card"><div class="headline-label">vs ${pos}</div><div class="headline-team">—</div><div class="headline-pts hard-pts">—</div></div>`;
+    return `<div class="headline-card hard-card">
+      <div class="headline-label">Hardest vs ${pos}</div>
+      <div class="headline-team">${esc(bot.team_name||bot.team)}</div>
+      <div class="headline-pts hard-pts">${fmt(bot[key])} fpts/g</div>
+    </div>`;
+  }).join('');
+}
+
+function renderMatchups(teams, pos, grade, search=''){
+  const tbody=document.getElementById('matchups-tbody');
+  const barHeader=document.getElementById('bar-col-header');
+  if(!tbody) return;
+
+  const key=getPosKey(pos);
+  if(barHeader) barHeader.textContent=getPosLabel(pos);
+
+  // Sort by key desc (most fpts allowed = easiest = rank 1 at top)
+  let sorted=[...teams].filter(t=>t[key]!=null).sort((a,b)=>(b[key]||0)-(a[key]||0));
+
+  // Compute thresholds from sorted values
+  const vals=sorted.map(t=>t[key]||0).sort((a,b)=>a-b);
+
+  const maxVal=vals.length?Math.max(...vals):1;
+
+  // Assign grades
+  sorted=sorted.map((t,i)=>({...t, _grade:getGrade(t[key]||0, vals), _rank:i+1}));
+
+  // Filter by grade
+  let filtered=sorted;
+  if(grade!=='ALL') filtered=sorted.filter(t=>t._grade===grade);
+
+  // Filter by search
+  if(search) filtered=filtered.filter(t=>(t.team_name||t.team||'').toLowerCase().includes(search.toLowerCase())||(t.team||'').toLowerCase().includes(search.toLowerCase()));
+
+  if(!filtered.length){ tbody.innerHTML=`<tr><td colspan="5" class="empty-state">No teams match</td></tr>`; return; }
+
+  tbody.innerHTML=filtered.map(t=>{
+    const val=t[key]||0;
+    const pct=maxVal>0?(val/maxVal*100):0;
+    const g=t._grade;
+    const barColor=g==='EASY'?'#10B981':g==='HARD'?'#ef4444':'#64748b';
+    const gradeCls=g==='EASY'?'grade-easy':g==='HARD'?'grade-hard':'grade-mid';
+    return `<tr class="tbl-row">
+      <td><span class="rank-num">${t._rank}</span></td>
+      <td>
+        <div class="team-name">${esc(t.team_name||t.team)}</div>
+        <div class="team-abbr">${esc(t.team)}</div>
+      </td>
+      <td>
+        <div class="bar-cell">
+          <div class="bar-track" style="flex:1">
+            <div class="bar-fill" style="width:${pct.toFixed(1)}%;background:${barColor}"></div>
+          </div>
+        </div>
+      </td>
+      <td><span class="pts">${fmt(val)}</span></td>
+      <td><span class="${gradeCls}">${g}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderMetrics(offense, defense){
+  // Metric row removed — no-op kept for safety
+}
+
+async function init(){
+  const [meta, teamStats] = await Promise.all([
+    loadJSON('meta.json'),
+    loadJSON('team_stats.json')
+  ]);
+
+  // STATUS BAR
+  if(meta){
+    document.getElementById('sb-season').textContent=meta.season||'—';
+  }
+  if(teamStats){
+    document.getElementById('sb-data-season').textContent=teamStats.data_season||meta&&meta.season||'—';
+    if(teamStats.is_prior_season){
+      document.getElementById('sb-warn').style.display='inline';
+      document.getElementById('sb-warn-sep').style.display='inline';
+    }
+
+    offenseData=(teamStats.offense||[]).sort((a,b)=>(b.pts_per_game||0)-(a.pts_per_game||0));
+    defenseData=(teamStats.defense||[]).sort((a,b)=>(a.pts_allowed_pg||0)-(b.pts_allowed_pg||0));
+  }
+
+  renderMetrics(offenseData, defenseData);
+  renderOffense(offenseData);
+  renderDefense(defenseData);
+  renderHeadlineCards(defenseData);
+  renderMatchups(defenseData, 'ALL', 'ALL');
+
+  // TAB SWITCHING
+  document.querySelectorAll('.main-tab').forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      document.querySelectorAll('.main-tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+      tab.classList.add('active');
+      const name=tab.dataset.tab;
+      currentTab=name;
+      document.getElementById('tab-'+name).classList.add('active');
+      const posFilter=document.getElementById('pos-filter');
+      if(name==='matchups') posFilter.classList.add('visible');
+      else posFilter.classList.remove('visible');
+    });
+  });
+
+  // POSITION FILTER (matchups)
+  document.getElementById('pos-filter').addEventListener('click',e=>{
+    const btn=e.target.closest('.pos-btn');
+    if(!btn) return;
+    document.querySelectorAll('.pos-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentPos=btn.dataset.pos;
+    renderMatchups(defenseData, currentPos, currentGrade, document.getElementById('search-matchups').value);
+  });
+
+  // GRADE FILTER
+  document.getElementById('grade-btns').addEventListener('click',e=>{
+    const btn=e.target.closest('.grade-btn');
+    if(!btn) return;
+    document.querySelectorAll('.grade-btn').forEach(b=>{
+      b.className='grade-btn';
+    });
+    const g=btn.dataset.grade;
+    currentGrade=g;
+    if(g==='ALL') btn.classList.add('active-all');
+    else if(g==='EASY') btn.classList.add('active-easy');
+    else if(g==='MID') btn.classList.add('active-mid');
+    else if(g==='HARD') btn.classList.add('active-hard');
+    renderMatchups(defenseData, currentPos, currentGrade, document.getElementById('search-matchups').value);
+  });
+
+  // SEARCH
+  document.getElementById('search-offense').addEventListener('input',e=>{
+    renderOffense(offenseData, e.target.value);
+  });
+  document.getElementById('search-defense').addEventListener('input',e=>{
+    renderDefense(defenseData, e.target.value);
+  });
+  document.getElementById('search-matchups').addEventListener('input',e=>{
+    renderMatchups(defenseData, currentPos, currentGrade, e.target.value);
+  });
+}
+
+// NEWSLETTER FORM
+document.getElementById('nl-submit').addEventListener('click', async ()=>{
+  const email=document.getElementById('nl-email').value.trim();
+  if(!email||!email.includes('@')) return;
+  try{
+    await fetch('https://sleepercellff.com/.netlify/functions/subscribe',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email})
+    });
+  }catch(e){}
+  document.getElementById('nl-form').style.display='none';
+  document.getElementById('nl-success').style.display='block';
+});
+
+init();
+</script>
+</body>
+</html>

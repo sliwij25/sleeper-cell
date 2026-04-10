@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Sleeper Cell — Weekly Fantasy Football Rankings. Tier-based rankings, waiver targets, and real-time intelligence.">
+<meta name="theme-color" content="#001C1C">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<title>Weekly Rankings | Sleeper Cell</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --core:#001C1C;
+  --accent:#10B981;
+  --accent-dim:rgba(16,185,129,0.12);
+  --border:rgba(16,185,129,0.18);
+  --text:#e2e8f0;
+  --muted:rgba(255,255,255,0.62);
+  --muted2:#94a3b8;
+  --card:rgba(0,35,35,0.9);
+  --tertiary:#002B2B;
+  --grid-color:rgba(16,185,129,0.06);
+}
+html{scroll-behavior:smooth}
+body{background-color:var(--core);color:var(--text);font-family:'Barlow Condensed',sans-serif;min-height:100vh;overflow-x:hidden}
+
+.grid-bg{position:fixed;inset:0;background-image:linear-gradient(var(--grid-color) 1px,transparent 1px),linear-gradient(90deg,var(--grid-color) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.scanline{position:fixed;top:-100%;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent,rgba(16,185,129,0.4),transparent);animation:scan 6s linear infinite;z-index:1;pointer-events:none}
+@keyframes scan{0%{top:-2px}100%{top:100vh}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.page{position:relative;z-index:2}
+
+/* NAV */
+nav{display:flex;align-items:stretch;justify-content:space-between;height:52px;border-bottom:1px solid var(--border);padding:0 32px;background:rgba(0,28,28,0.95)}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+.nav-logo-icon{width:30px;height:30px;flex-shrink:0}
+.nav-wordmark{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;letter-spacing:0.12em;color:var(--text);text-transform:uppercase}
+.nav-wordmark span{color:var(--accent)}
+.nav-links{display:flex;align-items:stretch}
+.nav-link{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.1em;text-decoration:none;text-transform:uppercase;display:flex;align-items:center;padding:0 16px;border-right:1px solid var(--border);transition:color 0.2s,background 0.2s}
+.nav-link:first-child{border-left:1px solid var(--border)}
+.nav-link:hover{color:var(--accent);background:var(--accent-dim)}
+.nav-link.active{color:var(--accent);background:var(--accent-dim)}
+.nav-right{display:flex;align-items:center;gap:16px}
+.nav-status{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.08em;display:flex;align-items:center;gap:6px}
+.nav-pulse{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 1.5s ease-in-out infinite;flex-shrink:0}
+.nav-cta-btn{background:var(--accent);color:#001C1C;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;padding:8px 18px;text-decoration:none;display:inline-block;transition:opacity 0.2s;flex-shrink:0}
+.nav-cta-btn:hover{opacity:0.88}
+
+/* STATUS BAR */
+.status-bar{background:rgba(0,28,28,0.85);border-bottom:1px solid var(--border);padding:0 48px;height:32px;display:flex;align-items:center;gap:20px}
+.status-item{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.status-item .val{color:var(--text)}
+.status-sep{color:rgba(16,185,129,0.3);font-size:10px}
+
+/* BADGES */
+.badge{font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 7px;border-radius:2px;letter-spacing:0.06em;display:inline-block}
+.badge.pivot{background:rgba(16,185,129,0.15);color:#10B981}
+.badge.fade{background:rgba(239,68,68,0.12);color:#f87171}
+.badge.warn{background:rgba(251,191,36,0.12);color:#fbbf24}
+.badge.start{background:rgba(16,185,129,0.15);color:#10B981}
+.badge.sit{background:rgba(239,68,68,0.12);color:#f87171}
+.badge.easy{background:rgba(16,185,129,0.15);color:#10B981}
+.badge.hard{background:rgba(239,68,68,0.12);color:#f87171}
+.badge.mid{background:rgba(100,116,139,0.2);color:#94a3b8}
+.badge.hold{background:rgba(100,116,139,0.15);color:#94a3b8}
+.badge.crit{background:rgba(239,68,68,0.15);color:#f87171}
+.badge.clear{background:rgba(16,185,129,0.10);color:#10B981}
+
+.pos-badge{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:10px;padding:2px 5px;border:1px solid;margin-right:4px}
+.pos-QB{color:#60a5fa;border-color:rgba(96,165,250,0.4)}
+.pos-RB{color:#34d399;border-color:rgba(52,211,153,0.4)}
+.pos-WR{color:#a78bfa;border-color:rgba(167,139,250,0.4)}
+.pos-TE{color:#fbbf24;border-color:rgba(251,191,36,0.4)}
+
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-bottom:2px}
+.stat-card{background:rgba(0,43,43,0.75);border:1px solid var(--border);padding:16px 18px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:-1px;left:-1px;width:10px;height:10px;border-top:2px solid var(--accent);border-left:2px solid var(--accent)}
+.stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.82);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:6px}
+.stat-value{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:28px;color:#e2e8f0;line-height:1}
+.stat-value.teal{color:var(--accent)}
+.stat-value.red{color:#f87171}
+.stat-value.lg{font-size:18px;padding-top:4px}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:3px;font-family:'Share Tech Mono',monospace}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse}
+.tbl-head th{font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(16,185,129,0.75);letter-spacing:0.15em;text-transform:uppercase;padding:8px 14px;text-align:left;border-bottom:1px solid rgba(16,185,129,0.2)}
+.tbl-row td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.09);vertical-align:middle}
+.tbl-row:last-child td{border-bottom:none}
+.tbl-row:hover td{background:rgba(16,185,129,0.04)}
+.player-name{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:15px;color:#e2e8f0;letter-spacing:0.03em}
+.player-meta{font-size:11px;color:var(--muted);font-family:'Share Tech Mono',monospace}
+.rank-num{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:rgba(16,185,129,0.5)}
+.pts{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;color:var(--accent)}
+.stat-mono{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)}
+.tier-num{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted2)}
+
+/* PANEL */
+.panel{background:rgba(0,43,43,0.65);border:1px solid var(--border);position:relative;margin-bottom:2px}
+.panel::before{content:'';position:absolute;top:-1px;left:-1px;width:14px;height:14px;border-top:2px solid var(--accent);border-left:2px solid var(--accent)}
+.panel::after{content:'';position:absolute;bottom:-1px;right:-1px;width:14px;height:14px;border-bottom:2px solid var(--accent);border-right:2px solid var(--accent)}
+.panel-header{padding:14px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.panel-label{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase}
+.panel-body{padding:16px 18px}
+
+/* FILTER TABS */
+.filter-row{display:flex;align-items:center;justify-content:space-between;padding:0 0 12px 0;gap:12px;flex-wrap:wrap}
+.pos-tabs{display:flex;gap:0}
+.pos-tab{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;padding:6px 14px;cursor:pointer;border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;transition:color 0.2s,border-color 0.2s;display:flex;align-items:center;gap:6px}
+.pos-tab:hover{color:var(--accent)}
+.pos-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.pos-tab.sep{border-right:1px solid var(--border);margin-right:6px;padding-right:6px}
+.scoring-btns{display:flex;gap:0}
+.scoring-btn{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;padding:5px 11px;cursor:pointer;color:var(--muted);background:rgba(0,28,28,0.6);border:1px solid rgba(16,185,129,0.18);border-right:none;transition:all 0.15s}
+.scoring-btn:last-child{border-right:1px solid rgba(16,185,129,0.18)}
+.scoring-btn:hover{color:var(--text)}
+.scoring-btn.active{color:var(--accent);background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.4)}
+
+/* TWO COLUMN */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:2px}
+
+/* START SIT */
+.start-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.start-row:last-child{border-bottom:none}
+.start-row.is-start{background:rgba(16,185,129,0.05)}
+.start-row.is-sit{background:rgba(239,68,68,0.04)}
+.start-info{flex:1;min-width:0}
+.start-name{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:14px;color:var(--text)}
+.start-ctx{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px}
+.start-pts{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--accent);flex-shrink:0}
+.sub-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.6);letter-spacing:0.18em;text-transform:uppercase;padding:10px 16px 6px;border-bottom:1px solid rgba(16,185,129,0.1)}
+
+/* WAIVER WIRE */
+.ww-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.ww-row:last-child{border-bottom:none}
+.ww-info{flex:1;min-width:0}
+.ww-name{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:14px;color:var(--text)}
+.ww-meta{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px}
+.ww-right{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0}
+.ww-faab{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:var(--accent)}
+.ww-pts{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)}
+
+/* TREND ROWS */
+.trend-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.trend-row:last-child{border-bottom:none}
+.trend-name{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:14px;color:var(--text);flex:1;min-width:0}
+.trend-metric{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted2)}
+.trend-change{font-family:'Share Tech Mono',monospace;font-size:11px;display:flex;align-items:center;gap:4px;flex-shrink:0}
+.trend-up{color:#10B981}
+.trend-dn{color:#f87171}
+.empty-state{text-align:center;padding:28px 16px;font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(16,185,129,0.4);letter-spacing:0.12em;text-transform:uppercase}
+
+/* INJURY ROW */
+.inj-row{display:flex;align-items:flex-start;gap:10px;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.inj-row:last-child{border-bottom:none}
+.inj-info{flex:1;min-width:0}
+.inj-name{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:14px;color:var(--text)}
+.inj-detail{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px}
+.inj-time{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted2);flex-shrink:0;padding-top:3px}
+
+/* PAGE LAYOUT */
+.page-wrap{max-width:1300px;margin:0 auto;padding:0 48px 0}
+.page-header{padding:28px 0 16px}
+.page-eyebrow{font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(16,185,129,0.6);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.page-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:38px;text-transform:uppercase;letter-spacing:0.03em;color:var(--text);display:flex;align-items:center;gap:12px}
+.page-title span{color:var(--accent)}
+
+/* TABLE WRAP */
+.tbl-wrap{overflow-x:auto}
+.tbl-wrap table{min-width:600px}
+
+/* NEWSLETTER BAR */
+.newsletter-bar{background:rgba(16,185,129,0.04);border-top:1px solid var(--border);padding:32px 48px}
+.nl-inner{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.nl-eyebrow{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:10px}
+.nl-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:22px;color:var(--text);letter-spacing:0.04em;margin-bottom:6px}
+.nl-desc{font-family:'Barlow Condensed',sans-serif;font-size:15px;color:var(--muted);line-height:1.5}
+.nl-right{display:flex;flex-direction:column;gap:14px}
+.nl-preview{background:rgba(0,28,28,0.85);border:1px solid var(--border);padding:14px 16px;position:relative}
+.nl-preview::before{content:'';position:absolute;top:-1px;left:-1px;width:8px;height:8px;border-top:1.5px solid var(--accent);border-left:1.5px solid var(--accent)}
+.nl-from{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.06em;margin-bottom:4px}
+.nl-from span{color:var(--accent)}
+.nl-subject{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text);letter-spacing:0.04em;margin-bottom:6px}
+.nl-teaser{font-family:'Barlow Condensed',sans-serif;font-size:13px;color:var(--muted);line-height:1.4}
+.nl-form{display:flex;gap:8px}
+.nl-input{flex:1;background:rgba(0,28,28,0.9);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;padding:10px 14px;letter-spacing:0.06em;outline:none;transition:border-color 0.2s}
+.nl-input:focus{border-color:rgba(16,185,129,0.5)}
+.nl-input::placeholder{color:rgba(255,255,255,0.3)}
+.nl-btn{background:var(--accent);color:#001C1C;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:0.12em;text-transform:uppercase;padding:10px 22px;border:none;cursor:pointer;transition:opacity 0.2s;flex-shrink:0}
+.nl-btn:hover{opacity:0.88}
+.nl-fine{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted2);letter-spacing:0.1em;text-align:center}
+.nl-success{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);letter-spacing:0.1em;display:none;padding:10px 0}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between}
+.footer-left{display:flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase}
+.footer-right{font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(16,185,129,0.4);letter-spacing:0.12em;text-transform:uppercase}
+
+/* SECTION SPACING */
+.section{margin-bottom:2px}
+.mb2{margin-bottom:2px}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="scanline"></div>
+
+<div class="page">
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <svg class="nav-logo-icon" viewBox="0 0 15 15" fill="#10B981" xmlns="http://www.w3.org/2000/svg">
+      <path d="M7.53,3C3.09,3,1,7.5,1,7.5S3.09,12,7.53,12S14,7.5,14,7.5S12,3,7.53,3z M11,7v1.5C11,8.7761,10.7761,9,10.5,9S10,8.7761,10,8.5V8H8v0.5C8,8.7761,7.7761,9,7.5,9S7,8.7761,7,8.5V8H5v0.5C5,8.7761,4.7761,9,4.5,9S4,8.7761,4,8.5v-2C4,6.2239,4.2239,6,4.5,6S5,6.2239,5,6.5V7h2V6.5C7,6.2239,7.2239,6,7.5,6S8,6.2239,8,6.5V7h2V6.5C10,6.2239,10.2239,6,10.5,6S11,6.2239,11,6.5V7z"/>
+    </svg>
+    <span class="nav-wordmark">Sleeper <span>Cell</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">Intel</a>
+    <a href="dashboard.html" class="nav-link active">Weekly Rankings</a>
+    <a href="season-outlook.html" class="nav-link">Season Outlook</a>
+    <a href="team-stats.html" class="nav-link">Team Analysis</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-status"><div class="nav-pulse"></div>Pipeline Active</div>
+    <a href="#subscribe" class="nav-cta-btn">Activate Clearance</a>
+  </div>
+</nav>
+
+<!-- STATUS BAR -->
+<div class="status-bar" id="status-bar">
+  <div class="status-item">Season <span class="val" id="sb-season">—</span></div>
+  <div class="status-sep">·</div>
+  <div class="status-item">Week <span class="val" id="sb-week">—</span></div>
+  <div class="status-sep">·</div>
+  <div class="status-item">Last Run <span class="val" id="sb-run">—</span></div>
+  <div class="status-sep">·</div>
+  <div class="status-item">Pivots <span class="val" id="sb-pivots">—</span></div>
+  <div class="status-sep">·</div>
+  <div class="status-item">Fades <span class="val" id="sb-fades">—</span></div>
+  <div class="status-sep">·</div>
+  <div class="status-item">Ranked <span class="val" id="sb-ranked">—</span></div>
+</div>
+
+<!-- PAGE CONTENT -->
+<div class="page-wrap">
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="page-eyebrow">// Intelligence Dashboard //</div>
+    <div class="page-title">
+      Weekly <span>Rankings</span>
+      <svg width="32" height="32" viewBox="0 0 15 15" fill="#10B981" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7.53,3C3.09,3,1,7.5,1,7.5S3.09,12,7.53,12S14,7.5,14,7.5S12,3,7.53,3z M11,7v1.5C11,8.7761,10.7761,9,10.5,9S10,8.7761,10,8.5V8H8v0.5C8,8.7761,7.7761,9,7.5,9S7,8.7761,7,8.5V8H5v0.5C5,8.7761,4.7761,9,4.5,9S4,8.7761,4,8.5v-2C4,6.2239,4.2239,6,4.5,6S5,6.2239,5,6.5V7h2V6.5C7,6.2239,7.2239,6,7.5,6S8,6.2239,8,6.5V7h2V6.5C10,6.2239,10.2239,6,10.5,6S11,6.2239,11,6.5V7z"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- METRIC ROW -->
+  <div class="stat-grid mb2">
+    <div class="stat-card">
+      <div class="stat-label">Pivots This Week</div>
+      <div class="stat-value teal" id="metric-pivots">—</div>
+      <div class="stat-sub" id="metric-pivots-sub">model bullish vs ADP</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Fades This Week</div>
+      <div class="stat-value red" id="metric-fades">—</div>
+      <div class="stat-sub" id="metric-fades-sub">model bearish vs ADP</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Top Waiver Add</div>
+      <div class="stat-value lg" id="metric-waiver-name">—</div>
+      <div class="stat-sub" id="metric-waiver-sub">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Sleeper Pick</div>
+      <div class="stat-value lg" id="metric-sleeper-name">—</div>
+      <div class="stat-sub" id="metric-sleeper-sub">—</div>
+    </div>
+  </div>
+
+  <!-- FILTER + TABLE -->
+  <div class="panel section">
+    <div style="padding:14px 18px 0">
+      <div class="filter-row">
+        <div class="pos-tabs" id="pos-tabs">
+          <button class="pos-tab active" data-pos="ALL">All</button>
+          <button class="pos-tab" data-pos="QB">QB</button>
+          <button class="pos-tab" data-pos="RB">RB</button>
+          <button class="pos-tab" data-pos="WR">WR</button>
+          <button class="pos-tab sep" data-pos="TE">TE</button>
+          <button class="pos-tab" data-pos="PIVOT">▲ Pivot Only</button>
+          <button class="pos-tab" data-pos="FADE">▼ Fade Only</button>
+        </div>
+        <div class="scoring-btns" id="scoring-btns">
+          <button class="scoring-btn active" data-scoring="full_ppr">PPR</button>
+          <button class="scoring-btn" data-scoring="half_ppr">Half PPR</button>
+          <button class="scoring-btn" data-scoring="no_ppr">Standard</button>
+          <button class="scoring-btn" data-scoring="te_premium">TE+</button>
+        </div>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead class="tbl-head">
+          <tr>
+            <th style="width:48px">#</th>
+            <th>Player</th>
+            <th style="width:60px">Tier</th>
+            <th style="width:80px">Proj</th>
+            <th style="width:110px">Floor / Ceiling</th>
+          </tr>
+        </thead>
+        <tbody id="rankings-tbody"></tbody>
+      </table>
+    </div>
+    <button id="expand-rankings" style="display:none;width:100%;padding:10px;background:rgba(0,28,28,0.7);border:none;border-top:1px solid rgba(16,185,129,0.12);color:rgba(16,185,129,0.6);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.15em;cursor:pointer;justify-content:center;align-items:center;transition:color 0.2s" onmouseover="this.style.color='#10B981'" onmouseout="this.style.color='rgba(16,185,129,0.6)'"></button>
+  </div>
+
+  <!-- START/SIT + WAIVER WIRE -->
+  <div class="two-col">
+    <!-- START / SIT -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-label" id="startsit-label">// Start / Sit — Wk — //</div>
+      </div>
+      <div class="sub-label">// Start //</div>
+      <div id="start-rows"></div>
+      <div class="sub-label" style="margin-top:2px">// Sit //</div>
+      <div id="sit-rows"></div>
+    </div>
+
+    <!-- WAIVER WIRE -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-label">// Tue Night Drop //</div>
+      </div>
+      <div class="sub-label">// High Priority Adds //</div>
+      <div id="ww-add"></div>
+      <div class="sub-label" style="margin-top:2px">// Monitor //</div>
+      <div id="ww-monitor"></div>
+      <div class="sub-label" style="margin-top:2px">// Drop Candidates //</div>
+      <div id="ww-drop"></div>
+    </div>
+  </div>
+
+  <!-- TRENDS + INJURIES -->
+  <div class="two-col" style="margin-top:2px;margin-bottom:32px">
+    <!-- SNAP/TARGET TRENDS -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-label">// Snap &amp; Target Trends //</div>
+      </div>
+      <div id="trends-body"></div>
+    </div>
+
+    <!-- INJURY INTEL -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-label">// Injury Intel //</div>
+      </div>
+      <div id="injury-body"></div>
+    </div>
+  </div>
+</div>
+
+<!-- NEWSLETTER BAR -->
+<div class="newsletter-bar" id="subscribe">
+  <div class="nl-inner">
+    <div class="nl-left">
+      <div class="nl-eyebrow">// Weekly Briefing — Published Every Tuesday Night</div>
+      <div class="nl-title">Waiver Intel. Rankings. In Your Inbox.</div>
+      <div class="nl-desc">Waiver targets and rankings in your inbox before Wednesday waivers run. Free.</div>
+    </div>
+    <div class="nl-right">
+      <div class="nl-preview">
+        <div class="nl-from">From: <span>intel@sleepercellff.com</span></div>
+        <div class="nl-subject" id="nl-subject">📡 Weekly Briefing — Wk —</div>
+        <div class="nl-teaser">Priority adds, must-start locks, and the one sleeper no one in your league is picking up.</div>
+      </div>
+      <div class="nl-form" id="nl-form">
+        <input class="nl-input" type="email" placeholder="your@email.com" id="nl-email">
+        <button class="nl-btn" id="nl-submit">Activate</button>
+      </div>
+      <div class="nl-success" id="nl-success">// Clearance granted. Transmission incoming. //</div>
+      <div class="nl-fine">No spam · Intel only · Unsubscribe anytime</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <svg width="16" height="16" viewBox="0 0 15 15" fill="#10B981" xmlns="http://www.w3.org/2000/svg">
+      <path d="M7.53,3C3.09,3,1,7.5,1,7.5S3.09,12,7.53,12S14,7.5,14,7.5S12,3,7.53,3z M11,7v1.5C11,8.7761,10.7761,9,10.5,9S10,8.7761,10,8.5V8H8v0.5C8,8.7761,7.7761,9,7.5,9S7,8.7761,7,8.5V8H5v0.5C5,8.7761,4.7761,9,4.5,9S4,8.7761,4,8.5v-2C4,6.2239,4.2239,6,4.5,6S5,6.2239,5,6.5V7h2V6.5C7,6.2239,7.2239,6,7.5,6S8,6.2239,8,6.5V7h2V6.5C10,6.2239,10.2239,6,10.5,6S11,6.2239,11,6.5V7z"/>
+    </svg>
+    Sleeper Cell · Fantasy Intelligence
+  </div>
+  <div class="footer-right">// Classified // Fantasy Operations Division //</div>
+</footer>
+</div>
+
+<script>
+const CDN = 'https://cdn.jsdelivr.net/gh/sliwij25/sleeper-cell@main/data/';
+
+function fmt(v, dec=1){ return (v==null||v===undefined||isNaN(v)) ? '—' : Number(v).toFixed(dec); }
+function esc(s){ if(!s) return '—'; const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+function posBadge(pos){
+  const cls={'QB':'pos-QB','RB':'pos-RB','WR':'pos-WR','TE':'pos-TE'}[pos]||'';
+  return `<span class="pos-badge ${cls}">${esc(pos)}</span>`;
+}
+
+function fmtTime(ts){
+  if(!ts) return '—';
+  try{
+    const d=new Date(ts);
+    const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const h=d.getHours(), m=d.getMinutes().toString().padStart(2,'0');
+    const ampm=h>=12?'PM':'AM';
+    return `${days[d.getDay()]} ${(h%12||12)}:${m} ${ampm}`;
+  }catch(e){return '—';}
+}
+
+async function loadJSON(name){
+  try{
+    const r=await fetch(CDN+name+'?v='+Date.now());
+    if(!r.ok) throw new Error(r.status);
+    return await r.json();
+  }catch(e){ console.warn('Failed to load',name,e); return null; }
+}
+
+// Flatten rankings.json positions into flat array, respecting scoring format
+// Supports d.formats[scoring][league][pos] (migration 019) and d.positions fallback
+function flattenRankings(d, scoringFmt='full_ppr'){
+  if(!d) return [];
+  // Try formats dict first (migration 019)
+  if(d.formats && d.formats[scoringFmt]){
+    const lf = scoringFmt==='te_premium' ? 'te_premium' : '1qb';
+    const fmtData = d.formats[scoringFmt][lf] || d.formats[scoringFmt]['1qb'] || d.formats[scoringFmt];
+    if(fmtData && typeof fmtData==='object' && !Array.isArray(fmtData)){
+      const arr=[];
+      for(const [pos,players] of Object.entries(fmtData)){
+        if(Array.isArray(players)) players.forEach(p=>arr.push({...p,position:p.position||pos}));
+      }
+      return arr.sort((a,b)=>(b.projected_pts||0)-(a.projected_pts||0));
+    }
+  }
+  // Fallback: positions key
+  if(d.positions && typeof d.positions==='object' && !Array.isArray(d.positions)){
+    const arr=[];
+    for(const [pos,players] of Object.entries(d.positions)){
+      if(Array.isArray(players)) players.forEach(p=>arr.push({...p,position:p.position||pos}));
+    }
+    return arr.sort((a,b)=>(b.projected_pts||0)-(a.projected_pts||0));
+  }
+  if(Array.isArray(d.players)) return d.players;
+  if(Array.isArray(d)) return d;
+  return [];
+}
+
+const ROWS_INIT = 15;
+let allPlayers=[];
+let currentPos='ALL';
+let currentScoring='full_ppr';
+let rankingsExpanded=false;
+let _rankingsData=null;
+
+function renderRankings(players, pos){
+  const tbody=document.getElementById('rankings-tbody');
+  const expandBtn=document.getElementById('expand-rankings');
+  if(!tbody) return;
+  let filtered=players;
+  if(pos==='PIVOT') filtered=players.filter(p=>p.is_pivot);
+  else if(pos==='FADE') filtered=players.filter(p=>p.is_fade);
+  else if(pos!=='ALL') filtered=players.filter(p=>(p.position||'')===pos);
+
+  const total=filtered.length;
+  const display=rankingsExpanded ? filtered : filtered.slice(0,ROWS_INIT);
+
+  if(!display.length){
+    tbody.innerHTML=`<tr><td colspan="5" style="padding:24px;text-align:center;font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(16,185,129,0.4);letter-spacing:0.12em">NO DATA AVAILABLE</td></tr>`;
+    if(expandBtn) expandBtn.style.display='none';
+    return;
+  }
+
+  tbody.innerHTML=display.map((p,i)=>{
+    const name=p.full_name||p.name||'Unknown';
+    const team=p.team||'—';
+    const ppos=p.position||'—';
+    const tier=p.tier||'—';
+    const proj=fmt(p.projected_pts);
+    const floor=fmt(p.floor_pts);
+    const ceil=fmt(p.ceiling_pts);
+    const pivBadge=p.is_pivot?`<span class="badge pivot">PIVOT</span>`:'';
+    const fadeBadge=p.is_fade?`<span class="badge fade">FADE</span>`:'';
+    return `<tr class="tbl-row">
+      <td><span class="rank-num">${i+1}</span></td>
+      <td>
+        <div class="player-name">${esc(name)}</div>
+        <div class="player-meta" style="margin-top:2px">${posBadge(ppos)}<span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">${esc(team)}</span>${pivBadge?'&nbsp;'+pivBadge:''}${fadeBadge?'&nbsp;'+fadeBadge:''}</div>
+      </td>
+      <td><span class="tier-num">${esc(String(tier))}</span></td>
+      <td><span class="pts">${proj}</span></td>
+      <td><span class="stat-mono">${floor} / ${ceil}</span></td>
+    </tr>`;
+  }).join('');
+
+  if(expandBtn){
+    if(total>ROWS_INIT){
+      expandBtn.style.display='flex';
+      expandBtn.textContent=rankingsExpanded
+        ? `▲ COLLAPSE`
+        : `▼ SHOW ALL ${total} PLAYERS`;
+    } else {
+      expandBtn.style.display='none';
+    }
+  }
+}
+
+function renderStartSit(players, week){
+  document.getElementById('startsit-label').textContent=`// Start / Sit — Wk ${week||'—'} //`;
+  const sorted=[...players].sort((a,b)=>(b.projected_pts||0)-(a.projected_pts||0));
+  const starts=sorted.slice(0,2);
+  const sits=sorted.slice(-2).reverse();
+
+  const startEl=document.getElementById('start-rows');
+  const sitEl=document.getElementById('sit-rows');
+
+  startEl.innerHTML=starts.length?starts.map(p=>{
+    const name=p.full_name||p.name||'Unknown';
+    const team=p.team||'—';
+    const pos=p.position||'—';
+    return `<div class="start-row is-start">
+      <span class="badge start">START</span>
+      <div class="start-info">
+        <div class="start-name">${esc(name)}</div>
+        <div class="start-ctx">${esc(team)} · ${esc(pos)}</div>
+      </div>
+      <div class="start-pts">${fmt(p.projected_pts)}</div>
+    </div>`;
+  }).join(''):`<div class="empty-state">No data</div>`;
+
+  sitEl.innerHTML=sits.length?sits.map(p=>{
+    const name=p.full_name||p.name||'Unknown';
+    const team=p.team||'—';
+    const pos=p.position||'—';
+    return `<div class="start-row is-sit">
+      <span class="badge sit">SIT</span>
+      <div class="start-info">
+        <div class="start-name">${esc(name)}</div>
+        <div class="start-ctx">${esc(team)} · ${esc(pos)}</div>
+      </div>
+      <div class="start-pts">${fmt(p.projected_pts)}</div>
+    </div>`;
+  }).join(''):`<div class="empty-state">No data</div>`;
+}
+
+function renderWaiverWire(data){
+  const renderSection=(id, players, action)=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    if(!players||!players.length){
+      el.innerHTML=`<div class="empty-state">No ${action.toLowerCase()} targets</div>`;
+      return;
+    }
+    el.innerHTML=players.slice(0,4).map(p=>{
+      const name=p.full_name||p.name||'Unknown';
+      const team=p.team||'—';
+      const pos=p.position||'—';
+      const own=p.ownership_pct!=null?fmt(p.ownership_pct,0)+'% own':'—';
+      const faab=p.faab_bid!=null?`$${fmt(p.faab_bid,0)}`:'—';
+      const pts=fmt(p.projected_pts);
+      let badgeCls=action==='ADD'?'start':action==='MONITOR'?'warn':'sit';
+      return `<div class="ww-row">
+        <span class="badge ${badgeCls}">${esc(action)}</span>
+        <div class="ww-info">
+          <div class="ww-name">${esc(name)}</div>
+          <div class="ww-meta">${esc(team)} · ${esc(pos)} · ${own}</div>
+        </div>
+        <div class="ww-right">
+          <div class="ww-faab">${faab}</div>
+          <div class="ww-pts">${pts} proj</div>
+        </div>
+      </div>`;
+    }).join('');
+  };
+
+  if(!data||!data.targets){
+    ['ww-add','ww-monitor','ww-drop'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el) el.innerHTML=`<div class="empty-state">No data</div>`;
+    });
+    return;
+  }
+  renderSection('ww-add', data.targets.add||[], 'ADD');
+  renderSection('ww-monitor', data.targets.monitor||[], 'MONITOR');
+  renderSection('ww-drop', data.targets.drop||[], 'DROP');
+}
+
+function renderTrends(players){
+  const el=document.getElementById('trends-body');
+  if(!el) return;
+
+  // Filter players with non-stable snap_trend or any trend data
+  const trending=players.filter(p=>p.snap_trend&&p.snap_trend!=='stable').slice(0,8);
+
+  if(!trending.length){
+    el.innerHTML=`<div class="empty-state">// Trend data populates in-season //</div>`;
+    return;
+  }
+
+  el.innerHTML=trending.map(p=>{
+    const name=p.full_name||p.name||'Unknown';
+    const trend=p.snap_trend||'stable';
+    const isUp=trend==='up'||trend==='trending_up'||trend==='breakout';
+    return `<div class="trend-row">
+      <div class="trend-name">${esc(name)}</div>
+      <div class="trend-metric" style="margin-right:auto;padding-left:8px">${esc(p.team||'—')} · snap</div>
+      <div class="trend-change ${isUp?'trend-up':'trend-dn'}">${isUp?'▲':'▼'} ${esc(trend.replace(/_/g,' ').toUpperCase())}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderInjuries(data){
+  const el=document.getElementById('injury-body');
+  if(!el) return;
+  const alerts=(data&&data.alerts)||[];
+  if(!alerts.length){
+    el.innerHTML=`<div class="empty-state">// No active injury alerts //</div>`;
+    return;
+  }
+  el.innerHTML=alerts.slice(0,8).map(a=>{
+    const name=a.full_name||a.name||'Unknown';
+    const sev=(a.severity||'warn').toLowerCase();
+    let badgeCls=sev==='critical'?'crit':sev==='cleared'?'clear':'warn';
+    const detail=a.injury_type?`${a.injury_type}${a.status?' · '+a.status:''}`:a.status||'—';
+    const ts=fmtTime(a.updated_at);
+    return `<div class="inj-row">
+      <span class="badge ${badgeCls}">${esc((a.severity||'WARN').toUpperCase())}</span>
+      <div class="inj-info">
+        <div class="inj-name">${esc(name)} <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">${esc(a.team||'')}</span></div>
+        <div class="inj-detail">${esc(detail)}</div>
+      </div>
+      <div class="inj-time">${ts}</div>
+    </div>`;
+  }).join('');
+}
+
+async function init(){
+  const [meta, rankings, waiver, injuries] = await Promise.all([
+    loadJSON('meta.json'),
+    loadJSON('rankings.json'),
+    loadJSON('waiver_targets.json'),
+    loadJSON('injury_alerts.json')
+  ]);
+
+  // STATUS BAR
+  if(meta){
+    document.getElementById('sb-season').textContent=meta.season||'—';
+    const week=rankings&&rankings.week!=null?rankings.week:(meta.week||0);
+    document.getElementById('sb-week').textContent=week||'Pre';
+    document.getElementById('sb-run').textContent=fmtTime(meta.last_run||meta.generated_at);
+    document.getElementById('sb-ranked').textContent=meta.projection_count||'—';
+  }
+
+  // FLATTEN PLAYERS (default PPR)
+  _rankingsData=rankings;
+  allPlayers=flattenRankings(rankings, currentScoring);
+
+  // COUNT PIVOTS/FADES
+  const pivotCount=allPlayers.filter(p=>p.is_pivot).length;
+  const fadeCount=allPlayers.filter(p=>p.is_fade).length;
+  document.getElementById('sb-pivots').textContent=pivotCount;
+  document.getElementById('sb-fades').textContent=fadeCount;
+
+  // METRIC CARDS
+  document.getElementById('metric-pivots').textContent=pivotCount;
+  document.getElementById('metric-fades').textContent=fadeCount;
+
+  // Top waiver add
+  if(waiver&&waiver.targets&&waiver.targets.add&&waiver.targets.add.length){
+    const top=waiver.targets.add[0];
+    document.getElementById('metric-waiver-name').textContent=top.full_name||top.name||'—';
+    document.getElementById('metric-waiver-sub').textContent=`${fmt(top.projected_pts)} proj · ${top.faab_bid!=null?'$'+fmt(top.faab_bid,0)+' FAAB':'—'}`;
+  } else {
+    document.getElementById('metric-waiver-name').textContent='N/A';
+    document.getElementById('metric-waiver-sub').textContent='No waiver data';
+  }
+
+  // Sleeper pick = lowest ownership but high proj
+  const withOwn=allPlayers.filter(p=>p.ownership_pct!=null&&p.projected_pts>0);
+  withOwn.sort((a,b)=>(a.ownership_pct||100)-(b.ownership_pct||100));
+  if(withOwn.length){
+    const s=withOwn[0];
+    document.getElementById('metric-sleeper-name').textContent=s.full_name||s.name||'—';
+    document.getElementById('metric-sleeper-sub').textContent=`${fmt(s.ownership_pct,0)}% own · ${fmt(s.projected_pts)} proj`;
+  } else if(allPlayers.length){
+    // fallback: last player in sorted list
+    const s=allPlayers[allPlayers.length-1];
+    document.getElementById('metric-sleeper-name').textContent=s.full_name||s.name||'—';
+    document.getElementById('metric-sleeper-sub').textContent=`${fmt(s.projected_pts)} proj`;
+  }
+
+  // NEWSLETTER WEEK
+  const wk=rankings&&rankings.week!=null?rankings.week:(meta&&meta.week||'—');
+  document.getElementById('nl-subject').textContent=`📡 Weekly Briefing — Wk ${wk}`;
+
+  // RENDER TABLES
+  renderRankings(allPlayers, 'ALL');
+  renderStartSit(allPlayers, wk);
+  renderWaiverWire(waiver);
+  renderTrends(allPlayers);
+  renderInjuries(injuries);
+
+  // POSITION FILTER TABS
+  document.getElementById('pos-tabs').addEventListener('click',e=>{
+    const btn=e.target.closest('.pos-tab');
+    if(!btn) return;
+    document.querySelectorAll('.pos-tab').forEach(t=>t.classList.remove('active'));
+    btn.classList.add('active');
+    currentPos=btn.dataset.pos;
+    rankingsExpanded=false;
+    renderRankings(allPlayers, currentPos);
+  });
+
+  // SCORING FORMAT BUTTONS
+  document.getElementById('scoring-btns').addEventListener('click',e=>{
+    const btn=e.target.closest('.scoring-btn');
+    if(!btn) return;
+    document.querySelectorAll('.scoring-btn').forEach(t=>t.classList.remove('active'));
+    btn.classList.add('active');
+    currentScoring=btn.dataset.scoring;
+    rankingsExpanded=false;
+    allPlayers=flattenRankings(_rankingsData, currentScoring);
+    renderRankings(allPlayers, currentPos);
+  });
+
+  // EXPAND / COLLAPSE RANKINGS
+  document.getElementById('expand-rankings').addEventListener('click',()=>{
+    rankingsExpanded=!rankingsExpanded;
+    renderRankings(allPlayers, currentPos);
+  });
+}
+
+// NEWSLETTER FORM
+document.getElementById('nl-submit').addEventListener('click', async ()=>{
+  const email=document.getElementById('nl-email').value.trim();
+  if(!email||!email.includes('@')) return;
+  try{
+    await fetch('https://sleepercellff.com/.netlify/functions/subscribe',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email})
+    });
+  }catch(e){}
+  document.getElementById('nl-form').style.display='none';
+  document.getElementById('nl-success').style.display='block';
+});
+
+init();
+</script>
+</body>
+</html>
