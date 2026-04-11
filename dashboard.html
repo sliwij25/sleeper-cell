@@ -3,14 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
-<title>Sleeper Cell | Intelligence Dashboard</title>
+<meta name="description" content="Sleeper Cell — Weekly Fantasy Football Rankings. Tier-based rankings, waiver targets, and real-time intelligence.">
+<meta name="theme-color" content="#001C1C">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<title>Weekly Rankings | Sleeper Cell</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--core:#001C1C;--accent:#10B981;--primary:#FFFFFF;--tertiary:#002B2B;--accent-dim:rgba(16,185,129,0.15);--grid-color:rgba(16,185,129,0.06);--muted:rgba(255,255,255,0.62);--border:rgba(16,185,129,0.28)}
+:root{
+  --core:#001C1C;
+  --accent:#10B981;
+  --accent-dim:rgba(16,185,129,0.12);
+  --border:rgba(16,185,129,0.18);
+  --text:#e2e8f0;
+  --muted:rgba(255,255,255,0.62);
+  --muted2:#94a3b8;
+  --card:rgba(0,35,35,0.9);
+  --tertiary:#002B2B;
+  --grid-color:rgba(16,185,129,0.06);
+}
 html{scroll-behavior:smooth}
-body{background-color:var(--core);color:var(--primary);font-family:'Barlow Condensed',sans-serif;min-height:100vh;overflow-x:hidden}
+body{background-color:var(--core);color:var(--text);font-family:'Barlow Condensed',sans-serif;min-height:100vh;overflow-x:hidden}
+
 .grid-bg{position:fixed;inset:0;background-image:linear-gradient(var(--grid-color) 1px,transparent 1px),linear-gradient(90deg,var(--grid-color) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
 .scanline{position:fixed;top:-100%;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent,rgba(16,185,129,0.4),transparent);animation:scan 6s linear infinite;z-index:1;pointer-events:none}
 @keyframes scan{0%{top:-2px}100%{top:100vh}}
@@ -18,871 +32,734 @@ body{background-color:var(--core);color:var(--primary);font-family:'Barlow Conde
 .page{position:relative;z-index:2}
 
 /* NAV */
-nav{display:flex;align-items:center;justify-content:space-between;padding:20px 48px;border-bottom:1px solid rgba(16,185,129,0.22)}
-.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none}
-.logo-icon{width:36px;height:36px;border:1.5px solid var(--accent);display:flex;align-items:center;justify-content:center}
-.eye-svg{width:20px;height:14px}
-.logo-text{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;letter-spacing:0.15em;color:var(--primary);text-transform:uppercase}
-.logo-text span{color:var(--accent)}
-.nav-tag{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);letter-spacing:0.1em;opacity:0.9}
-.nav-links{display:flex;align-items:center;gap:24px}
-.nav-link{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.1em;text-decoration:none;text-transform:uppercase;transition:color 0.2s}
-.nav-link:hover,.nav-link.active{color:var(--accent)}
-.nav-cta{background:transparent;border:1px solid var(--accent);color:var(--accent);font-family:'Rajdhani',sans-serif;font-weight:600;font-size:13px;letter-spacing:0.12em;text-transform:uppercase;padding:8px 20px;cursor:pointer;text-decoration:none;transition:all 0.2s;display:inline-block}
-.nav-cta:hover{background:var(--accent);color:var(--core)}
+nav{display:flex;align-items:stretch;justify-content:space-between;height:52px;border-bottom:1px solid var(--border);padding:0 32px;background:rgba(0,28,28,0.95)}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+.nav-logo-icon{width:30px;height:30px;flex-shrink:0}
+.nav-wordmark{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;letter-spacing:0.12em;color:var(--text);text-transform:uppercase}
+.nav-wordmark span{color:var(--accent)}
+.nav-links{display:flex;align-items:stretch}
+.nav-link{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.1em;text-decoration:none;text-transform:uppercase;display:flex;align-items:center;padding:0 16px;border-right:1px solid var(--border);transition:color 0.2s,background 0.2s}
+.nav-link:first-child{border-left:1px solid var(--border)}
+.nav-link:hover{color:var(--accent);background:var(--accent-dim)}
+.nav-link.active{color:var(--accent);background:var(--accent-dim)}
+.nav-right{display:flex;align-items:center;gap:16px}
+.nav-status{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.08em;display:flex;align-items:center;gap:6px}
+.nav-pulse{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 1.5s ease-in-out infinite;flex-shrink:0}
+.nav-cta-btn{background:var(--accent);color:#001C1C;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;padding:8px 18px;text-decoration:none;display:inline-block;transition:opacity 0.2s;flex-shrink:0}
+.nav-cta-btn:hover{opacity:0.88}
 
-/* DASH HEADER */
-.dash-header{padding:32px 48px 24px;max-width:1400px;margin:0 auto}
-.dash-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.eyebrow-line{width:32px;height:1px;background:var(--accent)}
-.eyebrow-text{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase}
-.dash-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:32px;text-transform:uppercase;letter-spacing:0.05em;color:var(--primary)}
-.dash-title span{color:var(--accent)}
+/* STATUS BAR */
+.status-bar{background:rgba(0,28,28,0.85);border-bottom:1px solid var(--border);padding:0 48px;height:32px;display:flex;align-items:center;gap:20px}
+.status-item{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.status-item .val{color:var(--text)}
+.status-sep{color:rgba(16,185,129,0.3);font-size:10px}
 
-/* PIPELINE STRIP */
-.pipeline-strip{display:flex;align-items:center;gap:24px;padding:8px 16px;border:1px solid var(--border);border-bottom:none;background:rgba(0,28,28,0.85)}
-.live-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 1.5s ease-in-out infinite}
-.strip-item{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.1em}
-.strip-item.live{color:var(--accent);display:flex;align-items:center;gap:6px}
+/* BADGES */
+.badge{font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 7px;border-radius:2px;letter-spacing:0.06em;display:inline-block}
+.badge.pivot{background:rgba(16,185,129,0.15);color:#10B981}
+.badge.fade{background:rgba(239,68,68,0.12);color:#f87171}
+.badge.warn{background:rgba(251,191,36,0.12);color:#fbbf24}
+.badge.start{background:rgba(16,185,129,0.15);color:#10B981}
+.badge.sit{background:rgba(239,68,68,0.12);color:#f87171}
+.badge.easy{background:rgba(16,185,129,0.15);color:#10B981}
+.badge.hard{background:rgba(239,68,68,0.12);color:#f87171}
+.badge.mid{background:rgba(100,116,139,0.2);color:#94a3b8}
+.badge.hold{background:rgba(100,116,139,0.15);color:#94a3b8}
+.badge.crit{background:rgba(239,68,68,0.15);color:#f87171}
+.badge.clear{background:rgba(16,185,129,0.10);color:#10B981}
 
-/* STAT CARDS */
-.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-bottom:2px}
-.stat-card{background:rgba(0,43,43,0.75);border:1px solid var(--border);padding:16px 18px;position:relative;overflow:hidden;cursor:pointer;transition:border-color 0.2s,background 0.2s}
-.stat-card:hover{border-color:rgba(16,185,129,0.4);background:rgba(0,43,43,0.8)}
-.stat-card.active{border-color:var(--accent);background:rgba(16,185,129,0.08);border-left:3px solid var(--accent)}
-.stat-card::before{content:'';position:absolute;top:-1px;left:-1px;width:10px;height:10px;border-top:2px solid var(--accent);border-left:2px solid var(--accent)}
-.stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.82);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:6px}
-.stat-value{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:28px;color:var(--primary);line-height:1}
-.stat-sub{font-size:11px;color:var(--muted);margin-top:3px}
-.stat-trend-up{color:#10B981;font-size:11px;font-family:'Share Tech Mono',monospace;margin-top:3px}
-.stat-trend-dn{color:#ef4444;font-size:11px;font-family:'Share Tech Mono',monospace;margin-top:3px}
-.card-hint{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.55);letter-spacing:0.1em;margin-top:6px}
-.stat-card.active .card-hint{color:var(--accent);opacity:0.7}
-
-/* CONTEXT CARDS */
-.ctx-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-bottom:12px}
-.ctx-card{background:rgba(0,28,28,0.88);border:1px solid var(--border);padding:10px 14px;position:relative;cursor:pointer;transition:border-color 0.2s,background 0.2s}
-.ctx-card:hover{border-color:rgba(16,185,129,0.3);background:rgba(0,43,43,0.5)}
-.ctx-card.active{border-color:var(--accent);background:rgba(16,185,129,0.06);border-left:3px solid var(--accent)}
-.ctx-card::before{content:'';position:absolute;top:-1px;left:-1px;width:7px;height:7px;border-top:1.5px solid var(--accent);border-left:1.5px solid var(--accent)}
-.ctx-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.72);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px}
-.ctx-metrics{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end}
-.ctx-item{display:flex;flex-direction:column;gap:1px}
-.ctx-key{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.08em}
-.ctx-val{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--primary)}
-.ctx-val.green{color:#10B981}
-.ctx-val.red{color:#ef4444}
-.ctx-val.yellow{color:#fbbf24}
-.ctx-val.sm{font-size:13px}
-
-/* SECTION NAV */
-.sec-nav{display:flex;flex-direction:column;gap:2px;margin-bottom:8px}
-.sec-btn{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--border);background:rgba(0,28,28,0.82);cursor:pointer;transition:all 0.2s;gap:12px;width:100%}
-.sec-btn:hover{border-color:rgba(16,185,129,0.3);background:rgba(0,43,43,0.6)}
-.sec-btn.active{border-color:var(--accent);background:rgba(16,185,129,0.08);border-left:3px solid var(--accent)}
-.sec-left{display:flex;align-items:center;gap:10px}
-.sec-tag{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;background:var(--accent-dim);padding:3px 8px;border-left:2px solid var(--accent)}
-.sec-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:0.05em;color:var(--primary)}
-.sec-metrics{display:flex;gap:20px;align-items:center}
-.sec-metric{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.08em;white-space:nowrap}
-.sec-metric span{color:var(--accent)}
-.sec-metric span.red{color:#ef4444}
-.sec-metric span.yellow{color:#fbbf24}
-.sec-arrow{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);opacity:0.65;flex-shrink:0;transition:transform 0.2s,opacity 0.2s}
-.sec-btn.active .sec-arrow{opacity:1;transform:rotate(90deg)}
-
-/* CONTENT PANELS */
-.sec-content{display:none;border:1px solid var(--border);background:rgba(0,43,43,0.65);position:relative;margin-bottom:2px}
-.sec-content.active{display:block}
-.sec-content::before{content:'';position:absolute;top:-1px;left:-1px;width:14px;height:14px;border-top:2px solid var(--accent);border-left:2px solid var(--accent)}
-.sec-content::after{content:'';position:absolute;bottom:-1px;right:-1px;width:14px;height:14px;border-bottom:2px solid var(--accent);border-right:2px solid var(--accent)}
-
-/* INNER TABS */
-.inner-tabs{display:flex;border-bottom:1px solid rgba(16,185,129,0.2)}
-.itab{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;padding:9px 18px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;transition:all 0.2s}
-.itab.active{color:var(--accent);border-bottom-color:var(--accent)}
-.itab:hover{color:var(--primary)}
-.itab-content{display:none}.itab-content.active{display:block}
-.fmt-btn{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:5px 10px;cursor:pointer;color:var(--muted);background:none;border:1px solid rgba(16,185,129,0.2);transition:all 0.2s}
-.fmt-btn.active{color:var(--accent);border-color:var(--accent);background:rgba(16,185,129,0.08)}
-.fmt-btn:hover{color:var(--primary);border-color:rgba(16,185,129,0.5)}
-
-/* TABLES */
-table{width:100%;border-collapse:collapse}
-.tbl-head th{font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(16,185,129,0.75);letter-spacing:0.15em;text-transform:uppercase;padding:8px 14px;text-align:left;border-bottom:1px solid rgba(16,185,129,0.2)}
-.tbl-row td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.09);vertical-align:middle}
-.tbl-row:last-child td{border-bottom:none}
-.tbl-row:hover td{background:rgba(16,185,129,0.04)}
-.player-name{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:15px;color:var(--primary);letter-spacing:0.03em}
-.player-meta{font-size:11px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:300}
 .pos-badge{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:10px;padding:2px 5px;border:1px solid;margin-right:4px}
 .pos-QB{color:#60a5fa;border-color:rgba(96,165,250,0.4)}
 .pos-RB{color:#34d399;border-color:rgba(52,211,153,0.4)}
 .pos-WR{color:#a78bfa;border-color:rgba(167,139,250,0.4)}
 .pos-TE{color:#fbbf24;border-color:rgba(251,191,36,0.4)}
-.pts{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;color:var(--accent);white-space:nowrap}
-.tier-badge{font-family:'Share Tech Mono',monospace;font-size:10px;padding:2px 7px;border:1px solid rgba(16,185,129,0.3);color:var(--accent);white-space:nowrap}
-.rank-num{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:rgba(16,185,129,0.5);width:28px;text-align:right;padding-right:6px}
-.pivot-tag{color:#10B981;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:0.1em}
-.fade-tag{color:#ef4444;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:0.1em}
-.hold-tag{color:rgba(255,255,255,0.62);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:0.1em}
-.action-add{color:#10B981;font-family:'Share Tech Mono',monospace;font-size:11px}
-.action-monitor{color:#fbbf24;font-family:'Share Tech Mono',monospace;font-size:11px}
-.action-drop{color:#ef4444;font-family:'Share Tech Mono',monospace;font-size:11px}
-.faab{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--primary);text-align:right}
-.faab-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)}
-.sub-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.75);padding:6px 14px;background:rgba(0,28,28,0.4);border-bottom:1px solid rgba(16,185,129,0.08);letter-spacing:0.15em}
-.alert-critical{color:#ef4444;font-family:'Share Tech Mono',monospace;font-size:11px;padding:2px 5px;border:1px solid rgba(239,68,68,0.4)}
-.alert-warn{color:#fbbf24;font-family:'Share Tech Mono',monospace;font-size:11px;padding:2px 5px;border:1px solid rgba(251,191,36,0.4)}
-.alert-cleared{color:#10B981;font-family:'Share Tech Mono',monospace;font-size:11px;padding:2px 5px;border:1px solid rgba(16,185,129,0.4)}
-.alert-time{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);white-space:nowrap}
-.alert-item{display:flex;justify-content:space-between;align-items:flex-start;padding:11px 14px;border-bottom:1px solid rgba(255,255,255,0.09);gap:10px}
-.alert-item:last-child{border-bottom:none}
-.season-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.09)}
-.season-row:last-child{border-bottom:none}
-.season-row:hover{background:rgba(16,185,129,0.04)}
-.season-pts{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:19px;color:var(--accent)}
-.season-range{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:0}
-.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
-.sleeper-card{padding:16px;border-right:1px solid rgba(16,185,129,0.08)}
-.sleeper-card:last-child{border-right:none}
-.trend-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.09)}
+
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-bottom:2px}
+.stat-card{background:rgba(0,43,43,0.75);border:1px solid var(--border);padding:16px 18px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:-1px;left:-1px;width:10px;height:10px;border-top:2px solid var(--accent);border-left:2px solid var(--accent)}
+.stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.82);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:6px}
+.stat-value{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:28px;color:#e2e8f0;line-height:1}
+.stat-value.teal{color:var(--accent)}
+.stat-value.red{color:#f87171}
+.stat-value.lg{font-size:18px;padding-top:4px}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:3px;font-family:'Share Tech Mono',monospace}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse}
+.tbl-head th{font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(16,185,129,0.75);letter-spacing:0.15em;text-transform:uppercase;padding:8px 14px;text-align:left;border-bottom:1px solid rgba(16,185,129,0.2)}
+.tbl-row td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.09);vertical-align:middle}
+.tbl-row:last-child td{border-bottom:none}
+.tbl-row:hover td{background:rgba(16,185,129,0.04)}
+.player-name{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:15px;color:#e2e8f0;letter-spacing:0.03em}
+.player-meta{font-size:11px;color:var(--muted);font-family:'Share Tech Mono',monospace}
+.rank-num{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:rgba(16,185,129,0.5)}
+.pts{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;color:var(--accent)}
+.stat-mono{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)}
+.tier-num{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted2)}
+
+/* PANEL */
+.panel{background:rgba(0,43,43,0.65);border:1px solid var(--border);position:relative;margin-bottom:2px}
+.panel::before{content:'';position:absolute;top:-1px;left:-1px;width:14px;height:14px;border-top:2px solid var(--accent);border-left:2px solid var(--accent)}
+.panel::after{content:'';position:absolute;bottom:-1px;right:-1px;width:14px;height:14px;border-bottom:2px solid var(--accent);border-right:2px solid var(--accent)}
+.panel-header{padding:14px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.panel-label{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase}
+.panel-body{padding:16px 18px}
+
+/* FILTER TABS */
+.filter-row{display:flex;align-items:center;justify-content:space-between;padding:0 0 12px 0;gap:12px;flex-wrap:wrap}
+.pos-tabs{display:flex;gap:0}
+.pos-tab{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;padding:6px 14px;cursor:pointer;border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;transition:color 0.2s,border-color 0.2s;display:flex;align-items:center;gap:6px}
+.pos-tab:hover{color:var(--accent)}
+.pos-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.pos-tab.sep{border-right:1px solid var(--border);margin-right:6px;padding-right:6px}
+.scoring-btns{display:flex;gap:0}
+.scoring-btn{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;padding:5px 11px;cursor:pointer;color:var(--muted);background:rgba(0,28,28,0.6);border:1px solid rgba(16,185,129,0.18);border-right:none;transition:all 0.15s}
+.scoring-btn:last-child{border-right:1px solid rgba(16,185,129,0.18)}
+.scoring-btn:hover{color:var(--text)}
+.scoring-btn.active{color:var(--accent);background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.4)}
+
+/* TWO COLUMN */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:2px}
+
+/* START SIT */
+.start-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.start-row:last-child{border-bottom:none}
+.start-row.is-start{background:rgba(16,185,129,0.05)}
+.start-row.is-sit{background:rgba(239,68,68,0.04)}
+.start-info{flex:1;min-width:0}
+.start-name{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:14px;color:var(--text)}
+.start-ctx{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px}
+.start-pts{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--accent);flex-shrink:0}
+.sub-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.6);letter-spacing:0.18em;text-transform:uppercase;padding:10px 16px 6px;border-bottom:1px solid rgba(16,185,129,0.1)}
+
+/* WAIVER WIRE */
+.ww-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.ww-row:last-child{border-bottom:none}
+.ww-info{flex:1;min-width:0}
+.ww-name{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:14px;color:var(--text)}
+.ww-meta{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px}
+.ww-right{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0}
+.ww-faab{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:var(--accent)}
+.ww-pts{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)}
+
+/* TREND ROWS */
+.trend-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.06)}
 .trend-row:last-child{border-bottom:none}
+.trend-name{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:14px;color:var(--text);flex:1;min-width:0}
+.trend-metric{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted2)}
+.trend-change{font-family:'Share Tech Mono',monospace;font-size:11px;display:flex;align-items:center;gap:4px;flex-shrink:0}
+.trend-up{color:#10B981}
+.trend-dn{color:#f87171}
+.empty-state{text-align:center;padding:28px 16px;font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(16,185,129,0.4);letter-spacing:0.12em;text-transform:uppercase}
 
-/* NEWSLETTER */
-.newsletter-card{background:rgba(0,43,43,0.4);border:1px solid var(--border);padding:28px;text-align:center;position:relative;margin-top:12px}
-.newsletter-card::before{content:'';position:absolute;top:-1px;left:-1px;width:14px;height:14px;border-top:2px solid var(--accent);border-left:2px solid var(--accent)}
-.newsletter-card::after{content:'';position:absolute;bottom:-1px;right:-1px;width:14px;height:14px;border-bottom:2px solid var(--accent);border-right:2px solid var(--accent)}
-.nl-eyebrow{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.2em;opacity:0.8;margin-bottom:10px}
-.nl-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:26px;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px}
-.nl-title span{color:var(--accent)}
-.nl-desc{font-size:13px;color:var(--muted);font-weight:300;max-width:380px;margin:0 auto 20px;line-height:1.6}
-.nl-form{display:flex;max-width:360px;margin:0 auto}
-.nl-input{flex:1;background:rgba(0,28,28,0.9);border:1px solid rgba(16,185,129,0.25);border-right:none;color:var(--primary);font-family:'Share Tech Mono',monospace;font-size:12px;padding:10px 14px;outline:none}
-.nl-input::placeholder{color:rgba(255,255,255,0.2)}
-.nl-btn{background:var(--accent);color:var(--core);border:none;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:0.12em;text-transform:uppercase;padding:10px 18px;cursor:pointer;clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,0 100%);white-space:nowrap}
-.nl-fine{margin-top:10px;font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(255,255,255,0.2);letter-spacing:0.12em}
+/* INJURY ROW */
+.inj-row{display:flex;align-items:flex-start;gap:10px;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.inj-row:last-child{border-bottom:none}
+.inj-info{flex:1;min-width:0}
+.inj-name{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:14px;color:var(--text)}
+.inj-detail{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px}
+.inj-time{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted2);flex-shrink:0;padding-top:3px}
 
-footer{padding:24px 48px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(16,185,129,0.18)}
-.footer-left{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:14px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.5)}
-.footer-left span{color:var(--accent)}
-.footer-right{font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:0.1em}
-@media(max-width:600px){
-  nav{padding:14px 20px}
-  .nav-tag,.nav-links{display:none}
-  .nav-logo{gap:8px}
-  .nav-logo svg[viewBox="0 0 15 15"]{width:18px;height:18px}
-  .logo-text{font-size:15px}
-  .logo-icon{width:28px;height:28px}
-  .nav-cta{font-size:11px;padding:6px 12px;letter-spacing:0.08em}
-  .dash-header{padding:0 0 16px}
-  .dash-title{font-size:24px}
-  .dash-title svg{width:26px !important;height:26px !important}
-  div[style*="padding:32px 48px"]{padding:20px 16px 40px !important}
-  .pipeline-strip{gap:12px;padding:7px 12px;flex-wrap:wrap}
-  .strip-item{font-size:8px}
-  .stat-grid{grid-template-columns:1fr 1fr}
-  .stat-card{padding:12px 14px}
-  .stat-value{font-size:22px}
-  .stat-label{font-size:7px}
-  .stat-sub,.stat-trend-up,.stat-trend-dn,.card-hint{font-size:10px}
-  .ctx-grid{grid-template-columns:1fr 1fr}
-  .ctx-card{padding:8px 10px}
-  .ctx-val{font-size:14px}
-  .ctx-val.sm{font-size:12px}
-  .ctx-key{font-size:7px}
-  .sec-metrics{display:none}
-  .sec-btn{padding:10px 12px}
-  .sec-tag{font-size:8px;padding:2px 6px}
-  .sec-name{font-size:13px}
-  .two-col{grid-template-columns:1fr}
-  .three-col{grid-template-columns:1fr}
-  .sleeper-card{border-right:none;border-bottom:1px solid rgba(16,185,129,0.08)}
-  .sleeper-card:last-child{border-bottom:none}
-  .tbl-head th{padding:6px 10px;font-size:8px}
-  .tbl-row td{padding:8px 10px}
-  .player-name{font-size:13px}
-  .pts{font-size:15px}
-  .tier-badge{font-size:8px;padding:2px 5px}
-  table{table-layout:fixed;width:100%}
-  .nl-form{max-width:100%}
-  footer{padding:20px 16px;flex-direction:column;gap:8px;text-align:center}
-}
-@media(max-width:480px){
-  .stat-grid{grid-template-columns:1fr 1fr}
-  .ctx-grid{grid-template-columns:1fr 1fr}
-  .pipeline-strip .strip-item:nth-child(n+3){display:none}
-  .rank-num{display:none}
-}
+/* PAGE LAYOUT */
+.page-wrap{max-width:1300px;margin:0 auto;padding:0 48px 0}
+.page-header{padding:28px 0 16px}
+.page-eyebrow{font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(16,185,129,0.6);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.page-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:38px;text-transform:uppercase;letter-spacing:0.03em;color:var(--text);display:flex;align-items:center;gap:12px}
+.page-title span{color:var(--accent)}
+
+/* TABLE WRAP */
+.tbl-wrap{overflow-x:auto}
+.tbl-wrap table{min-width:600px}
+
+/* NEWSLETTER BAR */
+.newsletter-bar{background:rgba(16,185,129,0.04);border-top:1px solid var(--border);padding:32px 48px}
+.nl-inner{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.nl-eyebrow{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:10px}
+.nl-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:22px;color:var(--text);letter-spacing:0.04em;margin-bottom:6px}
+.nl-desc{font-family:'Barlow Condensed',sans-serif;font-size:15px;color:var(--muted);line-height:1.5}
+.nl-right{display:flex;flex-direction:column;gap:14px}
+.nl-preview{background:rgba(0,28,28,0.85);border:1px solid var(--border);padding:14px 16px;position:relative}
+.nl-preview::before{content:'';position:absolute;top:-1px;left:-1px;width:8px;height:8px;border-top:1.5px solid var(--accent);border-left:1.5px solid var(--accent)}
+.nl-from{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.06em;margin-bottom:4px}
+.nl-from span{color:var(--accent)}
+.nl-subject{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text);letter-spacing:0.04em;margin-bottom:6px}
+.nl-teaser{font-family:'Barlow Condensed',sans-serif;font-size:13px;color:var(--muted);line-height:1.4}
+.nl-form{display:flex;gap:8px}
+.nl-input{flex:1;background:rgba(0,28,28,0.9);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;padding:10px 14px;letter-spacing:0.06em;outline:none;transition:border-color 0.2s}
+.nl-input:focus{border-color:rgba(16,185,129,0.5)}
+.nl-input::placeholder{color:rgba(255,255,255,0.3)}
+.nl-btn{background:var(--accent);color:#001C1C;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:0.12em;text-transform:uppercase;padding:10px 22px;border:none;cursor:pointer;transition:opacity 0.2s;flex-shrink:0}
+.nl-btn:hover{opacity:0.88}
+.nl-fine{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted2);letter-spacing:0.1em;text-align:center}
+.nl-success{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);letter-spacing:0.1em;display:none;padding:10px 0}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between}
+.footer-left{display:flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase}
+.footer-right{font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(16,185,129,0.4);letter-spacing:0.12em;text-transform:uppercase}
+
+/* SECTION SPACING */
+.section{margin-bottom:2px}
+.mb2{margin-bottom:2px}
 </style>
 </head>
 <body>
 <div class="grid-bg"></div>
 <div class="scanline"></div>
-<div class="page">
 
+<div class="page">
+<!-- NAV -->
 <nav>
   <a href="index.html" class="nav-logo">
-    <div class="logo-icon">
-      <svg class="eye-svg" viewBox="0 0 20 14" fill="none">
-        <path d="M1 7C1 7 4.5 1.5 10 1.5C15.5 1.5 19 7 19 7C19 7 15.5 12.5 10 12.5C4.5 12.5 1 7 1 7Z" stroke="#10B981" stroke-width="1.2"/>
-        <circle cx="10" cy="7" r="2.5" stroke="#10B981" stroke-width="1.2"/>
-        <circle cx="10" cy="7" r="1" fill="#10B981"/>
-      </svg>
-    </div>
-    <div class="logo-text">Sleeper <span>Cell</span></div>
-    <svg viewBox="0 0 15 15" width="22" height="22" fill="#10B981" style="margin-left:6px;flex-shrink:0" xmlns="http://www.w3.org/2000/svg"><path d="M7.53,3C3.09,3,1,7.5,1,7.5S3.09,12,7.53,12S14,7.5,14,7.5S12,3,7.53,3z M11,7v1.5C11,8.7761,10.7761,9,10.5,9S10,8.7761,10,8.5V8H8v0.5C8,8.7761,7.7761,9,7.5,9S7,8.7761,7,8.5V8H5v0.5C5,8.7761,4.7761,9,4.5,9S4,8.7761,4,8.5v-2C4,6.2239,4.2239,6,4.5,6S5,6.2239,5,6.5V7h2V6.5C7,6.2239,7.2239,6,7.5,6S8,6.2239,8,6.5V7h2V6.5C10,6.2239,10.2239,6,10.5,6S11,6.2239,11,6.5V7z"/></svg>
+    <svg class="nav-logo-icon" viewBox="0 0 15 15" fill="#10B981" xmlns="http://www.w3.org/2000/svg">
+      <path d="M7.53,3C3.09,3,1,7.5,1,7.5S3.09,12,7.53,12S14,7.5,14,7.5S12,3,7.53,3z M11,7v1.5C11,8.7761,10.7761,9,10.5,9S10,8.7761,10,8.5V8H8v0.5C8,8.7761,7.7761,9,7.5,9S7,8.7761,7,8.5V8H5v0.5C5,8.7761,4.7761,9,4.5,9S4,8.7761,4,8.5v-2C4,6.2239,4.2239,6,4.5,6S5,6.2239,5,6.5V7h2V6.5C7,6.2239,7.2239,6,7.5,6S8,6.2239,8,6.5V7h2V6.5C10,6.2239,10.2239,6,10.5,6S11,6.2239,11,6.5V7z"/>
+    </svg>
+    <span class="nav-wordmark">Sleeper <span>Cell</span></span>
   </a>
-  <div class="nav-tag">// FANTASY INTEL NETWORK //</div>
   <div class="nav-links">
-    <a href="index.html" class="nav-link">Home</a>
-    <a href="dashboard.html" class="nav-link active">Dashboard</a>
-    <a href="team-stats.html" class="nav-link">Teams</a>
-    <a href="index.html#subscribe" class="nav-link">Newsletter</a>
+    <a href="index.html" class="nav-link">Intel</a>
+    <a href="dashboard.html" class="nav-link active">Weekly Rankings</a>
+    <a href="season-outlook.html" class="nav-link">Season Outlook</a>
+    <a href="team-stats.html" class="nav-link">Team Analysis</a>
   </div>
-  <a href="index.html#subscribe" class="nav-cta">Join the Cell</a>
+  <div class="nav-right">
+    <div class="nav-status"><div class="nav-pulse"></div>Pipeline Active</div>
+    <a href="#subscribe" class="nav-cta-btn">Activate Clearance</a>
+  </div>
 </nav>
 
-<div style="max-width:1400px;margin:0 auto;padding:32px 48px 64px">
-
-  <div class="dash-header" style="padding:0 0 20px">
-    <div class="dash-eyebrow"><div class="eyebrow-line"></div><span class="eyebrow-text">Intelligence Dashboard</span></div>
-    <div class="dash-title">Weekly <span>Field Report</span>
-      <svg viewBox="0 0 15 15" width="36" height="36" fill="#10B981" style="display:inline-block;vertical-align:middle;margin-left:10px;opacity:0.9" xmlns="http://www.w3.org/2000/svg"><path d="M7.53,3C3.09,3,1,7.5,1,7.5S3.09,12,7.53,12S14,7.5,14,7.5S12,3,7.53,3z M11,7v1.5C11,8.7761,10.7761,9,10.5,9S10,8.7761,10,8.5V8H8v0.5C8,8.7761,7.7761,9,7.5,9S7,8.7761,7,8.5V8H5v0.5C5,8.7761,4.7761,9,4.5,9S4,8.7761,4,8.5v-2C4,6.2239,4.2239,6,4.5,6S5,6.2239,5,6.5V7h2V6.5C7,6.2239,7.2239,6,7.5,6S8,6.2239,8,6.5V7h2V6.5C10,6.2239,10.2239,6,10.5,6S11,6.2239,11,6.5V7z"/></svg>
-    </div>
-  </div>
-
-  <!-- PIPELINE STRIP -->
-  <div class="pipeline-strip" id="pipeline-strip">
-    <div class="strip-item live"><div class="live-dot"></div>PIPELINE ACTIVE</div>
-    <div class="strip-item" id="meta-season">2026 SEASON</div>
-    <div class="strip-item" id="meta-lastrun">LAST RUN: —</div>
-    <div class="strip-item">PPR SCORING</div>
-  </div>
-
-  <!-- ROW 1 — MAIN STAT CARDS -->
-  <div class="stat-grid">
-    <div class="stat-card" id="card-players" onclick="activateSection('s-proj','card-players')">
-      <div class="stat-label">Players Tracked</div>
-      <div class="stat-value" id="val-players">—</div>
-      <div class="stat-sub">QB / RB / WR / TE</div>
-      <div class="stat-trend-up" id="val-players-sub"></div>
-      <div class="card-hint">↓ VIEW PROJECTIONS</div>
-    </div>
-    <div class="stat-card" id="card-proj" onclick="activateSection('s-proj','card-proj')">
-      <div class="stat-label">Projections Generated</div>
-      <div class="stat-value" id="val-proj">—</div>
-      <div class="stat-sub" id="val-proj-sub"></div>
-      <div class="stat-trend-up" id="val-conf"></div>
-      <div class="card-hint">↓ VIEW RANKINGS</div>
-    </div>
-    <div class="stat-card" id="card-waiver" onclick="activateSection('s-waiver','card-waiver')">
-      <div class="stat-label">Waiver Targets</div>
-      <div class="stat-value" id="val-waiver">—</div>
-      <div class="stat-sub" id="val-waiver-sub"></div>
-      <div class="stat-trend-up" id="val-waiver-hint"></div>
-      <div class="card-hint">↓ VIEW WAIVER WIRE</div>
-    </div>
-    <div class="stat-card" id="card-injury" onclick="activateSection('s-injury','card-injury')">
-      <div class="stat-label">Injury Alerts</div>
-      <div class="stat-value" id="val-injury">—</div>
-      <div class="stat-sub">Last 3 days</div>
-      <div class="stat-trend-dn" id="val-injury-sub"></div>
-      <div class="card-hint">↓ VIEW INJURY REPORT</div>
-    </div>
-  </div>
-
-  <!-- ROW 2 — CONTEXT CARDS -->
-  <div class="ctx-grid">
-    <div class="ctx-card" id="ctx-rank" onclick="activateSection('s-rank','ctx-rank')">
-      <div class="ctx-label">Rankings</div>
-      <div class="ctx-metrics">
-        <div class="ctx-item"><div class="ctx-key">PIVOTS</div><div class="ctx-val green" id="ctx-pivots">—</div></div>
-        <div class="ctx-item"><div class="ctx-key">FADES</div><div class="ctx-val red" id="ctx-fades">—</div></div>
-        <div class="ctx-item"><div class="ctx-key">WEEK</div><div class="ctx-val" id="ctx-week">—</div></div>
-        <div class="ctx-item"><div class="ctx-key">RANKED</div><div class="ctx-val" id="ctx-ranked">—</div></div>
-      </div>
-    </div>
-    <div class="ctx-card" id="ctx-waiver" onclick="activateSection('s-waiver','ctx-waiver')">
-      <div class="ctx-label">Waiver Wire</div>
-      <div class="ctx-metrics">
-        <div class="ctx-item"><div class="ctx-key">TOP BID</div><div class="ctx-val green" id="ctx-topbid">—</div></div>
-        <div class="ctx-item"><div class="ctx-key">TOP ADD</div><div class="ctx-val sm" id="ctx-topadd">—</div></div>
-        <div class="ctx-item"><div class="ctx-key">OWNED</div><div class="ctx-val" id="ctx-owned">—</div></div>
-      </div>
-    </div>
-    <div class="ctx-card" id="ctx-startsit" onclick="activateSection('s-startsit','ctx-startsit')">
-      <div class="ctx-label">Start / Sit</div>
-      <div class="ctx-metrics">
-        <div class="ctx-item"><div class="ctx-key">STARTS</div><div class="ctx-val green">4</div></div>
-        <div class="ctx-item"><div class="ctx-key">SITS</div><div class="ctx-val red">4</div></div>
-        <div class="ctx-item"><div class="ctx-key">TOP START</div><div class="ctx-val sm">J. Allen</div></div>
-      </div>
-    </div>
-    <div class="ctx-card" id="ctx-sleeper" onclick="activateSection('s-sleeper','ctx-sleeper')">
-      <div class="ctx-label">Sleeper Pick</div>
-      <div class="ctx-metrics">
-        <div class="ctx-item"><div class="ctx-key">THIS WEEK</div><div class="ctx-val green sm">McMillan</div></div>
-        <div class="ctx-item"><div class="ctx-key">OWNED</div><div class="ctx-val">18%</div></div>
-        <div class="ctx-item"><div class="ctx-key">PROJ</div><div class="ctx-val">16.8</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SECTION NAV -->
-  <div class="sec-nav" id="sections-anchor">
-    <div class="sec-btn" id="btn-proj" onclick="activateSection('s-proj','btn-proj')">
-      <div class="sec-left"><div class="sec-tag">Season Forecast</div><div class="sec-name">2026 Projections</div></div>
-      <div class="sec-metrics">
-        <div class="sec-metric">TOP QB <span id="sn-topqb">—</span></div>
-        <div class="sec-metric">TOP RB <span id="sn-toprb">—</span></div>
-        <div class="sec-metric">TOP WR <span id="sn-topwr">—</span></div>
-        <div class="sec-metric">TOP TE <span id="sn-topte">—</span></div>
-      </div>
-      <div class="sec-arrow">▶</div>
-    </div>
-    <div class="sec-btn" id="btn-rank" onclick="activateSection('s-rank','btn-rank')">
-      <div class="sec-left"><div class="sec-tag">Field Report</div><div class="sec-name">Weekly Rankings</div></div>
-      <div class="sec-metrics">
-        <div class="sec-metric">WEEK <span id="sn-week">—</span></div>
-        <div class="sec-metric">PIVOTS <span id="sn-pivots" class="green">—</span></div>
-        <div class="sec-metric">FADES <span id="sn-fades" class="red">—</span></div>
-        <div class="sec-metric">RANKED <span id="sn-ranked">—</span></div>
-      </div>
-      <div class="sec-arrow">▶</div>
-    </div>
-    <div class="sec-btn" id="btn-waiver" onclick="activateSection('s-waiver','btn-waiver')">
-      <div class="sec-left"><div class="sec-tag">Acquisition</div><div class="sec-name">Waiver Wire</div></div>
-      <div class="sec-metrics">
-        <div class="sec-metric">ADDS <span id="sn-adds">—</span></div>
-        <div class="sec-metric">MONITOR <span id="sn-monitor">—</span></div>
-        <div class="sec-metric">DROP <span id="sn-drop">—</span></div>
-        <div class="sec-metric">TOP BID <span id="sn-topbid">—</span></div>
-      </div>
-      <div class="sec-arrow">▶</div>
-    </div>
-    <div class="sec-btn" id="btn-startsit" onclick="activateSection('s-startsit','btn-startsit')">
-      <div class="sec-left"><div class="sec-tag">Decision Intel</div><div class="sec-name">Start / Sit</div></div>
-      <div class="sec-metrics">
-        <div class="sec-metric">STARTS <span>4</span></div>
-        <div class="sec-metric">SITS <span>4</span></div>
-        <div class="sec-metric">TOP START <span>J. Allen</span></div>
-      </div>
-      <div class="sec-arrow">▶</div>
-    </div>
-    <div class="sec-btn" id="btn-sleeper" onclick="activateSection('s-sleeper','btn-sleeper')">
-      <div class="sec-left"><div class="sec-tag">Classified</div><div class="sec-name">Sleeper Picks</div></div>
-      <div class="sec-metrics">
-        <div class="sec-metric">THIS WEEK <span>McMillan</span></div>
-        <div class="sec-metric">OWNED <span>18%</span></div>
-        <div class="sec-metric">PROJ <span>16.8</span></div>
-      </div>
-      <div class="sec-arrow">▶</div>
-    </div>
-    <div class="sec-btn" id="btn-snap" onclick="activateSection('s-snap','btn-snap')">
-      <div class="sec-left"><div class="sec-tag">Usage Intel</div><div class="sec-name">Snap &amp; Target Trends</div></div>
-      <div class="sec-metrics">
-        <div class="sec-metric">RISING <span>5</span></div>
-        <div class="sec-metric">FALLING <span>3</span></div>
-        <div class="sec-metric">TOP RISER <span>McMillan</span></div>
-      </div>
-      <div class="sec-arrow">▶</div>
-    </div>
-    <div class="sec-btn" id="btn-injury" onclick="activateSection('s-injury','btn-injury')">
-      <div class="sec-left"><div class="sec-tag">Threat Monitor</div><div class="sec-name">Injury Alerts</div></div>
-      <div class="sec-metrics">
-        <div class="sec-metric">CRITICAL <span class="red" id="sn-critical">—</span></div>
-        <div class="sec-metric">QUEST. <span class="yellow" id="sn-warn">—</span></div>
-        <div class="sec-metric">CLEARED <span id="sn-cleared">—</span></div>
-        <div class="sec-metric">UPDATED <span id="sn-updated">—</span></div>
-      </div>
-      <div class="sec-arrow">▶</div>
-    </div>
-  </div>
-
-  <!-- PROJECTIONS -->
-  <div id="s-proj" class="sec-content">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:2px;padding:8px 14px;border-bottom:1px solid rgba(16,185,129,0.1)">
-      <div class="inner-tabs" style="margin-bottom:0">
-        <button class="itab active" onclick="innerTab(this,'p-qb')">QB</button>
-        <button class="itab" onclick="innerTab(this,'p-rb')">RB</button>
-        <button class="itab" onclick="innerTab(this,'p-wr')">WR</button>
-        <button class="itab" onclick="innerTab(this,'p-te')">TE</button>
-        <button class="itab" onclick="innerTab(this,'p-flex')">FLEX</button>
-        <button class="itab" onclick="innerTab(this,'p-superflex')">SUPERFLEX</button>
-      </div>
-      <div id="proj-sf-btns" style="display:flex;gap:4px;flex-wrap:wrap">
-        <button class="fmt-btn active" data-sf="full_ppr" onclick="projFmt(this)">PPR</button>
-        <button class="fmt-btn"        data-sf="half_ppr" onclick="projFmt(this)">HALF PPR</button>
-        <button class="fmt-btn"        data-sf="no_ppr"   onclick="projFmt(this)">STANDARD</button>
-        <button class="fmt-btn"        data-sf="te_plus"  onclick="projFmt(this)">TE+</button>
-      </div>
-    </div>
-    <div style="display:flex;align-items:center;gap:8px;padding:7px 14px;border-bottom:1px solid rgba(16,185,129,0.08);flex-wrap:wrap">
-      <input id="proj-search" type="text" placeholder="Search player or team…" oninput="searchProj(this.value)" style="flex:1;min-width:160px;background:rgba(0,43,43,0.8);border:1px solid rgba(16,185,129,0.2);color:#fff;font-family:'Share Tech Mono',monospace;font-size:11px;padding:5px 10px;outline:none;letter-spacing:0.05em">
-      <div id="proj-sig-btns" style="display:flex;gap:4px">
-        <button class="fmt-btn active" data-sig="all"   onclick="filterProjSig(this,'all')">ALL</button>
-        <button class="fmt-btn"        data-sig="pivot" onclick="filterProjSig(this,'pivot')">▲ PIVOT</button>
-        <button class="fmt-btn"        data-sig="fade"  onclick="filterProjSig(this,'fade')">▼ FADE</button>
-        <button class="fmt-btn"        data-sig="hold"  onclick="filterProjSig(this,'hold')">— HOLD</button>
-      </div>
-    </div>
-    <div id="p-qb" class="itab-content active"></div>
-    <div id="p-rb" class="itab-content"></div>
-    <div id="p-wr" class="itab-content"></div>
-    <div id="p-te" class="itab-content"></div>
-    <div id="p-flex" class="itab-content"></div>
-    <div id="p-superflex" class="itab-content"></div>
-  </div>
-
-  <!-- RANKINGS -->
-  <div id="s-rank" class="sec-content">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:2px;padding:8px 14px;border-bottom:1px solid rgba(16,185,129,0.1)">
-      <div class="inner-tabs" style="margin-bottom:0">
-        <button class="itab active" onclick="innerTab(this,'r-qb')">QB</button>
-        <button class="itab" onclick="innerTab(this,'r-rb')">RB</button>
-        <button class="itab" onclick="innerTab(this,'r-wr')">WR</button>
-        <button class="itab" onclick="innerTab(this,'r-te')">TE</button>
-        <button class="itab" onclick="innerTab(this,'r-flex')">FLEX</button>
-        <button class="itab" onclick="innerTab(this,'r-superflex')">SUPERFLEX</button>
-      </div>
-      <div id="rank-toggles" style="display:flex;gap:4px;flex-wrap:wrap">
-        <button class="fmt-btn active" data-sf="full_ppr" onclick="rankFmt(this)">PPR</button>
-        <button class="fmt-btn"        data-sf="half_ppr" onclick="rankFmt(this)">HALF PPR</button>
-        <button class="fmt-btn"        data-sf="no_ppr"   onclick="rankFmt(this)">STANDARD</button>
-        <button class="fmt-btn"        data-sf="te_plus"  onclick="rankFmt(this)">TE+</button>
-      </div>
-    </div>
-    <div style="display:flex;align-items:center;gap:8px;padding:7px 14px;border-bottom:1px solid rgba(16,185,129,0.08);flex-wrap:wrap">
-      <input id="rank-search" type="text" placeholder="Search player or team…" oninput="searchRank(this.value)" style="flex:1;min-width:160px;background:rgba(0,43,43,0.8);border:1px solid rgba(16,185,129,0.2);color:#fff;font-family:'Share Tech Mono',monospace;font-size:11px;padding:5px 10px;outline:none;letter-spacing:0.05em">
-      <div id="rank-sig-btns" style="display:flex;gap:4px">
-        <button class="fmt-btn active" data-sig="all"   onclick="filterRankSig(this,'all')">ALL</button>
-        <button class="fmt-btn"        data-sig="pivot" onclick="filterRankSig(this,'pivot')">▲ PIVOT</button>
-        <button class="fmt-btn"        data-sig="fade"  onclick="filterRankSig(this,'fade')">▼ FADE</button>
-        <button class="fmt-btn"        data-sig="hold"  onclick="filterRankSig(this,'hold')">— HOLD</button>
-      </div>
-    </div>
-    <div id="r-qb" class="itab-content active"></div>
-    <div id="r-rb" class="itab-content"></div>
-    <div id="r-wr" class="itab-content"></div>
-    <div id="r-te" class="itab-content"></div>
-    <div id="r-flex" class="itab-content"></div>
-    <div id="r-superflex" class="itab-content"></div>
-  </div>
-
-  <!-- WAIVER WIRE -->
-  <div id="s-waiver" class="sec-content">
-    <div class="sub-label">// HIGH PRIORITY ADDS //</div>
-    <table><thead class="tbl-head"><tr><th>Player</th><th>Action</th><th>Owned</th><th>FAAB</th></tr></thead>
-    <tbody id="waiver-adds"></tbody></table>
-    <div class="sub-label">// MONITOR //</div>
-    <table><thead class="tbl-head"><tr><th>Player</th><th>Action</th><th>Owned</th><th>FAAB</th></tr></thead>
-    <tbody id="waiver-monitor"></tbody></table>
-    <div class="sub-label">// DROP CANDIDATES //</div>
-    <table><thead class="tbl-head"><tr><th>Player</th><th>Action</th><th>Owned</th><th>FAAB</th></tr></thead>
-    <tbody id="waiver-drop"></tbody></table>
-  </div>
-
-  <!-- START / SIT -->
-  <div id="s-startsit" class="sec-content">
-    <div class="two-col">
-      <div>
-        <div class="sub-label">// START THESE //</div>
-        <div class="tbl-row" style="display:table;width:100%"><table><tbody>
-          <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-QB">QB</span>Josh Allen</div><div class="player-meta">BUF vs MIA · Def #24</div></td><td style="text-align:right"><div class="pivot-tag">▲ START</div><div class="pts" style="font-size:15px">29.4</div></td></tr>
-          <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-WR">WR</span>Puka Nacua</div><div class="player-meta">LAR vs ARI · Def #28</div></td><td style="text-align:right"><div class="pivot-tag">▲ START</div><div class="pts" style="font-size:15px">18.4</div></td></tr>
-          <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-RB">RB</span>De'Von Achane</div><div class="player-meta">MIA vs NYJ · Def #30</div></td><td style="text-align:right"><div class="pivot-tag">▲ START</div><div class="pts" style="font-size:15px">19.4</div></td></tr>
-          <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-TE">TE</span>Sam LaPorta</div><div class="player-meta">DET vs CHI · Def #27</div></td><td style="text-align:right"><div class="pivot-tag">▲ START</div><div class="pts" style="font-size:15px">14.8</div></td></tr>
-        </tbody></table></div>
-      </div>
-      <div style="border-left:1px solid rgba(16,185,129,0.08)">
-        <div class="sub-label">// SIT THESE //</div>
-        <table><tbody>
-          <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-QB">QB</span>C.J. Stroud</div><div class="player-meta">HOU vs PIT · Def #5</div></td><td style="text-align:right"><div class="fade-tag">▼ SIT</div><div class="pts" style="font-size:15px">18.1</div></td></tr>
-          <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-WR">WR</span>Davante Adams</div><div class="player-meta">LV vs SF · Def #2</div></td><td style="text-align:right"><div class="fade-tag">▼ SIT</div><div class="pts" style="font-size:15px">9.1</div></td></tr>
-          <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-RB">RB</span>Jonathan Taylor</div><div class="player-meta">IND vs BAL · Def #4</div></td><td style="text-align:right"><div class="fade-tag">▼ SIT</div><div class="pts" style="font-size:15px">11.2</div></td></tr>
-          <tr class="tbl-row"><td><div class="player-name"><span class="pos-badge pos-TE">TE</span>Dallas Goedert</div><div class="player-meta">PHI vs DAL · Def #6</div></td><td style="text-align:right"><div class="fade-tag">▼ SIT</div><div class="pts" style="font-size:15px">7.4</div></td></tr>
-        </tbody></table>
-      </div>
-    </div>
-  </div>
-
-  <!-- SLEEPER PICKS -->
-  <div id="s-sleeper" class="sec-content">
-    <div class="three-col" id="sleeper-cards">
-      <div class="sleeper-card" style="color:rgba(16,185,129,0.4);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.1em;padding:20px">// SLEEPER PICKS POPULATE IN-SEASON //</div>
-    </div>
-  </div>
-
-  <!-- SNAP & TARGET TRENDS -->
-  <div id="s-snap" class="sec-content">
-    <div class="inner-tabs">
-      <button class="itab active" onclick="innerTab(this,'snap-rising')">Rising</button>
-      <button class="itab" onclick="innerTab(this,'snap-falling')">Falling</button>
-    </div>
-    <div id="snap-rising" class="itab-content active">
-      <table><thead class="tbl-head"><tr><th>Player</th><th>Metric</th><th>Trend</th></tr></thead><tbody>
-        <tr class="tbl-row"><td><div class="player-name">Jalen McMillan</div><div class="player-meta">TB · WR</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">Snap%</div></td><td><div class="pivot-tag">▲ 71% → 94%</div></td></tr>
-        <tr class="tbl-row"><td><div class="player-name">Tyjae Spears</div><div class="player-meta">TEN · RB</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">Carries</div></td><td><div class="pivot-tag">▲ 8 → 19</div></td></tr>
-        <tr class="tbl-row"><td><div class="player-name">Tucker Kraft</div><div class="player-meta">GB · TE</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">Routes</div></td><td><div class="pivot-tag">▲ 18 → 31</div></td></tr>
-        <tr class="tbl-row"><td><div class="player-name">Bo Nix</div><div class="player-meta">DEN · QB</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">Air Yards</div></td><td><div class="pivot-tag">▲ 198 → 274</div></td></tr>
-        <tr class="tbl-row"><td><div class="player-name">Puka Nacua</div><div class="player-meta">LAR · WR</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">Tgt Share</div></td><td><div class="pivot-tag">▲ 18% → 29%</div></td></tr>
-      </tbody></table>
-    </div>
-    <div id="snap-falling" class="itab-content">
-      <table><thead class="tbl-head"><tr><th>Player</th><th>Metric</th><th>Trend</th></tr></thead><tbody>
-        <tr class="tbl-row"><td><div class="player-name">Wan'Dale Robinson</div><div class="player-meta">NYG · WR</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">Snap%</div></td><td><div class="fade-tag">▼ 78% → 41%</div></td></tr>
-        <tr class="tbl-row"><td><div class="player-name">Davante Adams</div><div class="player-meta">LV · WR</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">Routes</div></td><td><div class="fade-tag">▼ 38 → 21</div></td></tr>
-        <tr class="tbl-row"><td><div class="player-name">Tony Pollard</div><div class="player-meta">TEN · RB</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">Carries</div></td><td><div class="fade-tag">▼ 16 → 9</div></td></tr>
-      </tbody></table>
-    </div>
-  </div>
-
-  <!-- INJURY ALERTS -->
-  <div id="s-injury" class="sec-content">
-    <div id="injury-body" style="padding:4px 0"></div>
-  </div>
-
-  <!-- NEWSLETTER -->
-  <div class="newsletter-card">
-    <div class="nl-eyebrow">// Clearance Level: Open //</div>
-    <h2 class="nl-title">Weekly <span>Briefing</span>
-      <svg viewBox="0 0 15 15" width="32" height="32" fill="#10B981" style="display:inline-block;vertical-align:middle;margin-left:10px;opacity:0.9" xmlns="http://www.w3.org/2000/svg"><path d="M7.53,3C3.09,3,1,7.5,1,7.5S3.09,12,7.53,12S14,7.5,14,7.5S12,3,7.53,3z M11,7v1.5C11,8.7761,10.7761,9,10.5,9S10,8.7761,10,8.5V8H8v0.5C8,8.7761,7.7761,9,7.5,9S7,8.7761,7,8.5V8H5v0.5C5,8.7761,4.7761,9,4.5,9S4,8.7761,4,8.5v-2C4,6.2239,4.2239,6,4.5,6S5,6.2239,5,6.5V7h2V6.5C7,6.2239,7.2239,6,7.5,6S8,6.2239,8,6.5V7h2V6.5C10,6.2239,10.2239,6,10.5,6S11,6.2239,11,6.5V7z"/></svg>
-    </h2>
-    <p class="nl-desc">Intelligence delivered every Wednesday. Rankings, waiver targets, injury alerts — all in one field report. Free to join.</p>
-    <div class="nl-form">
-      <input type="email" class="nl-input" placeholder="enter.your@email.com">
-      <button class="nl-btn">Activate</button>
-    </div>
-    <div class="nl-fine">// NO SPAM. INTEL ONLY. UNSUBSCRIBE ANYTIME //</div>
-  </div>
-
+<!-- STATUS BAR -->
+<div class="status-bar" id="status-bar">
+  <div class="status-item">Season <span class="val" id="sb-season">—</span></div>
+  <div class="status-sep">·</div>
+  <div class="status-item">Week <span class="val" id="sb-week">—</span></div>
+  <div class="status-sep">·</div>
+  <div class="status-item">Last Run <span class="val" id="sb-run">—</span></div>
+  <div class="status-sep">·</div>
+  <div class="status-item">Pivots <span class="val" id="sb-pivots">—</span></div>
+  <div class="status-sep">·</div>
+  <div class="status-item">Fades <span class="val" id="sb-fades">—</span></div>
+  <div class="status-sep">·</div>
+  <div class="status-item">Ranked <span class="val" id="sb-ranked">—</span></div>
 </div>
 
-<footer>
-  <div class="footer-left">Sleeper <span>Cell</span> &nbsp;·&nbsp; Fantasy Intelligence</div>
-  <div class="footer-right">// CLASSIFIED // FANTASY OPERATIONS DIVISION //</div>
-</footer>
+<!-- PAGE CONTENT -->
+<div class="page-wrap">
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="page-eyebrow">// Intelligence Dashboard //</div>
+    <div class="page-title">
+      Weekly <span>Rankings</span>
+      <svg width="32" height="32" viewBox="0 0 15 15" fill="#10B981" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7.53,3C3.09,3,1,7.5,1,7.5S3.09,12,7.53,12S14,7.5,14,7.5S12,3,7.53,3z M11,7v1.5C11,8.7761,10.7761,9,10.5,9S10,8.7761,10,8.5V8H8v0.5C8,8.7761,7.7761,9,7.5,9S7,8.7761,7,8.5V8H5v0.5C5,8.7761,4.7761,9,4.5,9S4,8.7761,4,8.5v-2C4,6.2239,4.2239,6,4.5,6S5,6.2239,5,6.5V7h2V6.5C7,6.2239,7.2239,6,7.5,6S8,6.2239,8,6.5V7h2V6.5C10,6.2239,10.2239,6,10.5,6S11,6.2239,11,6.5V7z"/>
+      </svg>
+    </div>
+  </div>
 
-</div>
-<script>
-const BASE='https://cdn.jsdelivr.net/gh/sliwij25/sleeper-cell@main/data/';
-const POS_COLOR={QB:'#60a5fa',RB:'#34d399',WR:'#a78bfa',TE:'#fbbf24'};
-const POS_BORDER={QB:'rgba(96,165,250,0.4)',RB:'rgba(52,211,153,0.4)',WR:'rgba(167,139,250,0.4)',TE:'rgba(251,191,36,0.4)'};
+  <!-- METRIC ROW -->
+  <div class="stat-grid mb2">
+    <div class="stat-card">
+      <div class="stat-label">Pivots This Week</div>
+      <div class="stat-value teal" id="metric-pivots">—</div>
+      <div class="stat-sub" id="metric-pivots-sub">model bullish vs ADP</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Fades This Week</div>
+      <div class="stat-value red" id="metric-fades">—</div>
+      <div class="stat-sub" id="metric-fades-sub">model bearish vs ADP</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Top Waiver Add</div>
+      <div class="stat-value lg" id="metric-waiver-name">—</div>
+      <div class="stat-sub" id="metric-waiver-sub">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Sleeper Pick</div>
+      <div class="stat-value lg" id="metric-sleeper-name">—</div>
+      <div class="stat-sub" id="metric-sleeper-sub">—</div>
+    </div>
+  </div>
 
-function posBadge(p){return`<span class="pos-badge pos-${p}" style="color:${POS_COLOR[p]||'#fff'};border-color:${POS_BORDER[p]||'rgba(255,255,255,0.3)'}">${p}</span>`;}
-function sig(r){if(r.is_pivot)return`<div class="pivot-tag">▲ PIVOT</div>`;if(r.is_fade)return`<div class="fade-tag">▼ FADE</div>`;return`<div class="hold-tag">— HOLD</div>`;}
-function timeAgo(iso){if(!iso)return'—';const d=(Date.now()-new Date(iso).getTime())/1000;if(d<3600)return Math.floor(d/60)+'m ago';if(d<86400)return Math.floor(d/3600)+'h ago';return Math.floor(d/86400)+'d ago';}
-function alertCls(a){if(a.alert_type==='CLEARED')return'alert-cleared';if(a.alert_type==='CRITICAL'||a.new_status==='O'||a.new_status==='IR'||a.new_status==='PUP')return'alert-critical';return'alert-warn';}
-function alertLbl(a){if(a.alert_type==='CLEARED')return'CLEARED';if(a.new_status==='O'||a.new_status==='IR'||a.new_status==='PUP')return'CRITICAL';if(a.new_status==='D')return'DOUBTFUL';return'QUESTIONABLE';}
-
-async function load(f){try{const r=await fetch(BASE+f+'?t='+Date.now());if(!r.ok)throw new Error(r.status);return await r.json();}catch(e){console.warn('Could not load '+f,e);return null;}}
-
-function set(id,v){const el=document.getElementById(id);if(el)el.textContent=v;}
-
-// ── SECTION SWITCHING ──────────────────────────────────────
-const SEC_IDS=['s-proj','s-rank','s-waiver','s-startsit','s-sleeper','s-snap','s-injury'];
-const BTN_MAP={'s-proj':['btn-proj','card-players','card-proj'],'s-rank':['btn-rank','ctx-rank'],'s-waiver':['btn-waiver','card-waiver','ctx-waiver'],'s-startsit':['btn-startsit','ctx-startsit'],'s-sleeper':['btn-sleeper','ctx-sleeper'],'s-snap':['btn-snap'],'s-injury':['btn-injury','card-injury']};
-
-function activateSection(secId, triggerId){
-  SEC_IDS.forEach(id=>{
-    const el=document.getElementById(id);
-    if(el)el.classList.remove('active');
-  });
-  document.querySelectorAll('.sec-btn,.stat-card,.ctx-card').forEach(el=>el.classList.remove('active'));
-  const sec=document.getElementById(secId);
-  if(sec){sec.classList.add('active');}
-  const btns=BTN_MAP[secId]||[];
-  btns.forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('active');});
-  if(triggerId){const el=document.getElementById(triggerId);if(el)el.classList.add('active');}
-  document.getElementById('sections-anchor').scrollIntoView({behavior:'smooth',block:'start'});
-}
-
-function innerTab(btn,id){
-  const panel=btn.closest('.sec-content');
-  panel.querySelectorAll('.itab').forEach(t=>t.classList.remove('active'));
-  panel.querySelectorAll('.itab-content').forEach(t=>t.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById(id).classList.add('active');
-}
-
-// ── META ───────────────────────────────────────────────────
-async function loadMeta(){
-  const d=await load('meta.json');if(!d)return;
-  set('meta-season',d.season+' SEASON');
-  if(d.last_run)set('meta-lastrun','LAST RUN: '+new Date(d.last_run).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',timeZoneName:'short'}));
-  set('val-players',d.player_count||'—');
-  set('val-proj',d.projection_count||'—');
-  set('val-proj-sub','Season '+d.season);
-  if(d.avg_confidence)set('val-conf','▲ Avg confidence '+d.avg_confidence);
-  const w=d.waiver_adds+d.waiver_monitors+d.waiver_drops;
-  set('val-waiver',w||'—');
-  set('val-waiver-sub',d.waiver_adds+' add · '+d.waiver_monitors+' monitor · '+d.waiver_drops+' drop');
-  set('val-waiver-hint','▲ '+d.waiver_adds+' high priority adds');
-  set('val-injury',(d.injury_critical+d.injury_warn)||'—');
-  set('val-injury-sub','▼ '+d.injury_critical+' critical · '+d.injury_warn+' questionable');
-}
-
-// ── RANKINGS ───────────────────────────────────────────────
-let _rankData=null, _rankSF='full_ppr';
-let _rankSort={col:'_dp',dir:'desc'};
-let _rankFilter={search:'',signal:'all'};
-let _rankPositions=null; // current positions slice
-
-function _renderRankings(positions,sf){
-  _rankPositions=positions;
-  const base={QB:positions.QB||[],RB:positions.RB||[],WR:positions.WR||[],TE:positions.TE||[]};
-  const views={QB:base.QB,RB:base.RB,WR:base.WR,TE:base.TE,
-    FLEX:[...base.RB,...base.WR,...base.TE],
-    SUPERFLEX:[...base.QB,...base.RB,...base.WR,...base.TE]};
-  let pivots=0,fades=0,ranked=0;
-  Object.entries(views).forEach(([pos,rawList])=>{
-    const needsAdj=sf==='te_plus'||!_rankData?.formats;
-    const enriched=rawList.map(r=>({...r,
-      _dp:(r.projected_pts||0)+(needsAdj?_pprAdj(r.position||pos,sf):0),
-      _tier:r.tier||99,
-      _sig:r.is_pivot?2:r.is_fade?0:1
-    }));
-    if(['QB','RB','WR','TE'].includes(pos)){
-      ranked+=enriched.length;
-      enriched.forEach(r=>{if(r.is_pivot)pivots++;if(r.is_fade)fades++;});
-    }
-    const list=_sfApply(enriched,_rankSort,_rankFilter);
-    const el=document.getElementById('r-'+pos.toLowerCase());if(!el)return;
-    if(!list.length){
-      const msg=_rankFilter.search||_rankFilter.signal!=='all'?'// NO MATCHES //':'// NO DATA YET — RANKINGS POPULATE IN-SEASON //';
-      el.innerHTML=`<div style="padding:16px;font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.4);text-align:center;letter-spacing:0.1em">${msg}</div>`;return;
-    }
-    const S=(col,lbl)=>_th(col,lbl,_rankSort,'sortRank');
-    el.innerHTML=`<table><thead class="tbl-head"><tr><th></th>${S('full_name','Player')}${S('_tier','Tier')}${S('_dp','Proj')}${S('_sig','Signal')}</tr></thead><tbody>`+
-      list.map((r,i)=>`<tr class="tbl-row"><td class="rank-num">${r.rank||i+1}</td><td><div class="player-name">${posBadge(r.position)}${r.name||r.full_name||'—'}</div><div class="player-meta">${r.team||'—'} · ${r.position||'—'}</div></td><td><span class="tier-badge">TIER ${r.tier||'—'}</span></td><td><div class="pts">${r._dp.toFixed(1)}</div></td><td>${sig(r)}</td></tr>`).join('')+
-      '</tbody></table>';
-  });
-  set('ctx-pivots',pivots);set('sn-pivots',pivots);
-  set('ctx-fades',fades);set('sn-fades',fades);
-  set('ctx-ranked',ranked);set('sn-ranked',ranked);
-}
-function sortRank(col){
-  _rankSort={col,dir:_rankSort.col===col&&_rankSort.dir==='desc'?'asc':'desc'};
-  if(_rankPositions)_renderRankings(_rankPositions,_rankSF);
-}
-function filterRankSig(btn,val){
-  document.querySelectorAll('#rank-sig-btns [data-sig]').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');_rankFilter.signal=val;
-  if(_rankPositions)_renderRankings(_rankPositions,_rankSF);
-}
-function searchRank(val){
-  _rankFilter.search=val.trim();
-  if(_rankPositions)_renderRankings(_rankPositions,_rankSF);
-}
-function rankFmt(btn){
-  document.querySelectorAll('#rank-toggles [data-sf]').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');_rankSF=btn.dataset.sf;
-  if(!_rankData)return;
-  const backendSF=_rankSF==='te_plus'?'full_ppr':_rankSF;
-  const positions=_rankData.formats?((_rankData.formats[backendSF]||{})['1qb']||_rankData.positions):_rankData.positions;
-  _renderRankings(positions,_rankSF);
-}
-async function loadRankings(){
-  const d=await load('rankings.json');if(!d||!d.positions)return;
-  _rankData=d;_rankSF=d.default_scoring||'full_ppr';
-  const wk=d.week||'—';set('ctx-week',wk);set('sn-week',wk);
-  document.querySelectorAll('#rank-toggles [data-sf]').forEach(b=>b.classList.toggle('active',b.dataset.sf===_rankSF));
-  const positions=d.formats?((d.formats[_rankSF]||{})['1qb']||d.positions):d.positions;
-  _renderRankings(positions,_rankSF);
-}
-
-// ── WAIVER ─────────────────────────────────────────────────
-async function loadWaiver(){
-  const d=await load('waiver_targets.json');if(!d||!d.targets)return;
-  set('sn-adds',d.targets.add?.length||0);
-  set('sn-monitor',d.targets.monitor?.length||0);
-  set('sn-drop',d.targets.drop?.length||0);
-  const topAdd=d.targets.add?.[0];
-  if(topAdd){
-    set('ctx-topadd',topAdd.name.split(' ').pop());
-    set('ctx-topbid','$'+(topAdd.faab_bid||0));
-    set('ctx-owned',(topAdd.ownership_pct||'—')+'%');
-    set('sn-topbid','$'+(topAdd.faab_bid||0));
-  }
-  function wRow(p,action){
-    const owned=p.ownership_pct!=null?p.ownership_pct+'%':'—';
-    const faab=p.faab_bid>0?'$'+p.faab_bid:'—';
-    const cls=action==='add'?'action-add':action==='monitor'?'action-monitor':'action-drop';
-    const lbl=action==='add'?'▲ ADD':action==='monitor'?'~ MONITOR':'▼ DROP';
-    return`<tr class="tbl-row"><td><div class="player-name">${posBadge(p.position)}${p.name}</div><div class="player-meta">${p.team} · ${p.reason}</div></td><td><div class="${cls}">${lbl}</div></td><td><div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">${owned}</div></td><td><div class="faab">${faab}<div class="faab-label">${faab!=='—'?'BID':''}</div></div></td></tr>`;
-  }
-  ['add','monitor','drop'].forEach(a=>{
-    const el=document.getElementById('waiver-'+a);
-    if(!el)return;
-    const list=d.targets[a]||[];
-    el.innerHTML=list.length?list.map(p=>wRow(p,a)).join(''):`<tr><td colspan="4" style="padding:12px 14px;font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.3);letter-spacing:0.1em">// NO DATA YET //</td></tr>`;
-  });
-}
-
-// ── INJURIES ───────────────────────────────────────────────
-async function loadInjuries(){
-  const d=await load('injury_alerts.json');if(!d)return;
-  const alerts=d.alerts||[];
-  const critical=alerts.filter(a=>a.alert_type==='CRITICAL'||a.new_status==='O'||a.new_status==='IR'||a.new_status==='PUP').length;
-  const warn=alerts.filter(a=>a.new_status==='Q'||a.new_status==='D').length;
-  const cleared=alerts.filter(a=>a.alert_type==='CLEARED').length;
-  set('sn-critical',critical);set('sn-warn',warn);set('sn-cleared',cleared);
-  set('sn-updated',timeAgo(d.generated_at));
-  const body=document.getElementById('injury-body');
-  if(!body)return;
-  if(!alerts.length){body.innerHTML='<div style="padding:16px;font-family:\'Share Tech Mono\',monospace;font-size:10px;color:rgba(16,185,129,0.4);text-align:center;letter-spacing:0.1em">// NO INJURY ALERTS IN LAST 7 DAYS //</div>';return;}
-  body.innerHTML=alerts.slice(0,10).map(a=>`
-    <div class="alert-item">
-      <div style="flex:1">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-          <span class="${alertCls(a)}">${alertLbl(a)}</span>
-          <span class="player-name" style="font-size:14px">${a.name}</span>
-          <span class="player-meta">${a.team} · ${a.position}</span>
+  <!-- FILTER + TABLE -->
+  <div class="panel section">
+    <div style="padding:14px 18px 0">
+      <div class="filter-row">
+        <div class="pos-tabs" id="pos-tabs">
+          <button class="pos-tab active" data-pos="ALL">All</button>
+          <button class="pos-tab" data-pos="QB">QB</button>
+          <button class="pos-tab" data-pos="RB">RB</button>
+          <button class="pos-tab" data-pos="WR">WR</button>
+          <button class="pos-tab sep" data-pos="TE">TE</button>
+          <button class="pos-tab" data-pos="PIVOT">▲ Pivot Only</button>
+          <button class="pos-tab" data-pos="FADE">▼ Fade Only</button>
         </div>
-        <div class="player-meta">${a.alert_type==='CLEARED'?'Cleared from injury report — active.':`Status: ${a.old_status||'healthy'} → ${a.new_status}`}</div>
+        <div class="scoring-btns" id="scoring-btns">
+          <button class="scoring-btn active" data-scoring="full_ppr">PPR</button>
+          <button class="scoring-btn" data-scoring="half_ppr">Half PPR</button>
+          <button class="scoring-btn" data-scoring="no_ppr">Standard</button>
+          <button class="scoring-btn" data-scoring="te_premium">TE+</button>
+        </div>
       </div>
-      <div class="alert-time">${timeAgo(a.detected_at)}</div>
-    </div>`).join('');
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead class="tbl-head">
+          <tr>
+            <th style="width:48px">#</th>
+            <th>Player</th>
+            <th style="width:60px">Tier</th>
+            <th style="width:80px">Proj</th>
+            <th style="width:110px">Floor / Ceiling</th>
+          </tr>
+        </thead>
+        <tbody id="rankings-tbody"></tbody>
+      </table>
+    </div>
+    <button id="expand-rankings" style="display:none;width:100%;padding:10px;background:rgba(0,28,28,0.7);border:none;border-top:1px solid rgba(16,185,129,0.12);color:rgba(16,185,129,0.6);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.15em;cursor:pointer;justify-content:center;align-items:center;transition:color 0.2s" onmouseover="this.style.color='#10B981'" onmouseout="this.style.color='rgba(16,185,129,0.6)'"></button>
+  </div>
+
+  <!-- START/SIT + WAIVER WIRE -->
+  <div class="two-col">
+    <!-- START / SIT -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-label" id="startsit-label">// Start / Sit — Wk — //</div>
+      </div>
+      <div class="sub-label">// Start //</div>
+      <div id="start-rows"></div>
+      <div class="sub-label" style="margin-top:2px">// Sit //</div>
+      <div id="sit-rows"></div>
+    </div>
+
+    <!-- WAIVER WIRE -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-label">// Tue Night Drop //</div>
+      </div>
+      <div class="sub-label">// High Priority Adds //</div>
+      <div id="ww-add"></div>
+      <div class="sub-label" style="margin-top:2px">// Monitor //</div>
+      <div id="ww-monitor"></div>
+      <div class="sub-label" style="margin-top:2px">// Drop Candidates //</div>
+      <div id="ww-drop"></div>
+    </div>
+  </div>
+
+  <!-- TRENDS + INJURIES -->
+  <div class="two-col" style="margin-top:2px;margin-bottom:32px">
+    <!-- SNAP/TARGET TRENDS -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-label">// Snap &amp; Target Trends //</div>
+      </div>
+      <div id="trends-body"></div>
+    </div>
+
+    <!-- INJURY INTEL -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-label">// Injury Intel //</div>
+      </div>
+      <div id="injury-body"></div>
+    </div>
+  </div>
+</div>
+
+<!-- NEWSLETTER BAR -->
+<div class="newsletter-bar" id="subscribe">
+  <div class="nl-inner">
+    <div class="nl-left">
+      <div class="nl-eyebrow">// Weekly Briefing — Published Every Tuesday Night</div>
+      <div class="nl-title">Waiver Intel. Rankings. In Your Inbox.</div>
+      <div class="nl-desc">Waiver targets and rankings in your inbox before Wednesday waivers run. Free.</div>
+    </div>
+    <div class="nl-right">
+      <div class="nl-preview">
+        <div class="nl-from">From: <span>intel@sleepercellff.com</span></div>
+        <div class="nl-subject" id="nl-subject">📡 Weekly Briefing — Wk —</div>
+        <div class="nl-teaser">Priority adds, must-start locks, and the one sleeper no one in your league is picking up.</div>
+      </div>
+      <div class="nl-form" id="nl-form">
+        <input class="nl-input" type="email" placeholder="your@email.com" id="nl-email">
+        <button class="nl-btn" id="nl-submit">Activate</button>
+      </div>
+      <div class="nl-success" id="nl-success">// Clearance granted. Transmission incoming. //</div>
+      <div class="nl-fine">No spam · Intel only · Unsubscribe anytime</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <svg width="16" height="16" viewBox="0 0 15 15" fill="#10B981" xmlns="http://www.w3.org/2000/svg">
+      <path d="M7.53,3C3.09,3,1,7.5,1,7.5S3.09,12,7.53,12S14,7.5,14,7.5S12,3,7.53,3z M11,7v1.5C11,8.7761,10.7761,9,10.5,9S10,8.7761,10,8.5V8H8v0.5C8,8.7761,7.7761,9,7.5,9S7,8.7761,7,8.5V8H5v0.5C5,8.7761,4.7761,9,4.5,9S4,8.7761,4,8.5v-2C4,6.2239,4.2239,6,4.5,6S5,6.2239,5,6.5V7h2V6.5C7,6.2239,7.2239,6,7.5,6S8,6.2239,8,6.5V7h2V6.5C10,6.2239,10.2239,6,10.5,6S11,6.2239,11,6.5V7z"/>
+    </svg>
+    Sleeper Cell · Fantasy Intelligence
+  </div>
+  <div class="footer-right">// Classified // Fantasy Operations Division //</div>
+</footer>
+</div>
+
+<script>
+const CDN = 'https://cdn.jsdelivr.net/gh/sliwij25/sleeper-cell@main/data/';
+
+function fmt(v, dec=1){ return (v==null||v===undefined||isNaN(v)) ? '—' : Number(v).toFixed(dec); }
+function esc(s){ if(!s) return '—'; const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+function posBadge(pos){
+  const cls={'QB':'pos-QB','RB':'pos-RB','WR':'pos-WR','TE':'pos-TE'}[pos]||'';
+  return `<span class="pos-badge ${cls}">${esc(pos)}</span>`;
 }
 
-// ── PPR SCORING ENGINE ──────────────────────────────────────
-const AVG_REC={QB:5,RB:40,WR:70,TE:50};
-function _pprAdj(pos,sf){
-  const rec=AVG_REC[pos]||0;
-  if(sf==='no_ppr')  return -0.5*rec;
-  if(sf==='half_ppr')return 0;
-  if(sf==='full_ppr')return 0.5*rec;
-  if(sf==='te_plus') return pos==='TE'?1.0*rec:0.5*rec;
-  return 0;
+function fmtTime(ts){
+  if(!ts) return '—';
+  try{
+    const d=new Date(ts);
+    const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const h=d.getHours(), m=d.getMinutes().toString().padStart(2,'0');
+    const ampm=h>=12?'PM':'AM';
+    return `${days[d.getDay()]} ${(h%12||12)}:${m} ${ampm}`;
+  }catch(e){return '—';}
 }
 
-// ── SHARED SORT / FILTER UTILITIES ─────────────────────────
-function _sfApply(list,sort,filter){
-  let r=list;
-  if(filter.search){
-    const q=filter.search.toLowerCase();
-    r=r.filter(p=>(p.full_name||p.name||'').toLowerCase().includes(q)||(p.team||'').toLowerCase().includes(q));
-  }
-  if(filter.signal!=='all'){
-    r=r.filter(p=>filter.signal==='pivot'?p.is_pivot:filter.signal==='fade'?p.is_fade:!p.is_pivot&&!p.is_fade);
-  }
-  return [...r].sort((a,b)=>{
-    let av=a[sort.col]??0, bv=b[sort.col]??0;
-    if(typeof av==='string')av=av.toLowerCase();
-    if(typeof bv==='string')bv=bv.toLowerCase();
-    return sort.dir==='desc'?(bv>av?1:bv<av?-1:0):(av>bv?1:av<bv?-1:0);
-  });
-}
-function _th(col,label,sort,fn){
-  const on=sort.col===col;
-  const arr=on?(sort.dir==='desc'?' ↓':' ↑'):'';
-  return`<th onclick="${fn}('${col}')" style="cursor:pointer;user-select:none;white-space:nowrap">${label}<span style="font-size:9px;opacity:${on?1:0.3}">${arr||' ↕'}</span></th>`;
+async function loadJSON(name){
+  try{
+    const r=await fetch(CDN+name+'?v='+Date.now());
+    if(!r.ok) throw new Error(r.status);
+    return await r.json();
+  }catch(e){ console.warn('Failed to load',name,e); return null; }
 }
 
-// ── PROJECTIONS ────────────────────────────────────────────
-let _projData=null, _projSF='full_ppr';
-let _projSort={col:'_dp',dir:'desc'};
-let _projFilter={search:'',signal:'all'};
-
-function _renderProjections(projData,sf){
-  const base={QB:projData.QB||[],RB:projData.RB||[],WR:projData.WR||[],TE:projData.TE||[]};
-  const views={QB:base.QB,RB:base.RB,WR:base.WR,TE:base.TE,
-    FLEX:[...base.RB,...base.WR,...base.TE],
-    SUPERFLEX:[...base.QB,...base.RB,...base.WR,...base.TE]};
-  Object.entries(views).forEach(([pos,rawList])=>{
-    // Enrich with sortable computed fields
-    const enriched=rawList.map(p=>({...p,
-      _dp:Math.round((p.projected_season_pts||p.projected_pts||0)+_pprAdj(p.position||pos,sf)),
-      _fl:Math.round(p.season_floor||p.floor||0),
-      _cl:Math.round(p.season_ceiling||p.ceiling||0),
-      _conf:Math.round((p.confidence_score||p.confidence||0)*100),
-      _inj:p.injury_risk_pct!=null?Math.round(p.injury_risk_pct):-1,
-      _ecr:p.ecr_position_rank||p.ecr_rank||999,
-      _sig:p.is_pivot?2:p.is_fade?0:1
-    }));
-    // Nav bar uses unfiltered top
-    if(['QB','RB','WR','TE'].includes(pos)){
-      const top=[...enriched].sort((a,b)=>b._dp-a._dp)[0];
-      if(top)set('sn-top'+pos.toLowerCase(),(top.full_name||top.name||'').split(' ').slice(-1)[0]+' '+top._dp);
+// Flatten rankings.json positions into flat array, respecting scoring format
+// Supports d.formats[scoring][league][pos] (migration 019) and d.positions fallback
+function flattenRankings(d, scoringFmt='full_ppr'){
+  if(!d) return [];
+  // Try formats dict first (migration 019)
+  if(d.formats && d.formats[scoringFmt]){
+    const lf = scoringFmt==='te_premium' ? 'te_premium' : '1qb';
+    const fmtData = d.formats[scoringFmt][lf] || d.formats[scoringFmt]['1qb'] || d.formats[scoringFmt];
+    if(fmtData && typeof fmtData==='object' && !Array.isArray(fmtData)){
+      const arr=[];
+      for(const [pos,players] of Object.entries(fmtData)){
+        if(Array.isArray(players)) players.forEach(p=>arr.push({...p,position:p.position||pos}));
+      }
+      return arr.sort((a,b)=>(b.projected_pts||0)-(a.projected_pts||0));
     }
-    const list=_sfApply(enriched,_projSort,_projFilter);
-    const el=document.getElementById('p-'+pos.toLowerCase());if(!el)return;
-    if(!list.length){
-      const msg=_projFilter.search||_projFilter.signal!=='all'?'// NO MATCHES //':'// NO DATA //';
-      el.innerHTML=`<div style="padding:16px;font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(16,185,129,0.4);text-align:center;letter-spacing:0.1em">${msg}</div>`;return;
+  }
+  // Fallback: positions key
+  if(d.positions && typeof d.positions==='object' && !Array.isArray(d.positions)){
+    const arr=[];
+    for(const [pos,players] of Object.entries(d.positions)){
+      if(Array.isArray(players)) players.forEach(p=>arr.push({...p,position:p.position||pos}));
     }
-    const S=(col,lbl)=>_th(col,lbl,_projSort,'sortProj');
-    const hdr=`<table><thead class="tbl-head"><tr><th></th>${S('full_name','Player')}${S('_dp','Proj')}${S('_fl','Range')}${S('_conf','Conf')}${S('_inj','INJ%')}${S('_ecr','ECR')}${S('_sig','Signal')}</tr></thead><tbody>`;
-    el.innerHTML=hdr+list.map((p,i)=>{
-      const name=p.full_name||p.name||'—';
-      const confBar=p._conf>0?`<div style="display:flex;align-items:center;gap:6px"><div style="width:40px;height:3px;background:rgba(16,185,129,0.2);position:relative;flex-shrink:0"><div style="position:absolute;left:0;top:0;height:100%;width:${Math.min(p._conf,100)}%;background:#10B981"></div></div><span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#10B981">${p._conf}%</span></div>`:'—';
-      const injVal=p._inj>=0?p._inj+'%':'—';
-      const ecr=p.ecr_position_rank||p.ecr_rank||'—';
-      const rangeVal=p._fl&&p._cl?`${p._fl}–${p._cl}`:'—';
-      const rookie=p.data_source==='rookie_model'?' · ROOKIE':'';
-      const bye=p.bye_week?' · Bye '+p.bye_week:'';
-      return`<tr class="tbl-row"><td class="rank-num">${i+1}</td><td><div class="player-name">${posBadge(p.position)}${name}</div><div class="player-meta">${p.team||'—'}${bye}${rookie}</div></td><td><div class="pts">${p._dp}</div></td><td style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);white-space:nowrap">${rangeVal}</td><td>${confBar}</td><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">${injVal}</td><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">${ecr}</td><td>${sig(p)}</td></tr>`;
-    }).join('')+'</tbody></table>';
-  });
-}
-function sortProj(col){
-  _projSort={col,dir:_projSort.col===col&&_projSort.dir==='desc'?'asc':'desc'};
-  if(_projData)_renderProjections(_projData,_projSF);
-}
-function filterProjSig(btn,val){
-  document.querySelectorAll('#proj-sig-btns [data-sig]').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');_projFilter.signal=val;
-  if(_projData)_renderProjections(_projData,_projSF);
-}
-function searchProj(val){
-  _projFilter.search=val.trim();
-  if(_projData)_renderProjections(_projData,_projSF);
-}
-function projFmt(btn){
-  document.querySelectorAll('#proj-sf-btns [data-sf]').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');_projSF=btn.dataset.sf;
-  if(_projData)_renderProjections(_projData,_projSF);
-}
-async function loadProjections(){
-  const d=await load('season_projections.json');if(!d||(!d.players&&!d.positions))return;
-  _projData=d.players||d.positions;
-  _renderProjections(_projData,_projSF);
+    return arr.sort((a,b)=>(b.projected_pts||0)-(a.projected_pts||0));
+  }
+  if(Array.isArray(d.players)) return d.players;
+  if(Array.isArray(d)) return d;
+  return [];
 }
 
-// ── SLEEPER PICKS ──────────────────────────────────────────
-async function loadSleeper(){
-  const d=await load('waiver_targets.json');if(!d||!d.targets)return;
-  // Criteria: add targets with ownership_pct <= 50 (or unknown), sorted by projected_pts desc
-  const picks=(d.targets.add||[])
-    .filter(p=>p.ownership_pct==null||p.ownership_pct<=50)
-    .slice(0,3);
-  const el=document.getElementById('sleeper-cards');if(!el)return;
-  if(!picks.length){
-    el.innerHTML='<div class="sleeper-card" style="color:rgba(16,185,129,0.4);font-family:\'Share Tech Mono\',monospace;font-size:10px;letter-spacing:0.1em;padding:20px">// SLEEPER PICKS POPULATE IN-SEASON //</div>';
+const ROWS_INIT = 15;
+let allPlayers=[];
+let currentPos='ALL';
+let currentScoring='full_ppr';
+let rankingsExpanded=false;
+let _rankingsData=null;
+
+function renderRankings(players, pos){
+  const tbody=document.getElementById('rankings-tbody');
+  const expandBtn=document.getElementById('expand-rankings');
+  if(!tbody) return;
+  let filtered=players;
+  if(pos==='PIVOT') filtered=players.filter(p=>p.is_pivot);
+  else if(pos==='FADE') filtered=players.filter(p=>p.is_fade);
+  else if(pos!=='ALL') filtered=players.filter(p=>(p.position||'')===pos);
+
+  const total=filtered.length;
+  const display=rankingsExpanded ? filtered : filtered.slice(0,ROWS_INIT);
+
+  if(!display.length){
+    tbody.innerHTML=`<tr><td colspan="5" style="padding:24px;text-align:center;font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(16,185,129,0.4);letter-spacing:0.12em">NO DATA AVAILABLE</td></tr>`;
+    if(expandBtn) expandBtn.style.display='none';
     return;
   }
-  el.innerHTML=picks.map(p=>{
-    const owned=p.ownership_pct!=null?p.ownership_pct+'% owned':'ownership unknown';
-    const pts=(p.projected_pts||0).toFixed(1);
-    return`<div class="sleeper-card">
-      <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(16,185,129,0.5);letter-spacing:0.15em;margin-bottom:6px">${p.position||'—'} — LOW OWNERSHIP</div>
-      <div class="player-name" style="font-size:19px;margin-bottom:2px">${p.name||'—'}</div>
-      <div class="player-meta" style="margin-bottom:10px">${p.team||'—'} · ${owned}</div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.5;font-weight:300">${p.reason||'—'}</div>
-      <div style="margin-top:10px;display:flex;justify-content:space-between"><div class="pts">${pts}</div>${p.faab_bid>0?`<div class="faab">$${p.faab_bid}<div class="faab-label">BID</div></div>`:''}</div>
-    </div>`;
+
+  tbody.innerHTML=display.map((p,i)=>{
+    const name=p.full_name||p.name||'Unknown';
+    const team=p.team||'—';
+    const ppos=p.position||'—';
+    const tier=p.tier||'—';
+    const proj=fmt(p.projected_pts);
+    const floor=fmt(p.floor_pts);
+    const ceil=fmt(p.ceiling_pts);
+    const pivBadge=p.is_pivot?`<span class="badge pivot">PIVOT</span>`:'';
+    const fadeBadge=p.is_fade?`<span class="badge fade">FADE</span>`:'';
+    return `<tr class="tbl-row">
+      <td><span class="rank-num">${i+1}</span></td>
+      <td>
+        <div class="player-name">${esc(name)}</div>
+        <div class="player-meta" style="margin-top:2px">${posBadge(ppos)}<span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">${esc(team)}</span>${pivBadge?'&nbsp;'+pivBadge:''}${fadeBadge?'&nbsp;'+fadeBadge:''}</div>
+      </td>
+      <td><span class="tier-num">${esc(String(tier))}</span></td>
+      <td><span class="pts">${proj}</span></td>
+      <td><span class="stat-mono">${floor} / ${ceil}</span></td>
+    </tr>`;
   }).join('');
-  // update ctx card
-  if(picks[0]){
-    set('ctx-sleeper-name',picks[0].name.split(' ').pop());
-    set('ctx-sleeper-owned',(picks[0].ownership_pct||'—')+'%');
+
+  if(expandBtn){
+    if(total>ROWS_INIT){
+      expandBtn.style.display='flex';
+      expandBtn.textContent=rankingsExpanded
+        ? `▲ COLLAPSE`
+        : `▼ SHOW ALL ${total} PLAYERS`;
+    } else {
+      expandBtn.style.display='none';
+    }
   }
 }
 
-Promise.all([loadMeta(),loadRankings(),loadWaiver(),loadInjuries(),loadProjections(),loadSleeper()])
-  .then(()=>console.log('[dashboard] all data loaded'));
+function renderStartSit(players, week){
+  document.getElementById('startsit-label').textContent=`// Start / Sit — Wk ${week||'—'} //`;
+  const sorted=[...players].sort((a,b)=>(b.projected_pts||0)-(a.projected_pts||0));
+  const starts=sorted.slice(0,2);
+  const sits=sorted.slice(-2).reverse();
+
+  const startEl=document.getElementById('start-rows');
+  const sitEl=document.getElementById('sit-rows');
+
+  startEl.innerHTML=starts.length?starts.map(p=>{
+    const name=p.full_name||p.name||'Unknown';
+    const team=p.team||'—';
+    const pos=p.position||'—';
+    return `<div class="start-row is-start">
+      <span class="badge start">START</span>
+      <div class="start-info">
+        <div class="start-name">${esc(name)}</div>
+        <div class="start-ctx">${esc(team)} · ${esc(pos)}</div>
+      </div>
+      <div class="start-pts">${fmt(p.projected_pts)}</div>
+    </div>`;
+  }).join(''):`<div class="empty-state">No data</div>`;
+
+  sitEl.innerHTML=sits.length?sits.map(p=>{
+    const name=p.full_name||p.name||'Unknown';
+    const team=p.team||'—';
+    const pos=p.position||'—';
+    return `<div class="start-row is-sit">
+      <span class="badge sit">SIT</span>
+      <div class="start-info">
+        <div class="start-name">${esc(name)}</div>
+        <div class="start-ctx">${esc(team)} · ${esc(pos)}</div>
+      </div>
+      <div class="start-pts">${fmt(p.projected_pts)}</div>
+    </div>`;
+  }).join(''):`<div class="empty-state">No data</div>`;
+}
+
+function renderWaiverWire(data){
+  const renderSection=(id, players, action)=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    if(!players||!players.length){
+      el.innerHTML=`<div class="empty-state">No ${action.toLowerCase()} targets</div>`;
+      return;
+    }
+    el.innerHTML=players.slice(0,4).map(p=>{
+      const name=p.full_name||p.name||'Unknown';
+      const team=p.team||'—';
+      const pos=p.position||'—';
+      const own=p.ownership_pct!=null?fmt(p.ownership_pct,0)+'% own':'—';
+      const faab=p.faab_bid!=null?`$${fmt(p.faab_bid,0)}`:'—';
+      const pts=fmt(p.projected_pts);
+      let badgeCls=action==='ADD'?'start':action==='MONITOR'?'warn':'sit';
+      return `<div class="ww-row">
+        <span class="badge ${badgeCls}">${esc(action)}</span>
+        <div class="ww-info">
+          <div class="ww-name">${esc(name)}</div>
+          <div class="ww-meta">${esc(team)} · ${esc(pos)} · ${own}</div>
+        </div>
+        <div class="ww-right">
+          <div class="ww-faab">${faab}</div>
+          <div class="ww-pts">${pts} proj</div>
+        </div>
+      </div>`;
+    }).join('');
+  };
+
+  if(!data||!data.targets){
+    ['ww-add','ww-monitor','ww-drop'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el) el.innerHTML=`<div class="empty-state">No data</div>`;
+    });
+    return;
+  }
+  renderSection('ww-add', data.targets.add||[], 'ADD');
+  renderSection('ww-monitor', data.targets.monitor||[], 'MONITOR');
+  renderSection('ww-drop', data.targets.drop||[], 'DROP');
+}
+
+function renderTrends(players){
+  const el=document.getElementById('trends-body');
+  if(!el) return;
+
+  // Filter players with non-stable snap_trend or any trend data
+  const trending=players.filter(p=>p.snap_trend&&p.snap_trend!=='stable').slice(0,8);
+
+  if(!trending.length){
+    el.innerHTML=`<div class="empty-state">// Trend data populates in-season //</div>`;
+    return;
+  }
+
+  el.innerHTML=trending.map(p=>{
+    const name=p.full_name||p.name||'Unknown';
+    const trend=p.snap_trend||'stable';
+    const isUp=trend==='up'||trend==='trending_up'||trend==='breakout';
+    return `<div class="trend-row">
+      <div class="trend-name">${esc(name)}</div>
+      <div class="trend-metric" style="margin-right:auto;padding-left:8px">${esc(p.team||'—')} · snap</div>
+      <div class="trend-change ${isUp?'trend-up':'trend-dn'}">${isUp?'▲':'▼'} ${esc(trend.replace(/_/g,' ').toUpperCase())}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderInjuries(data){
+  const el=document.getElementById('injury-body');
+  if(!el) return;
+  const alerts=(data&&data.alerts)||[];
+  if(!alerts.length){
+    el.innerHTML=`<div class="empty-state">// No active injury alerts //</div>`;
+    return;
+  }
+  el.innerHTML=alerts.slice(0,8).map(a=>{
+    const name=a.full_name||a.name||'Unknown';
+    const sev=(a.severity||'warn').toLowerCase();
+    let badgeCls=sev==='critical'?'crit':sev==='cleared'?'clear':'warn';
+    const detail=a.injury_type?`${a.injury_type}${a.status?' · '+a.status:''}`:a.status||'—';
+    const ts=fmtTime(a.updated_at);
+    return `<div class="inj-row">
+      <span class="badge ${badgeCls}">${esc((a.severity||'WARN').toUpperCase())}</span>
+      <div class="inj-info">
+        <div class="inj-name">${esc(name)} <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">${esc(a.team||'')}</span></div>
+        <div class="inj-detail">${esc(detail)}</div>
+      </div>
+      <div class="inj-time">${ts}</div>
+    </div>`;
+  }).join('');
+}
+
+async function init(){
+  const [meta, rankings, waiver, injuries] = await Promise.all([
+    loadJSON('meta.json'),
+    loadJSON('rankings.json'),
+    loadJSON('waiver_targets.json'),
+    loadJSON('injury_alerts.json')
+  ]);
+
+  // STATUS BAR
+  if(meta){
+    document.getElementById('sb-season').textContent=meta.season||'—';
+    const week=rankings&&rankings.week!=null?rankings.week:(meta.week||0);
+    document.getElementById('sb-week').textContent=week||'Pre';
+    document.getElementById('sb-run').textContent=fmtTime(meta.last_run||meta.generated_at);
+    document.getElementById('sb-ranked').textContent=meta.projection_count||'—';
+  }
+
+  // FLATTEN PLAYERS (default PPR)
+  _rankingsData=rankings;
+  allPlayers=flattenRankings(rankings, currentScoring);
+
+  // COUNT PIVOTS/FADES
+  const pivotCount=allPlayers.filter(p=>p.is_pivot).length;
+  const fadeCount=allPlayers.filter(p=>p.is_fade).length;
+  document.getElementById('sb-pivots').textContent=pivotCount;
+  document.getElementById('sb-fades').textContent=fadeCount;
+
+  // METRIC CARDS
+  document.getElementById('metric-pivots').textContent=pivotCount;
+  document.getElementById('metric-fades').textContent=fadeCount;
+
+  // Top waiver add
+  if(waiver&&waiver.targets&&waiver.targets.add&&waiver.targets.add.length){
+    const top=waiver.targets.add[0];
+    document.getElementById('metric-waiver-name').textContent=top.full_name||top.name||'—';
+    document.getElementById('metric-waiver-sub').textContent=`${fmt(top.projected_pts)} proj · ${top.faab_bid!=null?'$'+fmt(top.faab_bid,0)+' FAAB':'—'}`;
+  } else {
+    document.getElementById('metric-waiver-name').textContent='N/A';
+    document.getElementById('metric-waiver-sub').textContent='No waiver data';
+  }
+
+  // Sleeper pick = lowest ownership but high proj
+  const withOwn=allPlayers.filter(p=>p.ownership_pct!=null&&p.projected_pts>0);
+  withOwn.sort((a,b)=>(a.ownership_pct||100)-(b.ownership_pct||100));
+  if(withOwn.length){
+    const s=withOwn[0];
+    document.getElementById('metric-sleeper-name').textContent=s.full_name||s.name||'—';
+    document.getElementById('metric-sleeper-sub').textContent=`${fmt(s.ownership_pct,0)}% own · ${fmt(s.projected_pts)} proj`;
+  } else if(allPlayers.length){
+    // fallback: last player in sorted list
+    const s=allPlayers[allPlayers.length-1];
+    document.getElementById('metric-sleeper-name').textContent=s.full_name||s.name||'—';
+    document.getElementById('metric-sleeper-sub').textContent=`${fmt(s.projected_pts)} proj`;
+  }
+
+  // NEWSLETTER WEEK
+  const wk=rankings&&rankings.week!=null?rankings.week:(meta&&meta.week||'—');
+  document.getElementById('nl-subject').textContent=`📡 Weekly Briefing — Wk ${wk}`;
+
+  // RENDER TABLES
+  renderRankings(allPlayers, 'ALL');
+  renderStartSit(allPlayers, wk);
+  renderWaiverWire(waiver);
+  renderTrends(allPlayers);
+  renderInjuries(injuries);
+
+  // POSITION FILTER TABS
+  document.getElementById('pos-tabs').addEventListener('click',e=>{
+    const btn=e.target.closest('.pos-tab');
+    if(!btn) return;
+    document.querySelectorAll('.pos-tab').forEach(t=>t.classList.remove('active'));
+    btn.classList.add('active');
+    currentPos=btn.dataset.pos;
+    rankingsExpanded=false;
+    renderRankings(allPlayers, currentPos);
+  });
+
+  // SCORING FORMAT BUTTONS
+  document.getElementById('scoring-btns').addEventListener('click',e=>{
+    const btn=e.target.closest('.scoring-btn');
+    if(!btn) return;
+    document.querySelectorAll('.scoring-btn').forEach(t=>t.classList.remove('active'));
+    btn.classList.add('active');
+    currentScoring=btn.dataset.scoring;
+    rankingsExpanded=false;
+    allPlayers=flattenRankings(_rankingsData, currentScoring);
+    renderRankings(allPlayers, currentPos);
+  });
+
+  // EXPAND / COLLAPSE RANKINGS
+  document.getElementById('expand-rankings').addEventListener('click',()=>{
+    rankingsExpanded=!rankingsExpanded;
+    renderRankings(allPlayers, currentPos);
+  });
+}
+
+// NEWSLETTER FORM
+document.getElementById('nl-submit').addEventListener('click', async ()=>{
+  const email=document.getElementById('nl-email').value.trim();
+  if(!email||!email.includes('@')) return;
+  try{
+    await fetch('https://sleepercellff.com/.netlify/functions/subscribe',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email})
+    });
+  }catch(e){}
+  document.getElementById('nl-form').style.display='none';
+  document.getElementById('nl-success').style.display='block';
+});
+
+init();
 </script>
 </body>
 </html>
