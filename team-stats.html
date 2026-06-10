@@ -320,11 +320,11 @@ footer{border-top:1px solid var(--border);padding:10px 20px;display:flex;align-i
             <tr>
               <th style="width:56px">Rank</th>
               <th>Team</th>
+              <th style="width:72px;font-size:10px">PASS YDS/G</th>
+              <th style="width:72px;font-size:10px">RUSH YDS/G</th>
+              <th style="width:72px;font-size:10px">REC YDS/G</th>
+              <th style="width:56px;font-size:10px">TDS/G</th>
               <th style="width:52px;font-size:10px">INT/G</th>
-              <th style="width:52px;font-size:10px">TDs/G</th>
-              <th style="width:60px;font-size:10px">PASS</th>
-              <th style="width:60px;font-size:10px">RUSH</th>
-              <th style="width:60px;font-size:10px">REC</th>
               <th style="width:72px" id="mth-qb">vs QB</th>
               <th style="width:72px" id="mth-rb">vs RB</th>
               <th style="width:72px" id="mth-wr">vs WR</th>
@@ -553,16 +553,16 @@ function renderMatchups(teams, pos, grade, search=''){
         <div class="team-name">${esc(t.team_name||t.team)}</div>
         <div class="team-abbr">${esc(t.team)}</div>
       </td>
-      <td style="text-align:right"><span class="stat-mono" style="color:var(--muted);font-size:11px">${fmt(t.ints_per_game,2)}</span></td>
-      <td style="text-align:right"><span class="stat-mono" style="color:var(--muted);font-size:11px">${fmt(t.tds_allowed_pg,1)}</span></td>
       <td style="text-align:right"><span class="stat-mono" style="color:var(--muted);font-size:11px">${fmt(t.pass_yds_allowed_pg,0)}</span></td>
       <td style="text-align:right"><span class="stat-mono" style="color:var(--muted);font-size:11px">${fmt(t.rush_yds_allowed_pg,0)}</span></td>
       <td style="text-align:right"><span class="stat-mono" style="color:var(--muted);font-size:11px">${fmt(t.rec_yds_allowed_pg,0)}</span></td>
+      <td style="text-align:right"><span class="stat-mono" style="color:var(--muted);font-size:11px">${fmt(t.tds_allowed_pg,1)}</span></td>
+      <td style="text-align:right"><span class="stat-mono" style="color:var(--muted);font-size:11px">${fmt(t.ints_per_game,2)}</span></td>
       <td style="text-align:right"><span class="stat-mono" style="color:${cellColor('fpts_vs_qb',qbVal||0)}">${fmt(qbVal)}</span></td>
       <td style="text-align:right"><span class="stat-mono" style="color:${cellColor('fpts_vs_rb',rbVal||0)}">${fmt(rbVal)}</span></td>
       <td style="text-align:right"><span class="stat-mono" style="color:${cellColor('fpts_vs_wr',wrVal||0)}">${fmt(wrVal)}</span></td>
       <td style="text-align:right"><span class="stat-mono" style="color:${cellColor('fpts_vs_te',teVal||0)}">${fmt(teVal)}</span></td>
-      <td style="background:linear-gradient(to right,rgba(16,185,129,0.18) ${barPct}%,transparent ${barPct}%);text-align:right;padding-right:10px">
+      <td style="background:linear-gradient(to right,${g==='EASY'?'rgba(16,185,129,0.20)':g==='HARD'?'rgba(248,113,113,0.18)':'rgba(255,255,255,0.07)'} ${barPct}%,transparent ${barPct}%);text-align:right;padding-right:10px">
         <span class="pts">${fmt(aggVal)}</span>
       </td>
       <td><span class="${gradeCls}">${g}</span></td>
