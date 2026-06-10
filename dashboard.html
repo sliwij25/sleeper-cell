@@ -496,11 +496,19 @@ function renderRankings(players, pos){
     const ceil=fmt(p.ceiling_pts);
     const pivBadge=p.is_pivot?`<span class="badge pivot">PIVOT</span>`:'';
     const fadeBadge=p.is_fade?`<span class="badge fade">FADE</span>`:'';
+    // Parse signal from reason string (e.g. "veteran_model -- PIVOT (model +12 vs ADP)")
+    const reasonRaw=p.reason||'';
+    const sigMatch=reasonRaw.match(/(PIVOT|FADE)\s*\(([^)]+)\)/i);
+    const sigHtml=sigMatch
+      ? `&nbsp;<span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:${sigMatch[1].toUpperCase()==='PIVOT'?'rgba(16,185,129,0.7)':'rgba(248,113,113,0.7)'};letter-spacing:0.05em">${sigMatch[1].toUpperCase()} ${sigMatch[2]}</span>`
+      : '';
+    const conf=p.confidence!=null?Math.round(p.confidence*100):null;
+    const confHtml=conf!=null?`&nbsp;<span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(255,255,255,0.3);letter-spacing:0.05em">CONF ${conf}%</span>`:'';
     return `<tr class="tbl-row">
       <td><span class="rank-num">${i+1}</span></td>
       <td>
         <div class="player-name">${esc(name)}</div>
-        <div class="player-meta" style="margin-top:2px">${posBadge(ppos)}<span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">${esc(team)}</span>${pivBadge?'&nbsp;'+pivBadge:''}${fadeBadge?'&nbsp;'+fadeBadge:''}</div>
+        <div class="player-meta" style="margin-top:2px">${posBadge(ppos)}<span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">${esc(team)}</span>${pivBadge?'&nbsp;'+pivBadge:''}${fadeBadge?'&nbsp;'+fadeBadge:''}${sigHtml}${confHtml}</div>
       </td>
       <td><span class="tier-num">${esc(String(tier))}</span></td>
       <td><span class="pts">${proj}</span></td>
@@ -750,7 +758,7 @@ document.getElementById('nl-submit').addEventListener('click', async ()=>{
   const email=document.getElementById('nl-email').value.trim();
   if(!email||!email.includes('@')) return;
   try{
-    await fetch('https://sleepercellff.com/.netlify/functions/subscribe',{
+    await fetch('/api/subscribe',{
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({email})
     });
