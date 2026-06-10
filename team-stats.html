@@ -320,11 +320,11 @@ footer{border-top:1px solid var(--border);padding:10px 20px;display:flex;align-i
             <tr>
               <th style="width:56px">Rank</th>
               <th>Team</th>
-              <th style="width:120px">Fpts/G</th>
               <th style="width:72px" id="mth-qb">vs QB</th>
               <th style="width:72px" id="mth-rb">vs RB</th>
               <th style="width:72px" id="mth-wr">vs WR</th>
               <th style="width:72px" id="mth-te">vs TE</th>
+              <th style="width:160px">Fpts/G</th>
               <th style="width:80px">Grade</th>
             </tr>
           </thead>
@@ -548,14 +548,13 @@ function renderMatchups(teams, pos, grade, search=''){
         <div class="team-name">${esc(t.team_name||t.team)}</div>
         <div class="team-abbr">${esc(t.team)}</div>
       </td>
-      <td style="position:relative;text-align:right">
-        <div style="position:absolute;left:0;top:0;bottom:0;width:${barPct}%;background:rgba(16,185,129,0.12);z-index:0"></div>
-        <span class="pts" style="position:relative;z-index:1">${fmt(aggVal)}</span>
-      </td>
       <td style="text-align:right"><span class="stat-mono" style="color:${cellColor('fpts_vs_qb',qbVal||0)}">${fmt(qbVal)}</span></td>
       <td style="text-align:right"><span class="stat-mono" style="color:${cellColor('fpts_vs_rb',rbVal||0)}">${fmt(rbVal)}</span></td>
       <td style="text-align:right"><span class="stat-mono" style="color:${cellColor('fpts_vs_wr',wrVal||0)}">${fmt(wrVal)}</span></td>
       <td style="text-align:right"><span class="stat-mono" style="color:${cellColor('fpts_vs_te',teVal||0)}">${fmt(teVal)}</span></td>
+      <td style="background:linear-gradient(to right,rgba(16,185,129,0.18) ${barPct}%,transparent ${barPct}%);text-align:right;padding-right:10px">
+        <span class="pts">${fmt(aggVal)}</span>
+      </td>
       <td><span class="${gradeCls}">${g}</span></td>
     </tr>`;
   }).join('');
