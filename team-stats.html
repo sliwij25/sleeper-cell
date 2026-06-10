@@ -563,7 +563,7 @@ function renderMatchups(teams, pos, grade, search=''){
       <td style="text-align:right"><span class="stat-mono" style="color:${cellColor('fpts_vs_wr',wrVal||0)}">${fmt(wrVal)}</span></td>
       <td style="text-align:right"><span class="stat-mono" style="color:${cellColor('fpts_vs_te',teVal||0)}">${fmt(teVal)}</span></td>
       <td style="background:linear-gradient(to right,${g==='EASY'?'rgba(16,185,129,0.30)':g==='HARD'?'rgba(239,68,68,0.45)':'rgba(251,191,36,0.20)'} ${barPct}%,transparent ${barPct}%);text-align:right;padding-right:10px">
-        <span class="pts">${fmt(aggVal)}</span>
+        <span class="pts" style="color:${g==='EASY'?'#10B981':g==='HARD'?'#f87171':'#FBBF24'}">${fmt(aggVal)}</span>
       </td>
       <td><span class="${gradeCls}">${g}</span></td>
     </tr>`;
