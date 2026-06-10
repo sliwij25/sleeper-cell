@@ -320,6 +320,7 @@ footer{border-top:1px solid var(--border);padding:10px 20px;display:flex;align-i
             <tr>
               <th style="width:56px">Rank</th>
               <th>Team</th>
+              <th style="width:120px">Fpts/G</th>
               <th style="width:72px" id="mth-qb">vs QB</th>
               <th style="width:72px" id="mth-rb">vs RB</th>
               <th style="width:72px" id="mth-wr">vs WR</th>
@@ -519,7 +520,9 @@ function renderMatchups(teams, pos, grade, search=''){
   // Filter by search
   if(search) filtered=filtered.filter(t=>(t.team_name||t.team||'').toLowerCase().includes(search.toLowerCase())||(t.team||'').toLowerCase().includes(search.toLowerCase()));
 
-  if(!filtered.length){ tbody.innerHTML=`<tr><td colspan="7" class="empty-state">No teams match</td></tr>`; return; }
+  if(!filtered.length){ tbody.innerHTML=`<tr><td colspan="8" class="empty-state">No teams match</td></tr>`; return; }
+
+  const aggMax=Math.max(...filtered.map(t=>t.pts_allowed_pg||t.fpts_allowed_pg||0),1);
 
   function cellColor(pk, val){
     const v=posThresh[pk];
@@ -537,11 +540,17 @@ function renderMatchups(teams, pos, grade, search=''){
     const gradeCls=g==='EASY'?'grade-easy':g==='HARD'?'grade-hard':'grade-mid';
     const qbVal=t.fpts_vs_qb; const rbVal=t.fpts_vs_rb;
     const wrVal=t.fpts_vs_wr; const teVal=t.fpts_vs_te;
+    const aggVal=t.pts_allowed_pg||t.fpts_allowed_pg||0;
+    const barPct=Math.round((aggVal/aggMax)*100);
     return `<tr class="tbl-row">
       <td><span class="rank-num">${t._rank}</span></td>
       <td>
         <div class="team-name">${esc(t.team_name||t.team)}</div>
         <div class="team-abbr">${esc(t.team)}</div>
+      </td>
+      <td style="position:relative;text-align:right">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:${barPct}%;background:rgba(16,185,129,0.12);z-index:0"></div>
+        <span class="pts" style="position:relative;z-index:1">${fmt(aggVal)}</span>
       </td>
       <td style="text-align:right"><span class="stat-mono" style="color:${cellColor('fpts_vs_qb',qbVal||0)}">${fmt(qbVal)}</span></td>
       <td style="text-align:right"><span class="stat-mono" style="color:${cellColor('fpts_vs_rb',rbVal||0)}">${fmt(rbVal)}</span></td>
