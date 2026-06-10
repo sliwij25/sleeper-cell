@@ -320,6 +320,11 @@ footer{border-top:1px solid var(--border);padding:10px 20px;display:flex;align-i
             <tr>
               <th style="width:56px">Rank</th>
               <th>Team</th>
+              <th style="width:52px;font-size:10px">INT/G</th>
+              <th style="width:52px;font-size:10px">TDs/G</th>
+              <th style="width:60px;font-size:10px">PASS</th>
+              <th style="width:60px;font-size:10px">RUSH</th>
+              <th style="width:60px;font-size:10px">REC</th>
               <th style="width:72px" id="mth-qb">vs QB</th>
               <th style="width:72px" id="mth-rb">vs RB</th>
               <th style="width:72px" id="mth-wr">vs WR</th>
@@ -520,7 +525,7 @@ function renderMatchups(teams, pos, grade, search=''){
   // Filter by search
   if(search) filtered=filtered.filter(t=>(t.team_name||t.team||'').toLowerCase().includes(search.toLowerCase())||(t.team||'').toLowerCase().includes(search.toLowerCase()));
 
-  if(!filtered.length){ tbody.innerHTML=`<tr><td colspan="8" class="empty-state">No teams match</td></tr>`; return; }
+  if(!filtered.length){ tbody.innerHTML=`<tr><td colspan="13" class="empty-state">No teams match</td></tr>`; return; }
 
   const aggMax=Math.max(...filtered.map(t=>t.pts_allowed_pg||t.fpts_allowed_pg||0),1);
 
@@ -548,6 +553,11 @@ function renderMatchups(teams, pos, grade, search=''){
         <div class="team-name">${esc(t.team_name||t.team)}</div>
         <div class="team-abbr">${esc(t.team)}</div>
       </td>
+      <td style="text-align:right"><span class="stat-mono" style="color:var(--muted);font-size:11px">${fmt(t.ints_per_game,2)}</span></td>
+      <td style="text-align:right"><span class="stat-mono" style="color:var(--muted);font-size:11px">${fmt(t.tds_allowed_pg,1)}</span></td>
+      <td style="text-align:right"><span class="stat-mono" style="color:var(--muted);font-size:11px">${fmt(t.pass_yds_allowed_pg,0)}</span></td>
+      <td style="text-align:right"><span class="stat-mono" style="color:var(--muted);font-size:11px">${fmt(t.rush_yds_allowed_pg,0)}</span></td>
+      <td style="text-align:right"><span class="stat-mono" style="color:var(--muted);font-size:11px">${fmt(t.rec_yds_allowed_pg,0)}</span></td>
       <td style="text-align:right"><span class="stat-mono" style="color:${cellColor('fpts_vs_qb',qbVal||0)}">${fmt(qbVal)}</span></td>
       <td style="text-align:right"><span class="stat-mono" style="color:${cellColor('fpts_vs_rb',rbVal||0)}">${fmt(rbVal)}</span></td>
       <td style="text-align:right"><span class="stat-mono" style="color:${cellColor('fpts_vs_wr',wrVal||0)}">${fmt(wrVal)}</span></td>
