@@ -320,8 +320,10 @@ footer{border-top:1px solid var(--border);padding:10px 20px;display:flex;align-i
             <tr>
               <th style="width:56px">Rank</th>
               <th>Team</th>
-              <th style="width:160px" id="bar-col-header">Fpts/G</th>
-              <th style="width:80px">Fpts/G</th>
+              <th style="width:72px" id="mth-qb">vs QB</th>
+              <th style="width:72px" id="mth-rb">vs RB</th>
+              <th style="width:72px" id="mth-wr">vs WR</th>
+              <th style="width:72px" id="mth-te">vs TE</th>
               <th style="width:80px">Grade</th>
             </tr>
           </thead>
@@ -484,21 +486,30 @@ function renderHeadlineCards(teams){
 
 function renderMatchups(teams, pos, grade, search=''){
   const tbody=document.getElementById('matchups-tbody');
-  const barHeader=document.getElementById('bar-col-header');
   if(!tbody) return;
 
   const key=getPosKey(pos);
-  if(barHeader) barHeader.textContent=getPosLabel(pos);
+
+  // Highlight active position header
+  ['QB','RB','WR','TE'].forEach(p=>{
+    const th=document.getElementById('mth-'+p.toLowerCase());
+    if(th) th.style.color=pos===p?'rgba(16,185,129,1)':'rgba(16,185,129,0.75)';
+  });
 
   // Sort by key desc (most fpts allowed = easiest = rank 1 at top)
   let sorted=[...teams].filter(t=>t[key]!=null).sort((a,b)=>(b[key]||0)-(a[key]||0));
 
-  // Compute thresholds from sorted values
+  // Compute thresholds for grade from active position key
   const vals=sorted.map(t=>t[key]||0).sort((a,b)=>a-b);
 
-  const maxVal=vals.length?Math.max(...vals):1;
+  // Per-position thresholds for coloring each column cell
+  const posKeys=['fpts_vs_qb','fpts_vs_rb','fpts_vs_wr','fpts_vs_te'];
+  const posThresh=Object.fromEntries(posKeys.map(pk=>{
+    const v=[...teams].map(t=>t[pk]||0).filter(x=>x>0).sort((a,b)=>a-b);
+    return [pk, v];
+  }));
 
-  // Assign grades
+  // Assign grades based on selected position
   sorted=sorted.map((t,i)=>({...t, _grade:getGrade(t[key]||0, vals), _rank:i+1}));
 
   // Filter by grade
@@ -508,28 +519,34 @@ function renderMatchups(teams, pos, grade, search=''){
   // Filter by search
   if(search) filtered=filtered.filter(t=>(t.team_name||t.team||'').toLowerCase().includes(search.toLowerCase())||(t.team||'').toLowerCase().includes(search.toLowerCase()));
 
-  if(!filtered.length){ tbody.innerHTML=`<tr><td colspan="5" class="empty-state">No teams match</td></tr>`; return; }
+  if(!filtered.length){ tbody.innerHTML=`<tr><td colspan="7" class="empty-state">No teams match</td></tr>`; return; }
+
+  function cellColor(pk, val){
+    const v=posThresh[pk];
+    if(!v||!v.length) return 'var(--muted)';
+    const n=v.length;
+    const lo=v[Math.floor(n/3)];
+    const hi=v[Math.floor(n*2/3)];
+    if(val>=hi) return '#10B981';
+    if(val<=lo) return '#f87171';
+    return 'var(--muted)';
+  }
 
   tbody.innerHTML=filtered.map(t=>{
-    const val=t[key]||0;
-    const pct=maxVal>0?(val/maxVal*100):0;
     const g=t._grade;
-    const barColor=g==='EASY'?'#10B981':g==='HARD'?'#ef4444':'#64748b';
     const gradeCls=g==='EASY'?'grade-easy':g==='HARD'?'grade-hard':'grade-mid';
+    const qbVal=t.fpts_vs_qb; const rbVal=t.fpts_vs_rb;
+    const wrVal=t.fpts_vs_wr; const teVal=t.fpts_vs_te;
     return `<tr class="tbl-row">
       <td><span class="rank-num">${t._rank}</span></td>
       <td>
         <div class="team-name">${esc(t.team_name||t.team)}</div>
         <div class="team-abbr">${esc(t.team)}</div>
       </td>
-      <td>
-        <div class="bar-cell">
-          <div class="bar-track" style="flex:1">
-            <div class="bar-fill" style="width:${pct.toFixed(1)}%;background:${barColor}"></div>
-          </div>
-        </div>
-      </td>
-      <td><span class="pts">${fmt(val)}</span></td>
+      <td style="text-align:right"><span class="stat-mono" style="color:${cellColor('fpts_vs_qb',qbVal||0)}">${fmt(qbVal)}</span></td>
+      <td style="text-align:right"><span class="stat-mono" style="color:${cellColor('fpts_vs_rb',rbVal||0)}">${fmt(rbVal)}</span></td>
+      <td style="text-align:right"><span class="stat-mono" style="color:${cellColor('fpts_vs_wr',wrVal||0)}">${fmt(wrVal)}</span></td>
+      <td style="text-align:right"><span class="stat-mono" style="color:${cellColor('fpts_vs_te',teVal||0)}">${fmt(teVal)}</span></td>
       <td><span class="${gradeCls}">${g}</span></td>
     </tr>`;
   }).join('');
@@ -624,7 +641,7 @@ document.getElementById('nl-submit').addEventListener('click', async ()=>{
   const email=document.getElementById('nl-email').value.trim();
   if(!email||!email.includes('@')) return;
   try{
-    await fetch('https://sleepercellff.com/.netlify/functions/subscribe',{
+    await fetch('/api/subscribe',{
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({email})
     });
