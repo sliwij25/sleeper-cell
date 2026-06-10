@@ -316,21 +316,21 @@ footer{border-top:1px solid var(--border);padding:10px 20px;display:flex;align-i
 
       <div class="tbl-wrap">
         <table>
-          <thead class="tbl-head">
+          <thead class="tbl-head" id="matchups-thead">
             <tr>
-              <th style="width:56px">Rank</th>
-              <th>Team</th>
-              <th style="width:72px;font-size:10px">PASS YDS/G</th>
-              <th style="width:72px;font-size:10px">RUSH YDS/G</th>
-              <th style="width:72px;font-size:10px">REC YDS/G</th>
-              <th style="width:56px;font-size:10px">TDS/G</th>
-              <th style="width:52px;font-size:10px">INT/G</th>
-              <th style="width:72px" id="mth-qb">vs QB</th>
-              <th style="width:72px" id="mth-rb">vs RB</th>
-              <th style="width:72px" id="mth-wr">vs WR</th>
-              <th style="width:72px" id="mth-te">vs TE</th>
-              <th style="width:160px">Fpts/G</th>
-              <th style="width:80px">Grade</th>
+              <th style="width:56px;cursor:pointer;user-select:none" data-sort="default" data-label="Rank">Rank</th>
+              <th style="cursor:pointer;user-select:none" data-sort="team" data-label="Team">Team</th>
+              <th style="width:72px;font-size:10px;cursor:pointer;user-select:none" data-sort="pass_yds_allowed_pg" data-label="PASS YDS/G">PASS YDS/G</th>
+              <th style="width:72px;font-size:10px;cursor:pointer;user-select:none" data-sort="rush_yds_allowed_pg" data-label="RUSH YDS/G">RUSH YDS/G</th>
+              <th style="width:72px;font-size:10px;cursor:pointer;user-select:none" data-sort="rec_yds_allowed_pg" data-label="REC YDS/G">REC YDS/G</th>
+              <th style="width:56px;font-size:10px;cursor:pointer;user-select:none" data-sort="tds_allowed_pg" data-label="TDS/G">TDS/G</th>
+              <th style="width:52px;font-size:10px;cursor:pointer;user-select:none" data-sort="ints_per_game" data-label="INT/G">INT/G</th>
+              <th style="width:72px;cursor:pointer;user-select:none" id="mth-qb" data-sort="fpts_vs_qb" data-label="vs QB">vs QB</th>
+              <th style="width:72px;cursor:pointer;user-select:none" id="mth-rb" data-sort="fpts_vs_rb" data-label="vs RB">vs RB</th>
+              <th style="width:72px;cursor:pointer;user-select:none" id="mth-wr" data-sort="fpts_vs_wr" data-label="vs WR">vs WR</th>
+              <th style="width:72px;cursor:pointer;user-select:none" id="mth-te" data-sort="fpts_vs_te" data-label="vs TE">vs TE</th>
+              <th style="width:160px;cursor:pointer;user-select:none" data-sort="pts_allowed_pg" data-label="Fpts/G">Fpts/G</th>
+              <th style="width:80px;cursor:pointer;user-select:none" data-sort="_grade" data-label="Grade">Grade</th>
             </tr>
           </thead>
           <tbody id="matchups-tbody"></tbody>
@@ -395,6 +395,8 @@ let defenseData=[];
 let currentPos='ALL';
 let currentGrade='ALL';
 let currentTab='matchups';
+let sortCol=null;   // null = default (sort by active position key desc)
+let sortDir='desc';
 
 // Compute grade thresholds using percentile thirds
 function getGrade(val, sortedVals){
@@ -502,8 +504,24 @@ function renderMatchups(teams, pos, grade, search=''){
     if(th) th.style.color=pos===p?'rgba(16,185,129,1)':'rgba(16,185,129,0.75)';
   });
 
-  // Sort by key desc (most fpts allowed = easiest = rank 1 at top)
-  let sorted=[...teams].filter(t=>t[key]!=null).sort((a,b)=>(b[key]||0)-(a[key]||0));
+  // Sort by active column (or default: position key desc)
+  const gradeOrder={EASY:3,MID:2,HARD:1};
+  let sorted=[...teams].filter(t=>t[key]!=null).sort((a,b)=>{
+    if(!sortCol){
+      return (b[key]||0)-(a[key]||0);
+    } else if(sortCol==='team'){
+      const av=(a.team_name||a.team||'').toLowerCase();
+      const bv=(b.team_name||b.team||'').toLowerCase();
+      return sortDir==='desc'?bv.localeCompare(av):av.localeCompare(bv);
+    } else if(sortCol==='_grade'){
+      const av=gradeOrder[getGrade(a[key]||0,[])]||0;
+      const bv=gradeOrder[getGrade(b[key]||0,[])]||0;
+      return sortDir==='desc'?bv-av:av-bv;
+    } else {
+      const av=a[sortCol]||0, bv=b[sortCol]||0;
+      return sortDir==='desc'?bv-av:av-bv;
+    }
+  });
 
   // Compute thresholds for grade from active position key
   const vals=sorted.map(t=>t[key]||0).sort((a,b)=>a-b);
@@ -570,6 +588,33 @@ function renderMatchups(teams, pos, grade, search=''){
   }).join('');
 }
 
+function updateSortIndicators(){
+  document.querySelectorAll('#matchups-thead th[data-sort]').forEach(th=>{
+    const field=th.dataset.sort;
+    const base=th.dataset.label||'';
+    const isActive=sortCol===null?field==='default':field===sortCol;
+    th.textContent=isActive?`${base} ${sortDir==='desc'?'▾':'▴'}`:base;
+  });
+}
+
+function attachMatchupsSortHandlers(){
+  document.querySelectorAll('#matchups-thead th[data-sort]').forEach(th=>{
+    th.addEventListener('click',()=>{
+      const field=th.dataset.sort;
+      if(field==='default'){
+        sortCol=null; sortDir='desc';
+      } else if(field===sortCol){
+        sortDir=sortDir==='desc'?'asc':'desc';
+      } else {
+        sortCol=field; sortDir='desc';
+      }
+      updateSortIndicators();
+      renderMatchups(defenseData,currentPos,currentGrade,document.getElementById('search-matchups').value);
+    });
+  });
+  updateSortIndicators();
+}
+
 function renderMetrics(offense, defense){
   // Metric row removed — no-op kept for safety
 }
@@ -600,6 +645,7 @@ async function init(){
   renderDefense(defenseData);
   renderHeadlineCards(defenseData);
   renderMatchups(defenseData, 'ALL', 'ALL');
+  attachMatchupsSortHandlers();
 
   // TAB SWITCHING
   document.querySelectorAll('.main-tab').forEach(tab=>{
