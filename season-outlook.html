@@ -491,6 +491,10 @@ function renderTable() {
     const ecr = p.ecr_rank || p.adp_rank || p.consensus_rank || '—';
     // Injury %: if pipeline provides it use it, else show —
     const injPct = p.injury_pct != null ? Math.round(p.injury_pct * 100) + '%' : '—';
+    // Trend label badge
+    const trendMap={BREAKOUT:'#10B981',TRENDING_UP:'rgba(16,185,129,0.6)',BUST:'#f87171',DECLINING:'rgba(248,113,113,0.6)'};
+    const tl=(p.trend_label||'').toUpperCase();
+    const trendHtml=trendMap[tl]?`<span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:${trendMap[tl]};letter-spacing:0.05em;margin-left:6px">${tl}</span>`:'';
     return `
       <tr class="tbl-row">
         <td class="rank-num">${i + 1}</td>
@@ -501,7 +505,7 @@ function renderTable() {
               <div class="player-name">${p.full_name}</div>
               <div class="player-meta">
                 <span style="color:var(--muted2)">${p.team}</span>
-                ${ageHtml}
+                ${ageHtml}${trendHtml}
               </div>
             </div>
           </div>
@@ -609,7 +613,7 @@ document.getElementById('nl-submit').addEventListener('click', async () => {
   btn.disabled = true;
   btn.textContent = '...';
   try {
-    const r = await fetch('https://sleepercellff.com/.netlify/functions/subscribe', {
+    const r = await fetch('/api/subscribe', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({email})
