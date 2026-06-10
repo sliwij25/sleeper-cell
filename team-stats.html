@@ -100,11 +100,6 @@ table{width:100%;border-collapse:collapse}
 .main-tab{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;padding:12px 18px;cursor:pointer;border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;transition:color 0.2s,border-color 0.2s}
 .main-tab:hover{color:var(--accent)}
 .main-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
-.pos-filter{display:none;gap:4px}
-.pos-filter.visible{display:flex}
-.pos-btn{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;padding:5px 12px;cursor:pointer;border:1px solid var(--border);background:none;transition:color 0.2s,background 0.2s,border-color 0.2s}
-.pos-btn:hover{color:var(--accent);border-color:rgba(16,185,129,0.4)}
-.pos-btn.active{color:var(--accent);background:var(--accent-dim);border-color:rgba(16,185,129,0.4)}
 
 /* GRADE FILTER */
 .grade-filter-row{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.06)}
@@ -237,13 +232,6 @@ footer{border-top:1px solid var(--border);padding:10px 20px;display:flex;align-i
         <button class="main-tab active" data-tab="matchups">Fantasy Matchups</button>
         <button class="main-tab" data-tab="offense">Offense</button>
         <button class="main-tab" data-tab="defense">Defense</button>
-      </div>
-      <div class="pos-filter visible" id="pos-filter">
-        <button class="pos-btn active" data-pos="ALL">All</button>
-        <button class="pos-btn" data-pos="QB">QB</button>
-        <button class="pos-btn" data-pos="RB">RB</button>
-        <button class="pos-btn" data-pos="WR">WR</button>
-        <button class="pos-btn" data-pos="TE">TE</button>
       </div>
     </div>
 
@@ -392,7 +380,6 @@ async function loadJSON(name){
 
 let offenseData=[];
 let defenseData=[];
-let currentPos='ALL';
 let currentGrade='ALL';
 let currentTab='matchups';
 let sortCol=null;   // null = default (sort by active position key desc)
@@ -492,17 +479,11 @@ function renderHeadlineCards(teams){
   }).join('');
 }
 
-function renderMatchups(teams, pos, grade, search=''){
+function renderMatchups(teams, grade, search=''){
   const tbody=document.getElementById('matchups-tbody');
   if(!tbody) return;
 
-  const key=getPosKey(pos);
-
-  // Highlight active position header
-  ['QB','RB','WR','TE'].forEach(p=>{
-    const th=document.getElementById('mth-'+p.toLowerCase());
-    if(th) th.style.color=pos===p?'rgba(16,185,129,1)':'rgba(16,185,129,0.75)';
-  });
+  const key='pts_allowed_pg';
 
   // Sort by active column (or default: position key desc)
   const gradeOrder={EASY:3,MID:2,HARD:1};
@@ -609,7 +590,7 @@ function attachMatchupsSortHandlers(){
         sortCol=field; sortDir='desc';
       }
       updateSortIndicators();
-      renderMatchups(defenseData,currentPos,currentGrade,document.getElementById('search-matchups').value);
+      renderMatchups(defenseData,currentGrade,document.getElementById('search-matchups').value);
     });
   });
   updateSortIndicators();
@@ -644,7 +625,7 @@ async function init(){
   renderOffense(offenseData);
   renderDefense(defenseData);
   renderHeadlineCards(defenseData);
-  renderMatchups(defenseData, 'ALL', 'ALL');
+  renderMatchups(defenseData, 'ALL');
   attachMatchupsSortHandlers();
 
   // TAB SWITCHING
@@ -656,21 +637,9 @@ async function init(){
       const name=tab.dataset.tab;
       currentTab=name;
       document.getElementById('tab-'+name).classList.add('active');
-      const posFilter=document.getElementById('pos-filter');
-      if(name==='matchups') posFilter.classList.add('visible');
-      else posFilter.classList.remove('visible');
     });
   });
 
-  // POSITION FILTER (matchups)
-  document.getElementById('pos-filter').addEventListener('click',e=>{
-    const btn=e.target.closest('.pos-btn');
-    if(!btn) return;
-    document.querySelectorAll('.pos-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    currentPos=btn.dataset.pos;
-    renderMatchups(defenseData, currentPos, currentGrade, document.getElementById('search-matchups').value);
-  });
 
   // GRADE FILTER
   document.getElementById('grade-btns').addEventListener('click',e=>{
@@ -685,7 +654,7 @@ async function init(){
     else if(g==='EASY') btn.classList.add('active-easy');
     else if(g==='MID') btn.classList.add('active-mid');
     else if(g==='HARD') btn.classList.add('active-hard');
-    renderMatchups(defenseData, currentPos, currentGrade, document.getElementById('search-matchups').value);
+    renderMatchups(defenseData, currentGrade, document.getElementById('search-matchups').value);
   });
 
   // SEARCH
@@ -696,7 +665,7 @@ async function init(){
     renderDefense(defenseData, e.target.value);
   });
   document.getElementById('search-matchups').addEventListener('input',e=>{
-    renderMatchups(defenseData, currentPos, currentGrade, e.target.value);
+    renderMatchups(defenseData, currentGrade, e.target.value);
   });
 }
 
