@@ -313,7 +313,7 @@ table{width:100%;border-collapse:collapse}
 
 </div>
 <script>
-const CDN = 'https://cdn.jsdelivr.net/gh/sliwij25/sleeper-cell@main/data/';
+const CDN = 'https://raw.githubusercontent.com/sliwij25/sleeper-cell/main/data/';
 const BRIEFINGS = [];
 
 async function loadMeta() {
@@ -447,7 +447,7 @@ document.getElementById('nl-submit').addEventListener('click', async () => {
   btn.disabled = true;
   btn.textContent = '...';
   try {
-    const r = await fetch('https://sleepercellff.com/.netlify/functions/subscribe', {
+    const r = await fetch('/api/subscribe', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({email})
