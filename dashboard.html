@@ -308,8 +308,9 @@ footer{border-top:1px solid var(--border);padding:10px 20px;display:flex;align-i
           <tr>
             <th style="width:48px">#</th>
             <th>Player</th>
-            <th style="width:52px;text-align:right">ECR</th>
-            <th style="width:72px;text-align:right">ADP Diff</th>
+            <th style="width:48px;text-align:center">Opp</th>
+            <th style="width:56px;text-align:center">Match</th>
+            <th style="width:80px;text-align:center">Mdl / ECR</th>
             <th style="width:60px">Tier</th>
             <th style="width:80px">Proj</th>
             <th style="width:110px">Floor / Ceiling</th>
@@ -483,7 +484,7 @@ function renderRankings(players, pos){
   const display=rankingsExpanded ? filtered : filtered.slice(0,ROWS_INIT);
 
   if(!display.length){
-    tbody.innerHTML=`<tr><td colspan="7" style="padding:24px;text-align:center;font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(16,185,129,0.4);letter-spacing:0.12em">NO DATA AVAILABLE</td></tr>`;
+    tbody.innerHTML=`<tr><td colspan="8" style="padding:24px;text-align:center;font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(16,185,129,0.4);letter-spacing:0.12em">NO DATA AVAILABLE</td></tr>`;
     if(expandBtn) expandBtn.style.display='none';
     return;
   }
@@ -506,17 +507,23 @@ function renderRankings(players, pos){
       : '';
     const conf=p.confidence!=null?Math.round(p.confidence*100):null;
     const confHtml=conf!=null?`&nbsp;<span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(255,255,255,0.3);letter-spacing:0.05em">CONF ${conf}%</span>`:'';
-    const ecr=p.ecr_rank!=null?p.ecr_rank:'—';
-    const adpDiff=p.adp_divergence!=null&&p.adp_divergence!==0?((p.adp_divergence>0?'+':'')+p.adp_divergence):'—';
-    const adpColor=p.adp_divergence>5?'rgba(16,185,129,0.85)':p.adp_divergence<-5?'rgba(248,113,113,0.85)':'rgba(255,255,255,0.35)';
+    const opp=p.opponent||'—';
+    const matchNum=p.matchup_rank;
+    const matchTxt=matchNum!=null?matchNum:'—';
+    const matchColor=matchNum!=null?(matchNum<=10?'rgba(16,185,129,0.85)':matchNum<=20?'rgba(251,191,36,0.8)':'rgba(248,113,113,0.8)'):'rgba(255,255,255,0.35)';
+    const mdlRank=i+1;
+    const ecrRank=p.ecr_rank!=null?p.ecr_rank:'—';
+    const mdlEcr=`${mdlRank} / ${ecrRank}`;
+    const mdlEcrColor=p.ecr_rank!=null?(mdlRank<p.ecr_rank?'rgba(16,185,129,0.75)':mdlRank>p.ecr_rank?'rgba(248,113,113,0.75)':'rgba(255,255,255,0.35)'):'rgba(255,255,255,0.35)';
     return `<tr class="tbl-row">
       <td><span class="rank-num">${i+1}</span></td>
       <td>
         <div class="player-name">${esc(name)}</div>
         <div class="player-meta" style="margin-top:2px">${posBadge(ppos)}<span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">${esc(team)}</span>${pivBadge?'&nbsp;'+pivBadge:''}${fadeBadge?'&nbsp;'+fadeBadge:''}${sigHtml}${confHtml}</div>
       </td>
-      <td style="text-align:right"><span class="stat-mono">${ecr}</span></td>
-      <td style="text-align:right"><span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:${adpColor}">${adpDiff}</span></td>
+      <td style="text-align:center"><span class="stat-mono" style="font-size:10px">${esc(opp)}</span></td>
+      <td style="text-align:center"><span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:${matchColor}">${matchTxt}</span></td>
+      <td style="text-align:center"><span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:${mdlEcrColor}">${mdlEcr}</span></td>
       <td><span class="tier-num">${esc(String(tier))}</span></td>
       <td><span class="pts">${proj}</span></td>
       <td><span class="stat-mono">${floor} / ${ceil}</span></td>
