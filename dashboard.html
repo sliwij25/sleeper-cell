@@ -309,7 +309,8 @@ footer{border-top:1px solid var(--border);padding:10px 20px;display:flex;align-i
             <th style="width:48px">#</th>
             <th>Player</th>
             <th style="width:80px;text-align:center">Opp</th>
-            <th style="width:76px;text-align:center">Mdl / ECR</th>
+            <th style="width:52px;text-align:center">Mdl</th>
+            <th style="width:52px;text-align:center">ECR</th>
             <th style="width:56px;text-align:right">Conf%</th>
             <th style="width:44px;text-align:center">Snap</th>
             <th style="width:80px;text-align:right">Season Pts</th>
@@ -486,7 +487,7 @@ function renderRankings(players, pos){
   const display=rankingsExpanded ? filtered : filtered.slice(0,ROWS_INIT);
 
   if(!display.length){
-    tbody.innerHTML=`<tr><td colspan="10" style="padding:24px;text-align:center;font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(16,185,129,0.4);letter-spacing:0.12em">NO DATA AVAILABLE</td></tr>`;
+    tbody.innerHTML=`<tr><td colspan="11" style="padding:24px;text-align:center;font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(16,185,129,0.4);letter-spacing:0.12em">NO DATA AVAILABLE</td></tr>`;
     if(expandBtn) expandBtn.style.display='none';
     return;
   }
@@ -527,7 +528,8 @@ function renderRankings(players, pos){
         <div class="player-meta" style="margin-top:2px">${posBadge(ppos)}<span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">${esc(team)}</span>${pivBadge?'&nbsp;'+pivBadge:''}${fadeBadge?'&nbsp;'+fadeBadge:''}${sigHtml}</div>
       </td>
       <td style="text-align:center;font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(255,255,255,0.6)">${oppTxt}</td>
-      <td style="text-align:center"><span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:${mdlEcrColor}">${mdlEcr}</span></td>
+      <td style="text-align:center"><span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:${mdlEcrColor}">${mdlRank}</span></td>
+      <td style="text-align:center"><span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:${mdlEcrColor}">${ecrRank}</span></td>
       <td style="text-align:right"><span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:${confColor}">${confTxt}</span></td>
       <td style="text-align:center"><span style="font-size:13px;color:${snapColor}">${snapArrow}</span></td>
       <td style="text-align:right"><span class="stat-mono">${seasonPts}</span></td>
