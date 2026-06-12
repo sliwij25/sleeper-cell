@@ -308,6 +308,8 @@ footer{border-top:1px solid var(--border);padding:10px 20px;display:flex;align-i
           <tr>
             <th style="width:48px">#</th>
             <th>Player</th>
+            <th style="width:52px;text-align:right">ECR</th>
+            <th style="width:58px;text-align:right">Inj %</th>
             <th style="width:60px">Tier</th>
             <th style="width:80px">Proj</th>
             <th style="width:110px">Floor / Ceiling</th>
@@ -481,7 +483,7 @@ function renderRankings(players, pos){
   const display=rankingsExpanded ? filtered : filtered.slice(0,ROWS_INIT);
 
   if(!display.length){
-    tbody.innerHTML=`<tr><td colspan="5" style="padding:24px;text-align:center;font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(16,185,129,0.4);letter-spacing:0.12em">NO DATA AVAILABLE</td></tr>`;
+    tbody.innerHTML=`<tr><td colspan="7" style="padding:24px;text-align:center;font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(16,185,129,0.4);letter-spacing:0.12em">NO DATA AVAILABLE</td></tr>`;
     if(expandBtn) expandBtn.style.display='none';
     return;
   }
@@ -504,12 +506,17 @@ function renderRankings(players, pos){
       : '';
     const conf=p.confidence!=null?Math.round(p.confidence*100):null;
     const confHtml=conf!=null?`&nbsp;<span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(255,255,255,0.3);letter-spacing:0.05em">CONF ${conf}%</span>`:'';
+    const ecr=p.ecr_rank!=null?p.ecr_rank:'—';
+    const injPct=p.injury_pct!=null?Math.round(p.injury_pct*100)+'%':'—';
+    const injColor=p.injury_pct!=null?(p.injury_pct>=0.4?'rgba(248,113,113,0.8)':p.injury_pct>=0.2?'rgba(251,191,36,0.8)':'rgba(255,255,255,0.35)'):'rgba(255,255,255,0.35)';
     return `<tr class="tbl-row">
       <td><span class="rank-num">${i+1}</span></td>
       <td>
         <div class="player-name">${esc(name)}</div>
         <div class="player-meta" style="margin-top:2px">${posBadge(ppos)}<span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">${esc(team)}</span>${pivBadge?'&nbsp;'+pivBadge:''}${fadeBadge?'&nbsp;'+fadeBadge:''}${sigHtml}${confHtml}</div>
       </td>
+      <td style="text-align:right"><span class="stat-mono">${ecr}</span></td>
+      <td style="text-align:right"><span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:${injColor}">${injPct}</span></td>
       <td><span class="tier-num">${esc(String(tier))}</span></td>
       <td><span class="pts">${proj}</span></td>
       <td><span class="stat-mono">${floor} / ${ceil}</span></td>
