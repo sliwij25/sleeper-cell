@@ -382,8 +382,12 @@ function normalizePlayer(p) {
     confidence_score: conf,
     is_pivot: !!p.is_pivot,
     is_fade: !!p.is_fade,
+    adp_divergence: p.adp_divergence || 0,
     age: p.age || null,
-    years_exp: p.years_exp || 0
+    years_exp: p.years_exp || 0,
+    ecr_rank: p.ecr_rank || p.adp_rank || p.consensus_rank || null,
+    injury_pct: p.injury_pct != null ? p.injury_pct : (p.injury_risk_pct != null ? p.injury_risk_pct / 100 : null),
+    trend_label: p.trend_label || null
   };
 }
 
@@ -477,6 +481,8 @@ function renderTable() {
   }
   const total = players.length;
   const display = outlookExpanded ? players : players.slice(0, ROWS_INIT_OUTLOOK);
+  const maxPts = Math.max(...players.map(p => p.projected_season_pts));
+  const posColors = {QB:'rgba(251,191,36,0.30)',RB:'rgba(16,185,129,0.28)',WR:'rgba(99,102,241,0.32)',TE:'rgba(249,115,22,0.30)'};
 
   tbody.innerHTML = display.map((p, i) => {
     const age = getAgeLabel(p);
@@ -487,9 +493,7 @@ function renderTable() {
     const confClass = getConfClass(p.confidence_score);
     const barColor = p.confidence_score >= 0.7 ? '#10B981' : p.confidence_score >= 0.4 ? '#fbbf24' : '#64748b';
     const barWidth = Math.max(4, confPct);
-    // ECR: use ecr_rank or adp_rank if available
-    const ecr = p.ecr_rank || p.adp_rank || p.consensus_rank || '—';
-    // Injury %: if pipeline provides it use it, else show —
+    const ecr = p.ecr_rank || '—';
     const injPct = p.injury_pct != null ? Math.round(p.injury_pct * 100) + '%' : '—';
     // Trend label badge
     const trendMap={BREAKOUT:'#10B981',TRENDING_UP:'rgba(16,185,129,0.6)',BUST:'#f87171',DECLINING:'rgba(248,113,113,0.6)'};
@@ -510,7 +514,7 @@ function renderTable() {
             </div>
           </div>
         </td>
-        <td class="pts-val">${Math.round(p.projected_season_pts)}</td>
+        <td style="background:linear-gradient(to right,${posColors[p.position]||'rgba(16,185,129,0.20)'} ${Math.round(p.projected_season_pts/maxPts*100)}%,transparent ${Math.round(p.projected_season_pts/maxPts*100)}%);text-align:right;padding-right:10px"><span class="pts-val">${Math.round(p.projected_season_pts)}</span></td>
         <td class="range-val">${fl} – ${cl}</td>
         <td style="text-align:right;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">${ecr}</td>
         <td style="text-align:right;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">${injPct}</td>
